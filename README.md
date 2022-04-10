@@ -1,2 +1,5 @@
-# stata-bimap
-A Stata command for bi-variate maps
+# bimap
+
+A Stata command for bi-variate maps.
+
+*More info coming soon.*
