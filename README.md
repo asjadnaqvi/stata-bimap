@@ -128,7 +128,7 @@ bimap share_asian share_afam using usa_county_shp_clean, cut(pctile) palette(blu
 		 polygon(data("usa_state_shp_clean") ocolor(white) osize(0.3))
 ```
 
-<img src="/figures/bimap3.png" height="600">
+<img src="/figures/bimap4.png" height="600">
 
 ## Feedback
 
