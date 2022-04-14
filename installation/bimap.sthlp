@@ -1,7 +1,7 @@
 {smcl}
-{* 08April2022}{...}
+{* 14April2022}{...}
 {hi:help bimap}{...}
-{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v1.0 (GitHub)}}
+{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v1.1 (GitHub)}}
 
 {hline}
 
@@ -16,7 +16,7 @@ The {cmd:bimap} command is a wrapper for {stata help spmap:spmap}. Therefore it 
 {p 8 15 2}
 
 {cmd:bimap} {it:vary varx} {ifin}, {cmd:cut}({it:option}) {cmd:palette}({it:option}) 
-		{cmd:[} ocolor({it:str}) osize({it:str}) ndocolor({it:str}) ndsize({it:str}) ndocolor({it:str}) polygon({it:str})
+		{cmd:[} ocolor({it:str}) osize({it:str}) ndocolor({it:str}) ndfcolor({it:str}) polygon({it:str})
 		textx({it:string}) texty({it:str}) values TEXTLABSize({it:num}) TEXTSize({it:num}) BOXsize({it:num}) xscale({it:num}) yscale({it:num}) 
 		title({it:str}) subtitle({it:str}) note({it:str}) scheme({it:str}) {cmd:]}
 
@@ -35,13 +35,13 @@ OR {ul:{it:equal}} for equal intervals. These cutoff values can be displayed usi
 
 {p2coldent : {opt palette(option)}}Palette options for bi-variate maps are: {ul:{it:pinkgreen}}, {ul:{it:bluered}}, {ul:{it:greenblue}}, or {ul:{it:purpleyellow}}.{p_end}
 
-{p2coldent : {opt ocolor(string)}}Outline color of polygons. Same as {cmd:spmap}.{p_end}
+{p2coldent : {opt osize(string)}}Line width of polygons. Same as in {cmd:spmap}. Default value is {it:0.02}. Also applied to polygons with no data.{p_end}
 
-{p2coldent : {opt osize(string)}}Line width of polygons. Same as {cmd:spmap}.{p_end}
+{p2coldent : {opt ocolor(string)}}Outline color of polygons with data. Same as in {cmd:spmap}. Default value is {it:white}.{p_end}
 
-{p2coldent : {opt ndocolor(string)}}Outline color of polygons with no data. Same as {cmd:spmap}.{p_end}
+{p2coldent : {opt ndocolor(string)}}Outline color of polygons with no data. Same as in {cmd:spmap}. Default value is {it:gs12}.{p_end}
 
-{p2coldent : {opt ndsize(string)}}Line width of polygons with no data. Same as {cmd:spmap}.{p_end}
+{p2coldent : {opt ndfcolor(string)}}Fill color of polygons with no data. Same as in {cmd:spmap}. Default value is {it:gs8}.{p_end}
 
 {p2coldent : {opt polygon(string)}}Add an additional polygon layer. For example for additional boundaries. It takes exactly the same arguements as {stata help spmap:spmap}. See example below.{p_end}
 
@@ -114,8 +114,8 @@ bimap share_asian share_afam using usa_county_shp_clean, cut(pctile) palette(blu
 
 {title:Package details}
 
-Version      : {bf:bimap} v1.0
-This release : 08 Apr 2022
+Version      : {bf:bimap} v1.1
+This release : 14 Apr 2022
 First release: 08 Apr 2022
 Repository   : {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub}
 Keywords     : Stata, graph, bi-variate, map

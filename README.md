@@ -1,22 +1,24 @@
-# bimap v1.0
+# bimap v1.1
 
 This package provides the ability to draw bi-variate maps in Stata. It is based on the [Bi-variate maps Guide](https://medium.com/the-stata-guide/stata-graphs-bi-variate-maps-b1e96dd4c2be) that I released in December 2021.
 
 
 ## Installation
 
-The package has been submitted to SSC and should be installable as:
+The package can be installed via SSC or GitHub. The GitHub version, *might* be more recent due to bug fixes, feature updates etc, and *may* contain syntax improvements and changes in *default* values. See version numbers below. Eventually the GitHub version is published on SSC.
+
+The package can be installed from SSC (**v1.0**):
 ```
 ssc install bimap, replace
 ```
 
-Or it can be installed from GitHub:
+Or it can be installed from GitHub (**v1.1**):
 
 ```
 net install bimap, from("https://raw.githubusercontent.com/asjadnaqvi/stata-bimap/main/installation/") replace
 ```
 
-The GitHub version, *might* be more recent due to bug fixes, feature updates etc.
+
 
 The `spmap` and `palettes` package is required to run this command:
 
@@ -136,6 +138,11 @@ Please open an [issue](https://github.com/asjadnaqvi/stata-bimap/issues) to repo
 
 
 ## Versions
+
+**v1.1 (14 Apr 2022)**
+- Errors in ado file corrected.
+- Help file was missing a couple of options.
+
 
 **v1.0 (08 Apr 2022)**
 - Public release.

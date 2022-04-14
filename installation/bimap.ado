@@ -1,4 +1,4 @@
-*! Bimap v1.0 Naqvi 8.Apr.2022
+*! Bimap v1.1 Naqvi 14.Apr.2022
 
 
 **********************************
@@ -23,7 +23,7 @@ version 15
 		[ BOXsize(real 8) textx(string) texty(string) xscale(real 30) yscale(real 100) TEXTLABSize(real 2) TEXTSize(real 2.5) values ] ///
 		[ polygon(string) ] ///
 		[ ocolor(string) osize(string) ]   ///
-		[ ndocolor(string) ndsize(string) ndocolor(string) ]   ///
+		[ ndocolor(string) ndsize(string) ndfcolor(string) ]   ///
 		[ title(string) subtitle(string) note(string)  ] ///
 		[ allopt graphopts(string asis) * ] 
 		
@@ -124,7 +124,7 @@ qui {
 				di in yellow "Wrong palette specified. The supported palettes are {ul:pinkgreen}, {ul:bluered}, {ul:greenblue}, {ul:purpleyellow}."
 				exit 198
 			}
-	
+		}
 
 		if "`palette'" == "pinkgreen" {
 			local color #e8e8e8 #dfb0d6 #be64ac #ace4e4 #a5add3 #8c62aa #5ac8c8 #5698b9 #3b4994
@@ -154,8 +154,10 @@ qui {
 		
 		local lw = cond("`osize'" == "", "0.02", "`osize'")
 	
-	
-	
+		local ndo = cond("`ndocolor'" == "", "gs12", "`ndocolor'")
+		
+		local ndf = cond("`ndfcolor'" == "", "gs8", "`ndfcolor'")
+		
 		// finally the map!
 		
 		colorpalette `color', nograph 
@@ -164,7 +166,7 @@ qui {
 		spmap `grp_cut' using "`using'", ///
 			id(_ID) clm(unique)  fcolor("`colors'") ///
 			ocolor(`lc' ..) osize(`lw' ..) ///	
-			ndocolor(gs6 ..) ndsize(`lw' ..) ndfcolor(gs14)  ///
+			ndocolor(`ndo' ..) ndsize(`lw' ..) ndfcolor(`ndf' ..)  ///
 			polygon(`polyadd') ///
 			legend(off)  ///
 			name(_map, replace) nodraw
@@ -323,7 +325,7 @@ qui {
 		subtitle(`subtitle') ///
 		note(`note')
 	
-	}	 
+	
 }
 
 end
