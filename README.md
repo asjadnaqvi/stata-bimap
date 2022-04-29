@@ -113,7 +113,7 @@ spmap share_afam using usa_county_shp_clean, id(_ID) clm(custom) clb(0(10)100) f
 spmap share_hisp using usa_county_shp_clean, id(_ID) clm(custom) clb(0(10)100) fcolor(Heat)
 ```
 
-<img src="/figures/bimap1_1.png" height="600">
+<img src="/figures/bimap1_2.png" height="600">
 
 
 
