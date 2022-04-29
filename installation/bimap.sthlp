@@ -29,7 +29,7 @@ The options are described as follows:
 {synopthdr}
 {synoptline}
 
-{p2coldent : {opt bimap vary varx}}The command requires numeric {it:vary} and {it:varx} variables.{p_end}
+{p2coldent : {opt bimap} {it:vary varx}}The command requires numeric {it:vary} and {it:varx} variables.{p_end}
 
 {p2coldent : {opt cut(option)}}Here {cmd:cut} can take on two values: {ul:{it:pctile}} for percentiles or terciles in this case, 
 OR {ul:{it:equal}} for equal intervals. These cutoff values can be displayed using the {cmd:values} option. See below.{p_end}
@@ -44,9 +44,9 @@ OR {ul:{it:equal}} for equal intervals. These cutoff values can be displayed usi
 
 {p2coldent : {opt ndfcolor(string)}}Fill color of polygons with no data. Same as in {cmd:spmap}. Default value is {it:gs8}.{p_end}
 
-{p2coldent : {opt polygon(string)}}Add an additional polygon layer. For example for additional boundaries. It takes exactly the same arguements as {stata help spmap:spmap}. See example below.{p_end}
+{p2coldent : {opt polygon}(), {opt line}(), {opt point}(), {opt label}()}These are {cmd:spmap} passthru options for additional layers. See {stata help spmap} for details.{p_end}
 
-{p2coldent : {opt title, subtitle, note}}These are standard twoway graph options.{p_end}
+{p2coldent : {opt title, subtitle, note, name}}These are standard twoway graph options.{p_end}
 
 
 

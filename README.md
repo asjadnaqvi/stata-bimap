@@ -53,14 +53,15 @@ This command is a wrapper for `spmap` and assumes that you have shapefiles in St
 
 ## Syntax
 
-The syntax is as follows:
+The syntax for **v1.2** is as follows:
 
 ```
 
 bimap vary varx [if] [in], cut(option) palette(option) 
-                [ ocolor(str) osize(str) ndocolor(str) ndsize(str) ndocolor(str) polygon(str)
-                textx(string) texty(str) values TEXTLABSize(num) TEXTSize(num) BOXsize(num) xscale(num) yscale(num) 
-                title(str) subtitle(str) note(str) scheme(str) ]
+		[ count values ocolor(str) osize(str) ndocolor(str) ndsize(str) ndocolor(str)
+		polygon(str) line(str) point(str) label(str) 
+		textx(string) texty(str) TEXTLABSize(num) TEXTSize(num) BOXsize(num) xscale(num) yscale(num) 
+		title(str) subtitle(str) note(str) name(srt) scheme(str) ]
 ```
 
 See the help file `help bimap` for details.
