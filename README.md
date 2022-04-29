@@ -1,7 +1,7 @@
 
 ![StataMin](https://img.shields.io/badge/stata-2015-blue) ![issues](https://img.shields.io/github/issues/asjadnaqvi/stata-bimap) ![license](https://img.shields.io/github/license/asjadnaqvi/stata-bimap) ![Stars](https://img.shields.io/github/stars/asjadnaqvi/stata-bimap) ![version](https://img.shields.io/github/v/release/asjadnaqvi/stata-bimap) ![release](https://img.shields.io/github/release-date/asjadnaqvi/stata-bimap)
 
-# bimap v1.1
+# bimap v1.2
 
 This package provides the ability to draw bi-variate maps in Stata. It is based on the [Bi-variate maps Guide](https://medium.com/the-stata-guide/stata-graphs-bi-variate-maps-b1e96dd4c2be) that I released in December 2021.
 
@@ -15,7 +15,7 @@ The package can be installed from SSC (**v1.0**):
 ssc install bimap, replace
 ```
 
-Or it can be installed from GitHub (**v1.1**):
+Or it can be installed from GitHub (**v1.2**):
 
 ```
 net install bimap, from("https://raw.githubusercontent.com/asjadnaqvi/stata-bimap/main/installation/") replace
@@ -30,6 +30,8 @@ ssc install spmap, replace
 ssc install palettes, replace
 ssc install colrspace, replace
 ```
+
+Even if you have these packages installed, please check for updates: `ado update, update`.
 
 If you want to make a clean figure, then it is advisable to load a clean scheme. These are several available and I personally use the following:
 
@@ -96,24 +98,46 @@ keep if _m==3
 drop _m	
 ```
 
-Test if `spmap` is working properly.
+Test whether the `spmap` is working properly:
 
-We can generate basic graphs as follows:
 
 ```
 spmap share_afam using usa_county_shp_clean, id(_ID) clm(custom) clb(0(10)100) fcolor(Heat)
 ```
 
-<img src="/figures/bimap1.png" height="600">
+<img src="/figures/bimap1_1.png" height="600">
 
 
-Let's test the command:
+```
+spmap share_hisp using usa_county_shp_clean, id(_ID) clm(custom) clb(0(10)100) fcolor(Heat)
+```
+
+<img src="/figures/bimap1_1.png" height="600">
+
+
+
+
+Let's test the `bimap` command:
 
 ```
 bimap share_hisp share_afam using usa_county_shp_clean, cut(pctile) palette(pinkgreen) 	
 ```
 
 <img src="/figures/bimap2.png" height="600">
+
+
+```
+bimap share_hisp share_afam using usa_county_shp_clean, cut(pctile) palette(pinkgreen) count values
+```
+
+<img src="/figures/bimap2_1.png" height="600">
+
+
+```
+bimap share_hisp share_afam using usa_county_shp_clean, cut(equal) palette(pinkgreen) count values
+```
+
+<img src="/figures/bimap2_2.png" height="600">
 
 
 ```
@@ -127,10 +151,10 @@ bimap share_hisp share_afam using usa_county_shp_clean, cut(pctile) palette(purp
 
 ```
 bimap share_asian share_afam using usa_county_shp_clean, cut(pctile) palette(bluered)  ///
-	title("My first bivariate map") subtitle("Made with Stata") note("Data from US Census Bureau.") ///	
-		 textx("Share African Americans") texty("Share of Asians") texts(3.5) textlabs(3) values ///
-		 ocolor() osize() ///
-		 polygon(data("usa_state_shp_clean") ocolor(white) osize(0.3))
+	title("{fontface Arial Bold:My first bivariate map}") subtitle("Made with Stata") note("Data from the US Census Bureau.") ///	
+	textx("Share of African Americans") texty("Share of Asians") texts(3.5) textlabs(3) values count ///
+	ocolor() osize(none) ///
+	polygon(data("usa_state_shp_clean") ocolor(white) osize(0.3))
 ```
 
 <img src="/figures/bimap4.png" height="600">
@@ -141,6 +165,12 @@ Please open an [issue](https://github.com/asjadnaqvi/stata-bimap/issues) to repo
 
 
 ## Versions
+
+**v1.2 (29 Apr 2022)**
+- Error in how cut-off are collected fixed.
+- Several `spmap` additional layer commands added as passthru options.
+- Count of each category added as an option.
+- Several bug fixes and error checks added.
 
 **v1.1 (14 Apr 2022)**
 - Errors in ado file corrected.

@@ -1,7 +1,7 @@
 {smcl}
-{* 14April2022}{...}
+{* 29April2022}{...}
 {hi:help bimap}{...}
-{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v1.1 (GitHub)}}
+{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v1.2 (GitHub)}}
 
 {hline}
 
@@ -16,9 +16,10 @@ The {cmd:bimap} command is a wrapper for {stata help spmap:spmap}. Therefore it 
 {p 8 15 2}
 
 {cmd:bimap} {it:vary varx} {ifin}, {cmd:cut}({it:option}) {cmd:palette}({it:option}) 
-		{cmd:[} ocolor({it:str}) osize({it:str}) ndocolor({it:str}) ndfcolor({it:str}) polygon({it:str})
-		textx({it:string}) texty({it:str}) values TEXTLABSize({it:num}) TEXTSize({it:num}) BOXsize({it:num}) xscale({it:num}) yscale({it:num}) 
-		title({it:str}) subtitle({it:str}) note({it:str}) scheme({it:str}) {cmd:]}
+		{cmd:[} {cmd:count} {cmd:values} {cmd:ocolor}({it:str}) {cmd:osize}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str}) 
+		{cmd:polygon}({it:options}) {cmd:line}({it:options}) {cmd:point}({it:options}) {cmd:label}({it:options}) 
+		{cmd:textx}({it:string}) {cmd:texty}({it:str}) {cmdab:textlabs:ize}({it:num}) {cmdab:texts:ize}({it:num}) {cmdab:box:size}({it:num}) {cmd:xscale}({it:num}) {cmd:yscale}({it:num}) 
+		{cmd:title}({it:str}) {cmd:subtitle}({it:str}) {cmd:note}({it:str}) {cmd:name}({it:str}) {cmd:scheme}({it:str}) {cmd:]}
 
 
 {p 4 4 2}
@@ -52,13 +53,15 @@ OR {ul:{it:equal}} for equal intervals. These cutoff values can be displayed usi
 {p 4 4 2}
 {it:{ul:Legend options}:}
 
+{p2coldent : {opt count}}Display the count of categories in each box in the bi-variate map legend.{p_end}
+
+{p2coldent : {opt values}}Display the cut off values in the bi-variate map legend.{p_end}
+
 {p2coldent : {opt texty(string)}}The label of legend variable on the y-axis. The default value is the variable name of {textit:vary}.{p_end}
 
 {p2coldent : {opt textx(string)}}The label of legend variable on the x-axis. The default value is the variable name of {textit:varx}.{p_end}
 
 {p2coldent : {opt texts:ize(string)}}The text size of the legend axis labels. The default value is 2.5.{p_end}
-
-{p2coldent : {opt values}}Display the cut off values in the bi-variate map legend. See example below.{p_end}
 
 {p2coldent : {opt textlabs:ize(string)}}The text size of the cut-off values. The default value is 2.{p_end}
 
@@ -67,7 +70,7 @@ OR {ul:{it:equal}} for equal intervals. These cutoff values can be displayed usi
 {p2coldent : {opt xscale(num)}}The scale of the legend on the x-axis. Default value is 30. This is an advanced option and use it with caution. This option also requires adjusting the {cmd:boxsize}.{p_end}
 
 {p2coldent : {opt yscale(num)}}The scale of the legend on the y-axis. Default value is 100. This is an advanced option and use it with caution. This option also requires adjusting the {cmd:boxsize}. 
-Ideally don't touch this option.{p_end}
+Ideally don't touch this.{p_end}
 
 {synoptline}
 {p2colreset}{...}
@@ -81,6 +84,7 @@ Ideally don't touch this option.{p_end}
 {stata ssc install palettes, replace}
 {stata ssc install colrspace, replace}
 
+Even if you have the packages installed, please check for updates: {stata ado update, update}.
 
 {title:Examples}
 
@@ -98,7 +102,10 @@ Test with the {cmd:spmap} command:
 {stata spmap share_afam using usa_county_shp_clean, id(_ID) clm(custom) clb(0(10)100) fcolor(Heat)}
 
 {ul:Basic use}
-. {stata bimap share_hisp share_afam using usa_county_shp_clean, cut(pctile) palette(pinkgreen)}
+{stata bimap share_hisp share_afam using usa_county_shp_clean, cut(pctile) palette(pinkgreen)}
+
+{stata bimap share_hisp share_afam using usa_county_shp_clean, cut(pctile) palette(pinkgreen) count values}
+
 
 {ul:Add additional information}
 bimap share_hisp share_afam using usa_county_shp_clean, cut(pctile) palette(purpleyellow) ///
@@ -106,16 +113,17 @@ bimap share_hisp share_afam using usa_county_shp_clean, cut(pctile) palette(purp
 
 {ul:Add additional polygon layer}
 bimap share_asian share_afam using usa_county_shp_clean, cut(pctile) palette(bluered)  ///
-	title("My first bivariate map") subtitle("Made with Stata") note("Data from US Census Bureau.") ///	
-		 textx("Share African Americans") texty("Share of Asians") texts(3.5) values textlabs(3) ///
+	title("{fontface Arial Bold:My first bivariate map}") subtitle("Made with Stata") note("Data from the US Census Bureau.") ///	
+		 textx("Share of African Americans") texty("Share of Asians") texts(3.5) textlabs(3) values count ///
+		 ocolor() osize(none) ///
 		 polygon(data("usa_state_shp_clean") ocolor(white) osize(0.3))
 
 {hline}
 
 {title:Package details}
 
-Version      : {bf:bimap} v1.1
-This release : 14 Apr 2022
+Version      : {bf:bimap} v1.2
+This release : 29 Apr 2022
 First release: 08 Apr 2022
 Repository   : {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub}
 Keywords     : Stata, graph, bi-variate, map

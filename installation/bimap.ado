@@ -1,5 +1,5 @@
-*! Bimap v1.1 Naqvi 14.Apr.2022
-
+*! Bimap Naqvi v1.2 29 Apr 2022. category cut-offs, counts, error checks, bug fixes
+* v1.1 14 Apr 2022. Stable release
 
 **********************************
 * Step-by-step guide on Medium   *
@@ -19,12 +19,12 @@ program bimap, sortpreserve
 version 15
  
 	syntax varlist(min=2 max=2 numeric) [if] [in] using/ , ///
-		cut(string) palette(string) ///
-		[ BOXsize(real 8) textx(string) texty(string) xscale(real 30) yscale(real 100) TEXTLABSize(real 2) TEXTSize(real 2.5) values ] ///
-		[ polygon(string) ] ///
+		cut(string) palette(string)  ///
+		[ count BOXsize(real 8) textx(string) texty(string) xscale(real 30) yscale(real 100) TEXTLABSize(real 2) TEXTSize(real 2.5) values ] ///
+		[ polygon(passthru) line(passthru) point(passthru) label(passthru) ] ///
 		[ ocolor(string) osize(string) ]   ///
 		[ ndocolor(string) ndsize(string) ndfcolor(string) ]   ///
-		[ title(string) subtitle(string) note(string)  ] ///
+		[ title(passthru) subtitle(passthru) note(passthru) name(passthru)  ] ///
 		[ allopt graphopts(string asis) * ] 
 		
 		
@@ -38,18 +38,24 @@ version 15
 	// check dependencies
 		capture findfile spmap.ado
 		if _rc != 0 {
-			display as error "spmap package is missing. Install the {stata ssc install spmap, replace:spmap}."
+			di as error "spmap package is missing. Install the {stata ssc install spmap, replace:spmap}."
 			exit
 		}
 
 		capture findfile colorpalette.ado
 		if _rc != 0 {
-			display as error "colorpalette package is missing. Install the {stata ssc install colorpalette, replace:colorpalette} and {stata ssc install colrspace, replace:colrspace} packages."
+			di as error "palettes package is missing. Click here to install the {stata ssc install palettes, replace:palettes} and {stata ssc install colrspace, replace:colrspace} packages."
 			exit
 		}	
 	
 		marksample touse, strok
 		gettoken var2 var1 : varlist 
+	
+		if `var1' == `var2' {
+			di as error "Both variables are the same. Please choose different variables."
+			exit
+		}
+	
 	
 		***** Get the cuts
 
@@ -65,8 +71,27 @@ qui {
 		}
 		
 		if "`cut'" == "equal" {
-			egen `cat_`var1'' = cut(`var1') if `touse', at(0,33,66,100) icodes
-			egen `cat_`var2'' = cut(`var2') if `touse', at(0,33,66,100) icodes
+			
+			summ `var1'
+			local interv = (r(max) - r(min)) / 3
+							
+				local cut0 = r(min)
+				local cut1 = `cut0' + `interv'
+				local cut2 = `cut1' + `interv'
+				local cut3 = r(max)
+			
+			egen `cat_`var1'' = cut(`var1') if `touse', at(`cut0', `cut1' , `cut2', `cut3') icodes
+
+			
+			summ `var2'
+			local interv = (r(max) - r(min)) / 3
+							
+				local cut0 = r(min)
+				local cut1 = `cut0' + `interv'
+				local cut2 = `cut1' + `interv'
+				local cut3 = r(max)			
+			
+			egen `cat_`var2'' = cut(`var2') if `touse', at(`cut0', `cut1' , `cut2', `cut3') icodes
 			
 			
 			replace `cat_`var1'' = `cat_`var1'' + 1 
@@ -105,6 +130,18 @@ qui {
 		summ `var2' if `cat_`var2'' == 3
 		local var23 = r(max)
 		local var23 : di %05.1f `var23'
+		
+		
+		if "`count'" != "" {			
+			local x = 1
+			forval i = 1/3 {
+				forval j = 1/3 {
+					count if `cat_`var1''==`j' & `cat_`var2''==`i'
+					local grsize`x' = `r(N)'					
+					local x = `x' + 1
+				}
+			}
+		}
 	
 		***** define the colors (https://www.joshuastevens.net/cartography/make-a-bivariate-choropleth-map/)
 	
@@ -167,7 +204,7 @@ qui {
 			id(_ID) clm(unique)  fcolor("`colors'") ///
 			ocolor(`lc' ..) osize(`lw' ..) ///	
 			ndocolor(`ndo' ..) ndsize(`lw' ..) ndfcolor(`ndf' ..)  ///
-			polygon(`polyadd') ///
+			`polygon' `polyline' `point' ///
 			legend(off)  ///
 			name(_map, replace) nodraw
 	
@@ -181,6 +218,19 @@ qui {
 		egen y = seq(), b(3)  
 		egen x = seq(), t(3) 	
 		
+		
+		if "`count'" != "" {
+			gen mycount = .
+		
+			forval i = 1/9 {
+				replace mycount = `grsize`i'' in `i'
+			}
+			
+		local marksym mycount	
+			
+		}
+
+	
 		cap drop spike*
 	
 	
@@ -275,12 +325,14 @@ qui {
 			levelsof x, local(xlvl)	
 			levelsof y, local(ylvl)
 
+			
 
 		local boxes
 
 		foreach x of local xlvl {
 			foreach y of local ylvl {
-				local boxes `boxes' (scatter y x if x==`x' & y==`y', msymbol(square) msize(`boxsize') mc("`color`x'`y''")) ///
+				local boxes `boxes' (scatter y x if x==`x' & y==`y', mlab("`marksym'") mlabpos(0) msymbol(square) msize(`boxsize') mc("`color`x'`y''")) ///
+				
 			
 			}
 		}
@@ -321,9 +373,10 @@ qui {
 	 
 	  graph combine _map _legend, ///
 		imargin(zero) ///
-		title(`title') ///
-		subtitle(`subtitle') ///
-		note(`note')
+		`title' 	///
+		`subtitle' ///
+		`note' ///
+		`name' 
 	
 	
 }

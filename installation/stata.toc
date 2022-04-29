@@ -1,4 +1,4 @@
-v 1.1
+v 1.2
 d BIMAP: A package for creating bivariate maps.
 d
 d Asjad Naqvi, 
