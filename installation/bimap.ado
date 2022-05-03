@@ -28,7 +28,9 @@ version 15
 		[ allopt graphopts(string asis) * ] 
 		
 		
-		capture confirm file "`using'.dta"   
+		if (substr(reverse("`using'"),1,4) != "atd.") local using "`using'.dta"  // from spmap to check for extension
+		
+		capture confirm file "`using'"   
 		if _rc {
 			di as err "{p}File {bf:`using'} not found{p_end}"
 			exit 601
@@ -98,12 +100,34 @@ qui {
 			replace `cat_`var2'' = `cat_`var2'' + 1
 		}	
 	
+		
+		
+		
 		sort `cat_`var1'' `cat_`var2''
 		
 		tempvar grp_cut
 		egen `grp_cut' = group(`cat_`var1'' `cat_`var2'')
 	
 	
+		// check for missing combinations
+		
+		/*
+		levelsof `grp_cut'
+		
+		if `r(r)' < 9 {
+		fillin `cat_`var1'' `cat_`var2''  
+		drop _fillin
+		
+			drop `grp_cut'
+		
+			sort `cat_`var1'' `cat_`var2''
+			
+			tempvar grp_cut
+			egen `grp_cut' = group(`cat_`var1'' `cat_`var2'')
+		}
+		*/		
+		
+
 	
 		***** store the cut-offs for labels	
 		
@@ -132,13 +156,14 @@ qui {
 		local var23 : di %05.1f `var23'
 		
 		
+		// grp order: 1 = 1 1, 2 = 1 2, 3 = 1 3, 4 = 2 1, 5 = 2 2, 6 = 2 3, 7 = 3 1, 8 = 3 2, 9 = 3 3
+		
 		if "`count'" != "" {			
-			local x = 1
+
 			forval i = 1/3 {
 				forval j = 1/3 {
-					count if `cat_`var1''==`j' & `cat_`var2''==`i'
-					local grsize`x' = `r(N)'					
-					local x = `x' + 1
+					count if `cat_`var1''==`j' & `cat_`var2''==`i' 
+					local grsize`i'`j' = `r(N)'					
 				}
 			}
 		}
@@ -222,9 +247,18 @@ qui {
 		if "`count'" != "" {
 			gen mycount = .
 		
-			forval i = 1/9 {
-				replace mycount = `grsize`i'' in `i'
+			local x = 1
+			forval i = 1/3 {
+				forval j = 1/3 {				
+					replace mycount = `grsize`i'`j'' in `x'		
+					local x = `x' + 1
+				}
 			}
+		
+
+			*forval i = 1/9 {
+			*	replace mycount = `grsize`i'' in `i'
+			*}
 			
 		local marksym mycount	
 			
