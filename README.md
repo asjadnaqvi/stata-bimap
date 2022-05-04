@@ -160,7 +160,6 @@ bimap share_asian share_afam using usa_county_shp_clean, cut(pctile) palette(blu
 <img src="/figures/bimap4.png" height="600">
 
 
-
 ```
 bimap share_asian share_afam using usa_county_shp_clean, cut(pctile) palette(yellowblue)  ///
 	title("{fontface Arial Bold:My first bivariate map}") subtitle("Made with Stata") note("Data from the US Census Bureau.") ///	
