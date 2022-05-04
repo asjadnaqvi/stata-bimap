@@ -1,5 +1,5 @@
 {smcl}
-{* 29April2022}{...}
+{* 04May2022}{...}
 {hi:help bimap}{...}
 {right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v1.2 (GitHub)}}
 
@@ -47,7 +47,6 @@ OR {ul:{it:equal}} for equal intervals. These cutoff values can be displayed usi
 {p2coldent : {opt polygon}(), {opt line}(), {opt point}(), {opt label}()}These are {cmd:spmap} passthru options for additional layers. See {stata help spmap} for details.{p_end}
 
 {p2coldent : {opt title, subtitle, note, name}}These are standard twoway graph options.{p_end}
-
 
 
 {p 4 4 2}
@@ -123,7 +122,7 @@ bimap share_asian share_afam using usa_county_shp_clean, cut(pctile) palette(blu
 {title:Package details}
 
 Version      : {bf:bimap} v1.2
-This release : 29 Apr 2022
+This release : 04 May 2022
 First release: 08 Apr 2022
 Repository   : {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub}
 Keywords     : Stata, graph, bi-variate, map
@@ -133,6 +132,10 @@ Author       : {browse "https://github.com/asjadnaqvi":Asjad Naqvi}
 E-mail       : asjadnaqvi@gmail.com
 Twitter      : {browse "https://twitter.com/AsjadNaqvi":@AsjadNaqvi}
 
+
+{title:Acknowledgements}
+
+Ruth Watkinson found an error in the grouping code. Pierre-Henri Bono suggested passthru options for {cmd:spmap}.
 
 
 {title:References}

@@ -101,15 +101,27 @@ qui {
 		}	
 	
 		
-		fillin `cat_`var1'' `cat_`var2''  // rectangularize for correct assignment with group
+		*fillin `cat_`var1'' `cat_`var2''  // rectangularize for correct assignment with group
 		
 		sort `cat_`var1'' `cat_`var2''
 		
 		tempvar grp_cut
-		egen `grp_cut' = group(`cat_`var1'' `cat_`var2'')
+		*egen `grp_cut' = group(`cat_`var1'' `cat_`var2'')
 	
-		drop if _fillin==1  // drop the groups we don't actually have
-		drop _fillin
+		*drop if _fillin==1  // drop the groups we don't actually have
+		*drop _fillin
+		
+		gen `grp_cut' = .
+		
+		replace `grp_cut' = 1 if `cat_`var2''==1 & `cat_`var1''==1
+		replace `grp_cut' = 2 if `cat_`var2''==2 & `cat_`var1''==1
+		replace `grp_cut' = 3 if `cat_`var2''==3 & `cat_`var1''==1
+		replace `grp_cut' = 4 if `cat_`var2''==1 & `cat_`var1''==2
+		replace `grp_cut' = 5 if `cat_`var2''==2 & `cat_`var1''==2
+		replace `grp_cut' = 6 if `cat_`var2''==3 & `cat_`var1''==2
+		replace `grp_cut' = 7 if `cat_`var2''==1 & `cat_`var1''==3
+		replace `grp_cut' = 8 if `cat_`var2''==2 & `cat_`var1''==3
+		replace `grp_cut' = 9 if `cat_`var2''==3 & `cat_`var1''==3
 		
 		
 	
