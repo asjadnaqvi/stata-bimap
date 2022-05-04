@@ -101,33 +101,17 @@ qui {
 		}	
 	
 		
-		
+		fillin `cat_`var1'' `cat_`var2''  // rectangularize for correct assignment with group
 		
 		sort `cat_`var1'' `cat_`var2''
 		
 		tempvar grp_cut
 		egen `grp_cut' = group(`cat_`var1'' `cat_`var2'')
 	
-	
-		// check for missing combinations
-		
-		/*
-		levelsof `grp_cut'
-		
-		if `r(r)' < 9 {
-		fillin `cat_`var1'' `cat_`var2''  
+		drop if _fillin==1  // drop the groups we don't actually have
 		drop _fillin
 		
-			drop `grp_cut'
 		
-			sort `cat_`var1'' `cat_`var2''
-			
-			tempvar grp_cut
-			egen `grp_cut' = group(`cat_`var1'' `cat_`var2'')
-		}
-		*/		
-		
-
 	
 		***** store the cut-offs for labels	
 		
@@ -173,7 +157,7 @@ qui {
 		// from spmap
    
 		if "`palette'" != "" {
-			local LIST "pinkgreen bluered greenblue purpleyellow"
+			local LIST "pinkgreen bluered greenblue purpleyellow yellowblue"
 			local LEN = length("`palette'")
 			local check = 0
 			foreach z of local LIST { 
@@ -183,7 +167,7 @@ qui {
 			}
 			
 			if !`check' {
-				di in yellow "Wrong palette specified. The supported palettes are {ul:pinkgreen}, {ul:bluered}, {ul:greenblue}, {ul:purpleyellow}."
+				di in yellow "Wrong palette specified. The supported palettes are {ul:pinkgreen}, {ul:bluered}, {ul:greenblue}, {ul:purpleyellow}, {ul:yellowblue}."
 				exit 198
 			}
 		}
@@ -202,6 +186,10 @@ qui {
 
 		if "`palette'" == "purpleyellow" {
 			local color #e8e8e8 #cbb8d7 #9972af #e4d9ac #c8ada0 #976b82 #c8b35a #af8e53 #804d36
+		}
+		
+		if "`palette'" == "yellowblue" {   // from ArcGIS
+			local color #e8e6f2 #f3d37a #f3b300 #a2c8db #8e916e #7a5a00 #509dc2 #284f61 #424035
 		}		
 	
 		if "`polygon'" == "" {

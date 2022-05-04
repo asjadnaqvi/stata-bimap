@@ -34,7 +34,7 @@ The options are described as follows:
 {p2coldent : {opt cut(option)}}Here {cmd:cut} can take on two values: {ul:{it:pctile}} for percentiles or terciles in this case, 
 OR {ul:{it:equal}} for equal intervals. These cutoff values can be displayed using the {cmd:values} option. See below.{p_end}
 
-{p2coldent : {opt palette(option)}}Palette options for bi-variate maps are: {ul:{it:pinkgreen}}, {ul:{it:bluered}}, {ul:{it:greenblue}}, or {ul:{it:purpleyellow}}.{p_end}
+{p2coldent : {opt palette(option)}}Palette options for bi-variate maps are: {ul:{it:pinkgreen}}, {ul:{it:bluered}}, {ul:{it:greenblue}}, {ul:{it:purpleyellow}}, {ul:{it:yellowblue}}.{p_end}
 
 {p2coldent : {opt osize(string)}}Line width of polygons. Same as in {cmd:spmap}. Default value is {it:0.02}. Also applied to polygons with no data.{p_end}
 
