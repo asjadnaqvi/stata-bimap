@@ -149,7 +149,6 @@ bimap share_hisp share_afam using usa_county_shp_clean, cut(pctile) palette(purp
 <img src="/figures/bimap3.png" height="600">
 
 
-
 ```
 bimap share_asian share_afam using usa_county_shp_clean, cut(pctile) palette(bluered)  ///
 	title("{fontface Arial Bold:My first bivariate map}") subtitle("Made with Stata") note("Data from the US Census Bureau.") ///	
@@ -160,6 +159,19 @@ bimap share_asian share_afam using usa_county_shp_clean, cut(pctile) palette(blu
 
 <img src="/figures/bimap4.png" height="600">
 
+
+
+```
+bimap share_asian share_afam using usa_county_shp_clean, cut(pctile) palette(yellowblue)  ///
+	title("{fontface Arial Bold:My first bivariate map}") subtitle("Made with Stata") note("Data from the US Census Bureau.") ///	
+		 textx("Share of African Americans") texty("Share of Asians") texts(3.5) textlabs(3) values count ///
+		 ocolor() osize(none) ///
+		 polygon(data("usa_state_shp_clean") ocolor(black) osize(0.2)) 
+```
+
+<img src="/figures/bimap6.png" height="600">
+
+
 ## Feedback
 
 Please open an [issue](https://github.com/asjadnaqvi/stata-bimap/issues) to report errors, feature enhancements, and/or other requests. 
@@ -168,8 +180,9 @@ Please open an [issue](https://github.com/asjadnaqvi/stata-bimap/issues) to repo
 ## Versions
 
 **v1.2 (29 Apr 2022)**
+- Fixed a bug in cut-off groupings (thanks to Ruth Watkinson).
 - Error in how cut-off are collected fixed.
-- Several `spmap` additional layer commands added as passthru options.
+- Several `spmap` additional layer commands added as passthru options (thanks to Pierre-Henri Bono).
 - Count of each category added as an option.
 - Several bug fixes and error checks added.
 
