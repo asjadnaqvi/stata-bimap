@@ -94,9 +94,19 @@ graph set window fontface "Arial Narrow"
 use usa_county, clear
 	destring _all, replace
 	
+
+
 merge 1:1 STATEFP COUNTYFP using county_race
 keep if _m==3
-drop _m	
+drop _m		
+
+
+	drop if inlist(STATEFP,2,15,60,66,69,72,78)
+	geo2xy _CY _CX, proj(albers) replace
+
+// save file for using as labels
+compress
+save usa_county2.dta, replace   
 ```
 
 Test whether the `spmap` is working properly:
@@ -170,6 +180,34 @@ bimap share_asian share_afam using usa_county_shp_clean, cut(pctile) palette(yel
 
 <img src="/figures/bimap6.png" height="600">
 
+
+```
+bimap share_asian share_hisp  using usa_county_shp_clean, cut(pctile) palette(orangeblue)  ///
+	title("{fontface Arial Bold:My first bivariate map}") subtitle("Made with Stata") note("Data from the US Census Bureau.") ///	
+		 textx("Share of Hispanics") texty("Share of Asians") texts(3.5) textlabs(3) values count ///
+		 ocolor() osize(none) ///
+		 polygon(data("usa_state_shp_clean") ocolor(black) osize(0.2)) 
+```
+
+<img src="/figures/bimap7.png" height="600">
+
+
+
+### Adding other layers to the maps
+
+Since `bimap` is a wrapper of `spmap`, we can pass information for other layers as well including dots. Below we use the file we saved in the first step to plot the population of counties:
+
+```
+bimap share_hisp share_afam using usa_county_shp_clean, cut(pctile) palette(pinkgreen)  ///
+	title("{fontface Arial Bold:My first bivariate map}") subtitle("Made with Stata") ///
+	note("Data from the US Census Bureau. Counties with population > 100k plotted as proportional dots.", size(1.8)) ///	
+		 textx("Share of African Americans") texty("Share of Hispanics") texts(3.5) textlabs(3) values count ///
+		 ocolor() osize(none) ///
+		 polygon(data("usa_state_shp_clean") ocolor(white) osize(0.3)) ///
+		 point(data("usa_county2") x(_CX) y(_CY) select(keep if tot_pop>100000) proportional(tot_pop) psize(absolute) fcolor(lime%85) ocolor(black) osize(0.12) size(0.9) )  
+```
+
+<img src="/figures/bimap8.png" height="600">
 
 ## Feedback
 
