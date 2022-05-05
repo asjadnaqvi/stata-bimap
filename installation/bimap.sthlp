@@ -1,5 +1,5 @@
 {smcl}
-{* 04May2022}{...}
+{* 05May2022}{...}
 {hi:help bimap}{...}
 {right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v1.2 (GitHub)}}
 
@@ -34,7 +34,7 @@ The options are described as follows:
 {p2coldent : {opt cut(option)}}Here {cmd:cut} can take on two values: {ul:{it:pctile}} for percentiles or terciles in this case, 
 OR {ul:{it:equal}} for equal intervals. These cutoff values can be displayed using the {cmd:values} option. See below.{p_end}
 
-{p2coldent : {opt palette(option)}}Palette options for bi-variate maps are: {ul:{it:pinkgreen}}, {ul:{it:bluered}}, {ul:{it:greenblue}}, {ul:{it:purpleyellow}}, {ul:{it:yellowblue}}.{p_end}
+{p2coldent : {opt palette(option)}}Palette options for bi-variate maps are: {ul:{it:pinkgreen}}, {ul:{it:bluered}}, {ul:{it:greenblue}}, {ul:{it:purpleyellow}}, {ul:{it:yellowblue}}, {ul:{it:orangeblue}}.{p_end}
 
 {p2coldent : {opt osize(string)}}Line width of polygons. Same as in {cmd:spmap}. Default value is {it:0.02}. Also applied to polygons with no data.{p_end}
 
@@ -122,7 +122,7 @@ bimap share_asian share_afam using usa_county_shp_clean, cut(pctile) palette(blu
 {title:Package details}
 
 Version      : {bf:bimap} v1.2
-This release : 04 May 2022
+This release : 05 May 2022
 First release: 08 Apr 2022
 Repository   : {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub}
 Keywords     : Stata, graph, bi-variate, map

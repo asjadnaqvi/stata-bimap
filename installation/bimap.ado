@@ -1,4 +1,4 @@
-*! Bimap Naqvi v1.2 29 Apr 2022. category cut-offs, counts, error checks, bug fixes
+*! Bimap Naqvi v1.2 05 May 2022. category cut-offs, counts, error checks, bug fixes, new palettes
 * v1.1 14 Apr 2022. Stable release
 
 **********************************
@@ -164,12 +164,12 @@ qui {
 			}
 		}
 	
-		***** define the colors (https://www.joshuastevens.net/cartography/make-a-bivariate-choropleth-map/)
+		
 	
 		// from spmap
    
 		if "`palette'" != "" {
-			local LIST "pinkgreen bluered greenblue purpleyellow yellowblue"
+			local LIST "pinkgreen bluered greenblue purpleyellow yellowblue orangeblue"
 			local LEN = length("`palette'")
 			local check = 0
 			foreach z of local LIST { 
@@ -179,7 +179,7 @@ qui {
 			}
 			
 			if !`check' {
-				di in yellow "Wrong palette specified. The supported palettes are {ul:pinkgreen}, {ul:bluered}, {ul:greenblue}, {ul:purpleyellow}, {ul:yellowblue}."
+				di in yellow "Wrong palette specified. The supported palettes are {ul:pinkgreen}, {ul:bluered}, {ul:greenblue}, {ul:purpleyellow}, {ul:yellowblue}, {ul:orangeblue}."
 				exit 198
 			}
 		}
@@ -203,6 +203,10 @@ qui {
 		if "`palette'" == "yellowblue" {   // from ArcGIS
 			local color #e8e6f2 #f3d37a #f3b300 #a2c8db #8e916e #7a5a00 #509dc2 #284f61 #424035
 		}		
+		
+		if "`palette'" == "orangeblue" {   // from ArcGIS
+			local color #fef1e4 #97d0e7 #18aee5 #fab186 #b0988c #407b8f #f3742d #ab5f37 #5c473d
+		}			
 	
 		if "`polygon'" == "" {
 			local polyadd 
