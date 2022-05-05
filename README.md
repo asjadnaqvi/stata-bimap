@@ -193,7 +193,7 @@ bimap share_asian share_hisp  using usa_county_shp_clean, cut(pctile) palette(or
 
 
 
-### Adding other layers to the maps
+### Adding other layers to the bimap
 
 Since `bimap` is a wrapper of `spmap`, we can pass information for other layers as well including dots. Below we use the file we saved in the first step to plot the population of counties:
 
@@ -218,7 +218,8 @@ Please open an [issue](https://github.com/asjadnaqvi/stata-bimap/issues) to repo
 
 **v1.2 (29 Apr 2022)**
 - Fixed a bug in cut-off groupings (thanks to Ruth Watkinson).
-- Error in how cut-off are collected fixed.
+- Error in how cut-off values are collected is fixed.
+- Two palettes added  `yellowblue`, `orangeblue`. If you have more suggestions, the please suggest them.
 - Several `spmap` additional layer commands added as passthru options (thanks to Pierre-Henri Bono).
 - Count of each category added as an option.
 - Several bug fixes and error checks added.
