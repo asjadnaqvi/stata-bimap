@@ -219,7 +219,7 @@ Please open an [issue](https://github.com/asjadnaqvi/stata-bimap/issues) to repo
 **v1.2 (29 Apr 2022)**
 - Fixed a bug in cut-off groupings (thanks to Ruth Watkinson).
 - Error in how cut-off values are collected is fixed.
-- Two palettes added  `yellowblue`, `orangeblue`. If you have more suggestions, the please suggest them.
+- Two palettes added  `yellowblue`, `orangeblue`. If you have more palette suggestions, then please let me know!
 - Several `spmap` additional layer commands added as passthru options (thanks to Pierre-Henri Bono).
 - Count of each category added as an option.
 - Several bug fixes and error checks added.
