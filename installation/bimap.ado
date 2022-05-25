@@ -1,5 +1,9 @@
-*! Bimap Naqvi v1.2 05 May 2022. category cut-offs, counts, error checks, bug fixes, new palettes
-* v1.1 14 Apr 2022. Stable release
+*! bimap v1.3 
+*! Asjad Naqvi (asjadnaqvi@gmail.com)
+*! 26 May 2022: added percent option. Color range fixes. New schemes. label fixes
+
+* v1.2: 05 May 2022. Category cut-offs, counts, error checks, bug fixes, new palettes
+* v1.1: 14 Apr 2022. Stable release
 
 **********************************
 * Step-by-step guide on Medium   *
@@ -20,7 +24,7 @@ version 15
  
 	syntax varlist(min=2 max=2 numeric) [if] [in] using/ , ///
 		cut(string) palette(string)  ///
-		[ count BOXsize(real 8) textx(string) texty(string) xscale(real 30) yscale(real 100) TEXTLABSize(real 2) TEXTSize(real 2.5) values ] ///
+		[ count percent BOXsize(real 8) textx(string) texty(string) xscale(real 30) yscale(real 100) TEXTLABSize(real 2) TEXTSize(real 2.5) values ] ///
 		[ polygon(passthru) line(passthru) point(passthru) label(passthru) ] ///
 		[ ocolor(string) osize(string) ]   ///
 		[ ndocolor(string) ndsize(string) ndfcolor(string) ]   ///
@@ -101,15 +105,10 @@ qui {
 		}	
 	
 		
-		*fillin `cat_`var1'' `cat_`var2''  // rectangularize for correct assignment with group
 		
 		sort `cat_`var1'' `cat_`var2''
 		
 		tempvar grp_cut
-		*egen `grp_cut' = group(`cat_`var1'' `cat_`var2'')
-	
-		*drop if _fillin==1  // drop the groups we don't actually have
-		*drop _fillin
 		
 		gen `grp_cut' = .
 		
@@ -154,6 +153,12 @@ qui {
 		
 		// grp order: 1 = 1 1, 2 = 1 2, 3 = 1 3, 4 = 2 1, 5 = 2 2, 6 = 2 3, 7 = 3 1, 8 = 3 2, 9 = 3 3
 		
+		if "`count'" != "" & "`percent'" != "" {
+			di as error "Please specify either {it:count} or {it:percent} option."
+			exit 
+		}
+		
+		
 		if "`count'" != "" {			
 
 			forval i = 1/3 {
@@ -164,12 +169,27 @@ qui {
 			}
 		}
 	
-		
+
+		if "`percent'" != "" {	
+	
+		count if `cat_`var1''!=. & `cat_`var2''!=.
+		local grsum = `r(N)'
+	
+			forval i = 1/3 {
+				forval j = 1/3 {
+					count if `cat_`var1''==`j' & `cat_`var2''==`i' 
+					local grsize`i'`j' = (`r(N)'	/ `grsum') * 100
+					local grsize`i'`j' : di %3.1f `grsize`i'`j''
+				}
+			}
+	
+	
+		}
 	
 		// from spmap
    
 		if "`palette'" != "" {
-			local LIST "pinkgreen bluered greenblue purpleyellow yellowblue orangeblue"
+			local LIST "pinkgreen bluered greenblue purpleyellow yellowblue orangeblue brew1 brew2 brew3 census"
 			local LEN = length("`palette'")
 			local check = 0
 			foreach z of local LIST { 
@@ -179,7 +199,7 @@ qui {
 			}
 			
 			if !`check' {
-				di in yellow "Wrong palette specified. The supported palettes are {ul:pinkgreen}, {ul:bluered}, {ul:greenblue}, {ul:purpleyellow}, {ul:yellowblue}, {ul:orangeblue}."
+				di in yellow "Wrong palette specified. The supported palettes are {ul:pinkgreen}, {ul:bluered}, {ul:greenblue}, {ul:purpleyellow}, {ul:yellowblue}, {ul:orangeblue}, {ul:brew1}, {ul:brew2}, {ul:brew3}, {ul:census}."
 				exit 198
 			}
 		}
@@ -206,7 +226,24 @@ qui {
 		
 		if "`palette'" == "orangeblue" {   // from ArcGIS
 			local color #fef1e4 #97d0e7 #18aee5 #fab186 #b0988c #407b8f #f3742d #ab5f37 #5c473d
-		}			
+		}
+		
+		if "`palette'" == "brew1" {   
+			local color #f37300 #fe9aa6 #f0047f #cce88b #e6e6e6 #cd9acc #008837 #9ac9d5 #5a4da4
+		}	
+		
+		if "`palette'" == "brew2" {   
+			local color #c3b3d8 #7b67ab #240d5e #e6e6e6 #bfbfbf #7f7f7f #ffcc80 #f35926 #b30000
+		}
+		
+		if "`palette'" == "brew3" {   
+			local color #cce8d7 #80c39b #008837 #cedced #85a8d0 #0a50a1 #fbb4d9 #f668b3 #d60066
+		}
+		
+		if "`palette'" == "census" {   
+			local color #fffdef #e6f1df #d2e4f6 #fef3a9 #bedebc #a1c8ea #efd100 #4eb87b #007fc4
+		}
+		
 	
 		if "`polygon'" == "" {
 			local polyadd 
@@ -248,7 +285,7 @@ qui {
 		egen x = seq(), t(3) 	
 		
 		
-		if "`count'" != "" {
+		if "`count'" != "" | "`percent'" != "" {
 			gen mycount = .
 		
 			local x = 1
@@ -258,19 +295,12 @@ qui {
 					local x = `x' + 1
 				}
 			}
-		
-
-			*forval i = 1/9 {
-			*	replace mycount = `grsize`i'' in `i'
-			*}
-			
+					
 		local marksym mycount	
 			
 		}
-
 	
 		cap drop spike*
-	
 	
 		if "`textx'" == "" {
 			local labx = "`var1'"
@@ -288,27 +318,27 @@ qui {
 	
 	
 		// arrows
-		gen spike1_x1  = 0.35 in 1
-		gen spike1_x2  = 3.6 in 1 
-		gen spike1_y1  = 0.35 in 1	
-		gen spike1_y2  = 0.35 in 1	
-		gen spike1_m   = "`labx'" in 1
+		gen spike1_x1  = 0.35 		in 1
+		gen spike1_x2  = 3.6 		in 1 
+		gen spike1_y1  = 0.35 		in 1	
+		gen spike1_y2  = 0.35 		in 1	
+		gen spike1_m   = "`labx'" 	in 1
 			
-		gen spike2_y1  = 0.35 in 1
-		gen spike2_y2  = 3.6 in 1 
-		gen spike2_x1  = 0.35 in 1		
-		gen spike2_x2  = 0.35 in 1		
-		gen spike2_m   = "`laby'" in 1
+		gen spike2_y1  = 0.35 		in 1
+		gen spike2_y2  = 3.6 		in 1 
+		gen spike2_x1  = 0.35 		in 1		
+		gen spike2_x2  = 0.35 		in 1		
+		gen spike2_m   = "`laby'" 	in 1
 		
 		// ticks
 		gen xvalx = .
 		gen xvaly = .
 		gen xvaln = .
 	
-		replace xvaly = 0.36 in 1/3
-		replace xvalx = 0.8 in 1
-		replace xvalx = 1.8 in 2
-		replace xvalx = 2.8 in 3
+		replace xvaly = 0.36 	in 1/3
+		replace xvalx = 0.8 	in 1
+		replace xvalx = 1.8 	in 2
+		replace xvalx = 2.8 	in 3
 		
 		replace xvaln = `var11' in 1
 		replace xvaln = `var12' in 2
@@ -319,10 +349,10 @@ qui {
 		gen yvaly = .
 		gen yvaln = .
 
-		replace yvalx = 0.33 in 1/3
-		replace yvaly = 1.1 in 1
-		replace yvaly = 2.1 in 2
-		replace yvaly = 3.1 in 3	
+		replace yvalx = 0.33 	in 1/3
+		replace yvaly = 1.1 	in 1
+		replace yvaly = 2.1 	in 2
+		replace yvaly = 3.1 	in 3	
 		
 		replace yvaln = `var21' in 1
 		replace yvaln = `var22' in 2
@@ -335,12 +365,12 @@ qui {
 		gen laby = .
 		gen labn = ""
 		
-		replace labx = 2 in 1
-		replace laby = 0 in 1
+		replace labx = 2 		in 1
+		replace laby = 0 		in 1
 		replace labn = "`labx'" in 1
 		
-		replace labx = 0 in 2
-		replace laby = 3 in 2
+		replace labx = 0 		in 2
+		replace laby = 3 		in 2
 		replace labn = "`laby'" in 2
 	
 	
@@ -369,8 +399,18 @@ qui {
 
 		foreach x of local xlvl {
 			foreach y of local ylvl {
-				local boxes `boxes' (scatter y x if x==`x' & y==`y', mlab("`marksym'") mlabpos(0) msymbol(square) msize(`boxsize') mc("`color`x'`y''")) ///
 				
+				if (`x'==3 & `y'==3)  {    // | (`x'==3 & `y'==2)  | (`x'==2 & `y'==3)
+					local boxes `boxes' (scatter y x if x==`x' & y==`y', mlab("`marksym'") mlabpos(0) mlabc(gs13) msymbol(square) msize(`boxsize') mc("`color`x'`y''")) ///
+					
+				}					
+				
+				else {
+					local boxes `boxes' (scatter y x if x==`x' & y==`y', mlab("`marksym'") mlabpos(0) mlabc(black) msymbol(square) msize(`boxsize') mc("`color`x'`y''")) ///
+					
+				}
+				
+			
 			
 			}
 		}

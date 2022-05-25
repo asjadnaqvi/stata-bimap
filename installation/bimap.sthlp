@@ -1,7 +1,7 @@
 {smcl}
-{* 05May2022}{...}
+{* 26May2022}{...}
 {hi:help bimap}{...}
-{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v1.2 (GitHub)}}
+{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v1.3 (GitHub)}}
 
 {hline}
 
@@ -16,7 +16,7 @@ The {cmd:bimap} command is a wrapper for {stata help spmap:spmap}. Therefore it 
 {p 8 15 2}
 
 {cmd:bimap} {it:vary varx} {ifin}, {cmd:cut}({it:option}) {cmd:palette}({it:option}) 
-		{cmd:[} {cmd:count} {cmd:values} {cmd:ocolor}({it:str}) {cmd:osize}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str}) 
+		{cmd:[} {cmd:count} {cmd:percent} {cmd:values} {cmd:ocolor}({it:str}) {cmd:osize}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str}) 
 		{cmd:polygon}({it:options}) {cmd:line}({it:options}) {cmd:point}({it:options}) {cmd:label}({it:options}) 
 		{cmd:textx}({it:string}) {cmd:texty}({it:str}) {cmdab:textlabs:ize}({it:num}) {cmdab:texts:ize}({it:num}) {cmdab:box:size}({it:num}) {cmd:xscale}({it:num}) {cmd:yscale}({it:num}) 
 		{cmd:title}({it:str}) {cmd:subtitle}({it:str}) {cmd:note}({it:str}) {cmd:name}({it:str}) {cmd:scheme}({it:str}) {cmd:]}
@@ -34,7 +34,8 @@ The options are described as follows:
 {p2coldent : {opt cut(option)}}Here {cmd:cut} can take on two values: {ul:{it:pctile}} for percentiles or terciles in this case, 
 OR {ul:{it:equal}} for equal intervals. These cutoff values can be displayed using the {cmd:values} option. See below.{p_end}
 
-{p2coldent : {opt palette(option)}}Palette options for bi-variate maps are: {ul:{it:pinkgreen}}, {ul:{it:bluered}}, {ul:{it:greenblue}}, {ul:{it:purpleyellow}}, {ul:{it:yellowblue}}, {ul:{it:orangeblue}}.{p_end}
+{p2coldent : {opt palette(option)}}Palette options for bi-variate maps are: {ul:{it:pinkgreen}}, {ul:{it:bluered}}, {ul:{it:greenblue}}, {ul:{it:purpleyellow}}, {ul:{it:yellowblue}}, {ul:{it:orangeblue}},
+{ul:{it:brew1}}, {ul:{it:brew2}}, {ul:{it:brew3}}, {ul:{it:census}}. See {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub} for palette examples.{p_end}
 
 {p2coldent : {opt osize(string)}}Line width of polygons. Same as in {cmd:spmap}. Default value is {it:0.02}. Also applied to polygons with no data.{p_end}
 
@@ -52,7 +53,7 @@ OR {ul:{it:equal}} for equal intervals. These cutoff values can be displayed usi
 {p 4 4 2}
 {it:{ul:Legend options}:}
 
-{p2coldent : {opt count}}Display the count of categories in each box in the bi-variate map legend.{p_end}
+{p2coldent : {opt count} {it:or} {opt percent}}Display the count or percent of categories in each box in the bi-variate map legend.{p_end}
 
 {p2coldent : {opt values}}Display the cut off values in the bi-variate map legend.{p_end}
 
@@ -87,7 +88,7 @@ Even if you have the packages installed, please check for updates: {stata ado up
 
 {title:Examples}
 
-- Download the files from the {browse "https://github.com/asjadnaqvi/stata-bimap/tree/main/GIS":bimap GitHub repository} and copy them in a directory.
+Download the files from the {browse "https://github.com/asjadnaqvi/stata-bimap/tree/main/GIS":bimap GitHub repository} and copy them in a directory.
 
 use usa_county, clear
 	destring _all, replace
@@ -117,12 +118,15 @@ bimap share_asian share_afam using usa_county_shp_clean, cut(pctile) palette(blu
 		 ocolor() osize(none) ///
 		 polygon(data("usa_state_shp_clean") ocolor(white) osize(0.3))
 
+
+Additional examples on {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub}.
+
 {hline}
 
 {title:Package details}
 
-Version      : {bf:bimap} v1.2
-This release : 05 May 2022
+Version      : {bf:bimap} v1.3
+This release : 26 May 2022
 First release: 08 Apr 2022
 Repository   : {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub}
 Keywords     : Stata, graph, bi-variate, map
@@ -133,10 +137,14 @@ E-mail       : asjadnaqvi@gmail.com
 Twitter      : {browse "https://twitter.com/AsjadNaqvi":@AsjadNaqvi}
 
 
+
 {title:Acknowledgements}
 
-Ruth Watkinson found an error in the grouping code. Pierre-Henri Bono suggested passthru options for {cmd:spmap}.
+Ruth Watkinson found an error in the grouping code. Pierre-Henri Bono suggested passthru options for {cmd:spmap}. Kit Baum requested the {it:percent} option and fixes to label colors.
 
+{title:Feedback}
+
+If you find bugs or have feature requests, then please open an {browse "https://github.com/asjadnaqvi/stata-bimap/issues":issue} on GitHub.
 
 {title:References}
 
