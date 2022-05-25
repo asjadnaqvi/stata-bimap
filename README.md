@@ -163,10 +163,10 @@ foreach x in pinkgreen bluered greenblue purpleyellow yellowblue orangeblue brew
 }
 ```
 
-<img src="/figures/bimap3_1.png" height="200"><img src="/figures/bimap3_2.png" height="200"><img src="/figures/bimap3_3.png" height="200">
-<img src="/figures/bimap3_4.png" height="200"><img src="/figures/bimap3_5.png" height="200"><img src="/figures/bimap3_6.png" height="200">
-<img src="/figures/bimap3_7.png" height="200"><img src="/figures/bimap3_8.png" height="200"><img src="/figures/bimap3_9.png" height="200">
-<img src="/figures/bimap3_10.png" height="200">
+<img src="/figures/bimap3_1.png" height="250"><img src="/figures/bimap3_2.png" height="250"><img src="/figures/bimap3_3.png" height="250">
+<img src="/figures/bimap3_4.png" height="250"><img src="/figures/bimap3_5.png" height="250"><img src="/figures/bimap3_6.png" height="250">
+<img src="/figures/bimap3_7.png" height="250"><img src="/figures/bimap3_8.png" height="250"><img src="/figures/bimap3_9.png" height="250">
+<img src="/figures/bimap3_10.png" height="250">
 
 
 ### Advanced examples
