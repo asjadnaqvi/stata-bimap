@@ -10,7 +10,7 @@ This package provides the ability to draw bi-variate maps in Stata. It is based 
 
 The package can be installed via SSC or GitHub. The GitHub version, *might* be more recent due to bug fixes, feature updates etc, and *may* contain syntax improvements and changes in *default* values. See version numbers below. Eventually the GitHub version is published on SSC.
 
-The package can be installed from SSC (**v1.2**):
+The package can be installed from SSC (**v1.3**):
 ```
 ssc install bimap, replace
 ```
