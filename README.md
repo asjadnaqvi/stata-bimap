@@ -227,8 +227,8 @@ Please open an [issue](https://github.com/asjadnaqvi/stata-bimap/issues) to repo
 ## Versions
 
 **v1.31 (20 Jun 2022)**
-- Error fix in cut-offs skipping the last shape file.
-- Fixed color assignments to 3x3 groups. If a group was missing, the colors were wrongly assigned.
+- Error fix in cut-offs skipping the last shape file (thanks to Mattias Öhman).
+- Fixed color assignments to the 3x3 groups. If a group was missing, the colors were wrongly assigned.
 
 **v1.3 (26 May 2022)**
 - Percent option added to legend to show box share (thanks to Kit Baum).
