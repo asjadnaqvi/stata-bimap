@@ -1,7 +1,7 @@
-*! bimap v1.3 
+*! bimap v1.31 (20 Jun 2022): Fixed a floating point error and issue with color assignments.
 *! Asjad Naqvi (asjadnaqvi@gmail.com)
-*! 26 May 2022: added percent option. Color range fixes. New schemes. label fixes
-
+*! 
+* v1.3: 26 May 2022: added percent option. Color range fixes. New schemes. label fixes
 * v1.2: 05 May 2022. Category cut-offs, counts, error checks, bug fixes, new palettes
 * v1.1: 14 Apr 2022. Stable release
 
@@ -44,18 +44,18 @@ version 15
 	// check dependencies
 		capture findfile spmap.ado
 		if _rc != 0 {
-			di as error "spmap package is missing. Install the {stata ssc install spmap, replace:spmap}."
+			di as error "spmap package is missing. Click here to install {stata ssc install spmap, replace:spmap}."
 			exit
 		}
 
 		capture findfile colorpalette.ado
 		if _rc != 0 {
-			di as error "palettes package is missing. Click here to install the {stata ssc install palettes, replace:palettes} and {stata ssc install colrspace, replace:colrspace} packages."
+			di as error "palettes package is missing. Click here to install {stata ssc install palettes, replace:palettes} and {stata ssc install colrspace, replace:colrspace}."
 			exit
 		}	
 	
 		marksample touse, strok
-		gettoken var2 var1 : varlist 
+		gettoken var2 var1 : varlist   // var1 = x, var2 = y
 	
 		if `var1' == `var2' {
 			di as error "Both variables are the same. Please choose different variables."
@@ -84,7 +84,7 @@ qui {
 				local cut0 = r(min)
 				local cut1 = `cut0' + `interv'
 				local cut2 = `cut1' + `interv'
-				local cut3 = r(max)
+				local cut3 = r(max) + 1    // floating point fix
 			
 			egen `cat_`var1'' = cut(`var1') if `touse', at(`cut0', `cut1' , `cut2', `cut3') icodes
 
@@ -95,7 +95,7 @@ qui {
 				local cut0 = r(min)
 				local cut1 = `cut0' + `interv'
 				local cut2 = `cut1' + `interv'
-				local cut3 = r(max)			
+				local cut3 = r(max) + 1		// floating point fix	
 			
 			egen `cat_`var2'' = cut(`var2') if `touse', at(`cut0', `cut1' , `cut2', `cut3') icodes
 			
@@ -204,6 +204,8 @@ qui {
 			}
 		}
 
+		** bottom left to bottom top, bottom middle to top middle, bottom right to top right
+
 		if "`palette'" == "pinkgreen" {
 			local color #e8e8e8 #dfb0d6 #be64ac #ace4e4 #a5add3 #8c62aa #5ac8c8 #5698b9 #3b4994
 		}
@@ -267,7 +269,7 @@ qui {
 		local colors `r(p)'
 
 		spmap `grp_cut' using "`using'", ///
-			id(_ID) clm(unique)  fcolor("`colors'") ///
+			id(_ID) clm(custom) clb(0 1 2 3 4 5 6 7 8 9)  fcolor("`colors'") ///
 			ocolor(`lc' ..) osize(`lw' ..) ///	
 			ndocolor(`ndo' ..) ndsize(`lw' ..) ndfcolor(`ndf' ..)  ///
 			`polygon' `polyline' `point' ///
