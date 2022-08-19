@@ -15,7 +15,7 @@ The package can be installed from SSC (**v1.31**):
 ssc install bimap, replace
 ```
 
-Or it can be installed from GitHub (**v1.31**):
+Or it can be installed from GitHub (**v1.32**):
 
 ```
 net install bimap, from("https://raw.githubusercontent.com/asjadnaqvi/stata-bimap/main/installation/") replace
@@ -53,7 +53,7 @@ This command is a wrapper for `spmap` and assumes that you have shapefiles in St
 
 ## Syntax
 
-The syntax for **v1.31** is as follows:
+The syntax for **v1.32** is as follows:
 
 ```
 
@@ -225,6 +225,9 @@ Please open an [issue](https://github.com/asjadnaqvi/stata-bimap/issues) to repo
 
 
 ## Versions
+
+**v1.32 (19 Aug 2022)**
+- Fixed an error in variable name comparisons (thanks to Cristian Jordan Diaz).
 
 **v1.31 (20 Jun 2022)**
 - Error fix in cut-offs skipping the last shape file (thanks to Mattias Öhman).

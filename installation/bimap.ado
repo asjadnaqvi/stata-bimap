@@ -1,9 +1,11 @@
-*! bimap v1.31 (20 Jun 2022): Fixed a floating point error and issue with color assignments.
+*! bimap v1.32 (19 Aug 2022)
 *! Asjad Naqvi (asjadnaqvi@gmail.com)
-*! 
-* v1.3: 26 May 2022: added percent option. Color range fixes. New schemes. label fixes
-* v1.2: 05 May 2022. Category cut-offs, counts, error checks, bug fixes, new palettes
-* v1.1: 14 Apr 2022. Stable release
+*
+* v1.32 (19 Aug 2022): Fixed a bug in variable comparisons
+* v1.31 (20 Jun 2022): Fixed a floating point error and issue with color assignments.
+* v1.3  (26 May 2022): added percent option. Color range fixes. New schemes. label fixes
+* v1.2  (05 May 2022): Category cut-offs, counts, error checks, bug fixes, new palettes
+* v1.1  (14 Apr 2022): Stable release
 
 **********************************
 * Step-by-step guide on Medium   *
@@ -57,7 +59,7 @@ version 15
 		marksample touse, strok
 		gettoken var2 var1 : varlist   // var1 = x, var2 = y
 	
-		if `var1' == `var2' {
+		if "`var1'" == "`var2'" {
 			di as error "Both variables are the same. Please choose different variables."
 			exit
 		}
@@ -411,9 +413,7 @@ qui {
 					local boxes `boxes' (scatter y x if x==`x' & y==`y', mlab("`marksym'") mlabpos(0) mlabc(black) msymbol(square) msize(`boxsize') mc("`color`x'`y''")) ///
 					
 				}
-				
-			
-			
+
 			}
 		}
 	

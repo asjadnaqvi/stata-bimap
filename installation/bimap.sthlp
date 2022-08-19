@@ -1,7 +1,7 @@
 {smcl}
-{* 30Jun2022}{...}
+{* 19Aug2022}{...}
 {hi:help bimap}{...}
-{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v1.31 (GitHub)}}
+{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v1.32 (GitHub)}}
 
 {hline}
 
@@ -125,8 +125,8 @@ Additional examples on {browse "https://github.com/asjadnaqvi/stata-bimap":GitHu
 
 {title:Package details}
 
-Version      : {bf:bimap} v1.31
-This release : 20 Jun 2022
+Version      : {bf:bimap} v1.32
+This release : 19 Aug 2022
 First release: 08 Apr 2022
 Repository   : {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub}
 Keywords     : Stata, graph, bi-variate, map
@@ -141,6 +141,7 @@ Twitter      : {browse "https://twitter.com/AsjadNaqvi":@AsjadNaqvi}
 {title:Acknowledgements}
 
 Ruth Watkinson found an error in the grouping code. Pierre-Henri Bono suggested {it:passthru} options for {cmd:spmap}. Kit Baum requested the {it:percent} option and fixes to label colors. Mattias Öhman found an error in cut-offs and color assignments with missing groups.
+Cristian Jordan Diaz found and error in variable name comparisons.
 
 {title:Feedback}
 
