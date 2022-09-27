@@ -3,14 +3,14 @@
 
 # bimap v1.32
 
-This package provides the ability to draw bi-variate maps in Stata. It is based on the [Bi-variate maps Guide](https://medium.com/the-stata-guide/stata-graphs-bi-variate-maps-b1e96dd4c2be) that I released in December 2021.
+This package provides the ability to draw bi-variate maps in Stata. It is based on the [Bi-variate maps Guide](https://medium.com/the-stata-guide/stata-graphs-bi-variate-maps-b1e96dd4c2be).
 
 
 ## Installation
 
 The package can be installed via SSC or GitHub. The GitHub version, *might* be more recent due to bug fixes, feature updates etc, and *may* contain syntax improvements and changes in *default* values. See version numbers below. Eventually the GitHub version is published on SSC.
 
-The package can be installed from SSC (**v1.31**):
+The package can be installed from SSC (**v1.32**):
 ```
 ssc install bimap, replace
 ```
@@ -20,7 +20,6 @@ Or it can be installed from GitHub (**v1.32**):
 ```
 net install bimap, from("https://raw.githubusercontent.com/asjadnaqvi/stata-bimap/main/installation/") replace
 ```
-
 
 
 The `spmap` and `palettes` package is required to run this command:
