@@ -1,6 +1,7 @@
-*! bimap v1.32 (19 Aug 2022)
+*! bimap v1.33 (29 Sep 2022)
 *! Asjad Naqvi (asjadnaqvi@gmail.com)
 *
+* v1.33 (29 Sep 2022): Passthru options fixed.
 * v1.32 (19 Aug 2022): Fixed a bug in variable comparisons
 * v1.31 (20 Jun 2022): Fixed a floating point error and issue with color assignments.
 * v1.3  (26 May 2022): added percent option. Color range fixes. New schemes. label fixes
@@ -26,12 +27,11 @@ version 15
  
 	syntax varlist(min=2 max=2 numeric) [if] [in] using/ , ///
 		cut(string) palette(string)  ///
-		[ count percent BOXsize(real 8) textx(string) texty(string) xscale(real 30) yscale(real 100) TEXTLABSize(real 2) TEXTSize(real 2.5) values ] ///
+		[ count percent BOXsize(real 8) textx(string) texty(string) TEXTGap(real 2) xscale(real 30) yscale(real 100) TEXTLABSize(real 2)  TEXTSize(real 2.5) values ] ///
 		[ polygon(passthru) line(passthru) point(passthru) label(passthru) ] ///
 		[ ocolor(string) osize(string) ]   ///
 		[ ndocolor(string) ndsize(string) ndfcolor(string) ]   ///
-		[ title(passthru) subtitle(passthru) note(passthru) name(passthru)  ] ///
-		[ allopt graphopts(string asis) * ] 
+		[ title(passthru) subtitle(passthru) note(passthru) name(passthru)  ] 
 		
 		
 		if (substr(reverse("`using'"),1,4) != "atd.") local using "`using'.dta"  // from spmap to check for extension
@@ -274,7 +274,7 @@ qui {
 			id(_ID) clm(custom) clb(0 1 2 3 4 5 6 7 8 9)  fcolor("`colors'") ///
 			ocolor(`lc' ..) osize(`lw' ..) ///	
 			ndocolor(`ndo' ..) ndsize(`lw' ..) ndfcolor(`ndf' ..)  ///
-			`polygon' `polyline' `point' ///
+			`polygon' `line' `point' `label'  ///
 			legend(off)  ///
 			name(_map, replace) nodraw
 	
@@ -404,7 +404,7 @@ qui {
 		foreach x of local xlvl {
 			foreach y of local ylvl {
 				
-				if (`x'==3 & `y'==3)  {    // | (`x'==3 & `y'==2)  | (`x'==2 & `y'==3)
+				if (`x'==3 & `y'==3)  {    
 					local boxes `boxes' (scatter y x if x==`x' & y==`y', mlab("`marksym'") mlabpos(0) mlabc(gs13) msymbol(square) msize(`boxsize') mc("`color`x'`y''")) ///
 					
 				}					
@@ -431,8 +431,8 @@ qui {
 			`boxes' ///
 			(pcarrow spike1_y1 spike1_x1 spike1_y2 spike1_x2, lcolor(gs6) mcolor(gs6) msize(0.8) ) ///
 			(pcarrow spike2_y1 spike2_x1 spike2_y2 spike2_x2, lcolor(gs6) mcolor(gs6) msize(0.8) ) ///
-			(scatter laby labx in 1, mcolor(none) mlab(labn) mlabsize(`textsize') mlabpos(6))  ///
-			(scatter laby labx in 2, mcolor(none) mlab(labn) mlabsize(`textsize') mlabpos(9) mlabgap(3.5) mlabangle(90))  ///
+			(scatter laby labx in 1, mcolor(none) mlab(labn) mlabsize(`textsize') mlabpos(6) mlabgap(`textgap')				 )  ///
+			(scatter laby labx in 2, mcolor(none) mlab(labn) mlabsize(`textsize') mlabpos(9) mlabgap(`textgap') mlabangle(90))  ///
 			`xvals' ///
 			`yvals' ///
 			, ///

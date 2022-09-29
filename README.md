@@ -1,7 +1,7 @@
 
 ![StataMin](https://img.shields.io/badge/stata-2015-blue) ![issues](https://img.shields.io/github/issues/asjadnaqvi/stata-bimap) ![license](https://img.shields.io/github/license/asjadnaqvi/stata-bimap) ![Stars](https://img.shields.io/github/stars/asjadnaqvi/stata-bimap) ![version](https://img.shields.io/github/v/release/asjadnaqvi/stata-bimap) ![release](https://img.shields.io/github/release-date/asjadnaqvi/stata-bimap)
 
-# bimap v1.32
+# bimap v1.33
 
 This package provides the ability to draw bi-variate maps in Stata. It is based on the [Bi-variate maps Guide](https://medium.com/the-stata-guide/stata-graphs-bi-variate-maps-b1e96dd4c2be).
 
@@ -15,7 +15,7 @@ The package can be installed from SSC (**v1.32**):
 ssc install bimap, replace
 ```
 
-Or it can be installed from GitHub (**v1.32**):
+Or it can be installed from GitHub (**v1.33**):
 
 ```
 net install bimap, from("https://raw.githubusercontent.com/asjadnaqvi/stata-bimap/main/installation/") replace
@@ -52,14 +52,14 @@ This command is a wrapper for `spmap` and assumes that you have shapefiles in St
 
 ## Syntax
 
-The syntax for **v1.32** is as follows:
+The syntax for **v1.33** is as follows:
 
 ```
 
 bimap vary varx [if] [in], cut(option) palette(option) 
 		[ count percent values ocolor(str) osize(str) ndocolor(str) ndsize(str) ndocolor(str)
 		polygon(str) line(str) point(str) label(str) 
-		textx(string) texty(str) TEXTLABSize(num) TEXTSize(num) BOXsize(num) xscale(num) yscale(num) 
+		textx(string) texty(str) TEXTLABSize(num) TEXTSize(num) TEXGap(num) BOXsize(num) xscale(num) yscale(num) 
 		title(str) subtitle(str) note(str) name(srt) scheme(str) ]
 ```
 
@@ -224,6 +224,10 @@ Please open an [issue](https://github.com/asjadnaqvi/stata-bimap/issues) to repo
 
 
 ## Versions
+
+**v1.33 (29 Sep 2022)**
+- Bug fixes to `spmap` passthru options.
+- Add a new option `textgap` to allow adjustment of the distance of axes labels to the legend.
 
 **v1.32 (19 Aug 2022)**
 - Fixed an error in variable name comparisons (thanks to Cristian Jordan Diaz).
