@@ -1,7 +1,7 @@
 
 ![StataMin](https://img.shields.io/badge/stata-2015-blue) ![issues](https://img.shields.io/github/issues/asjadnaqvi/stata-bimap) ![license](https://img.shields.io/github/license/asjadnaqvi/stata-bimap) ![Stars](https://img.shields.io/github/stars/asjadnaqvi/stata-bimap) ![version](https://img.shields.io/github/v/release/asjadnaqvi/stata-bimap) ![release](https://img.shields.io/github/release-date/asjadnaqvi/stata-bimap)
 
-# bimap v1.33
+# bimap v1.4
 
 This package provides the ability to draw bi-variate maps in Stata. It is based on the [Bi-variate maps Guide](https://medium.com/the-stata-guide/stata-graphs-bi-variate-maps-b1e96dd4c2be).
 
@@ -15,7 +15,7 @@ The package can be installed from SSC (**v1.32**):
 ssc install bimap, replace
 ```
 
-Or it can be installed from GitHub (**v1.33**):
+Or it can be installed from GitHub (**v1.4**):
 
 ```
 net install bimap, from("https://raw.githubusercontent.com/asjadnaqvi/stata-bimap/main/installation/") replace
@@ -52,12 +52,13 @@ This command is a wrapper for `spmap` and assumes that you have shapefiles in St
 
 ## Syntax
 
-The syntax for **v1.33** is as follows:
+The syntax for **v1.4** is as follows:
 
 ```
 
-bimap vary varx [if] [in], cut(option) palette(option) 
-		[ count percent values ocolor(str) osize(str) ndocolor(str) ndsize(str) ndocolor(str)
+bimap vary varx [if] [in],  palette(option) cut(option) 
+		[ count percent values cutx(val1 val2) cuty(val1 val2) ocolor(str) osize(str) 
+		ndocolor(str) ndsize(str) ndocolor(str) showlegend
 		polygon(str) line(str) point(str) label(str) 
 		textx(string) texty(str) TEXTLABSize(num) TEXTSize(num) TEXGap(num) BOXsize(num) xscale(num) yscale(num) 
 		title(str) subtitle(str) note(str) name(srt) scheme(str) ]
@@ -218,12 +219,61 @@ bimap share_hisp share_afam using usa_county_shp_clean, cut(pctile) palette(pink
 
 <img src="/figures/bimap8.png" height="600">
 
+
+
+### v1.4 updates
+
+Let's make a `bimap` with percentiles as cut-offs and percentages shown in boxes:
+
+```
+bimap share_hisp share_afam using usa_county_shp_clean, cut(pctile) palette(orangeblue)  ///
+		note("Data from the US Census Bureau.") ///	
+		texty("Share of Hispanics") textx("Share of African Americans") texts(3.5) textlabs(3) values percent  ///
+		 ocolor() osize(none) ///
+		 polygon(data("usa_state_shp_clean") ocolor(black) osize(0.2)) 
+```
+
+<img src="/figures/bimap9_0.png" height="600">
+
+we can now modify the cut-offs as follows:
+
+```
+bimap share_hisp share_afam using usa_county_shp_clean, cut(custom) cuty(3 10) cutx(3 10) palette(orangeblue)    ///
+		 note("Data from the US Census Bureau.") ///	
+		 texty("Share of Hispanics") textx("Share of African Americans") texts(3.5) textlabs(3) values percent  ///
+		 ocolor() osize(none) ///
+		 polygon(data("usa_state_shp_clean") ocolor(black) osize(0.2)) 
+```
+
+<img src="/figures/bimap9.png" height="600">
+
+We now also enable and pass `spmap` legend options to explain additional layers:
+
+
+```
+bimap share_hisp share_afam using usa_county_shp_clean, cut(pctile) palette(census)  ///
+		 note("Data from the US Census Bureau.", size(small)) ///	
+		 texty("Share of Hispanics") textx("Share of African Americans") texts(3.2) textlabs(3) values percent ///
+		 ocolor(black) osize(0.03)  ///
+		 polygon(data("usa_state_shp_clean") ocolor(black) osize(0.2) legenda(on) leglabel(State boundaries))  ///
+		 showleg legenda(off) legend(pos(7) size(5)) legstyle(2) 
+```
+
+<img src="/figures/bimap10.png" height="600">
+
+
+
 ## Feedback
 
 Please open an [issue](https://github.com/asjadnaqvi/stata-bimap/issues) to report errors, feature enhancements, and/or other requests. 
 
 
 ## Versions
+
+**v1.4  (02 Oct 2022)**
+- Added the option to add custom cut-offs.
+- Added the option to show default `spmap` legends.
+- Code clean up. New error checks.
 
 **v1.33 (29 Sep 2022)**
 - Bug fixes to `spmap` passthru options.

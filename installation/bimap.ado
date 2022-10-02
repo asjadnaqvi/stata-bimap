@@ -1,6 +1,7 @@
-*! bimap v1.33 (29 Sep 2022)
+*! bimap v1.4 (2 Oct 2022)
 *! Asjad Naqvi (asjadnaqvi@gmail.com)
 *
+* v1.4  (02 Oct 2022): custom cut-off points added.
 * v1.33 (29 Sep 2022): Passthru options fixed.
 * v1.32 (19 Aug 2022): Fixed a bug in variable comparisons
 * v1.31 (20 Jun 2022): Fixed a floating point error and issue with color assignments.
@@ -31,7 +32,9 @@ version 15
 		[ polygon(passthru) line(passthru) point(passthru) label(passthru) ] ///
 		[ ocolor(string) osize(string) ]   ///
 		[ ndocolor(string) ndsize(string) ndfcolor(string) ]   ///
-		[ title(passthru) subtitle(passthru) note(passthru) name(passthru)  ] 
+		[ title(passthru) subtitle(passthru) note(passthru) name(passthru)  ] ///
+		[ cutx(numlist min=2 max=2)  cuty(numlist min=2 max=2) SHOWLEGend  ] ///  // 1.4 updates
+		[ LEGend(passthru) legenda(passthru) LEGStyle(passthru) LEGJunction(passthru) LEGCount(passthru) LEGOrder(passthru) LEGTitle(passthru)  ]   // 1.4 legend controls as passthru
 		
 		
 		if (substr(reverse("`using'"),1,4) != "atd.") local using "`using'.dta"  // from spmap to check for extension
@@ -59,10 +62,24 @@ version 15
 		marksample touse, strok
 		gettoken var2 var1 : varlist   // var1 = x, var2 = y
 	
+	
+	// errors checks
+	
 		if "`var1'" == "`var2'" {
 			di as error "Both variables are the same. Please choose different variables."
 			exit
 		}
+	
+		if "`count'" != "" & "`percent'" != "" {
+			di as error "Please specify either {it:count} or {it:percent}. See {stata help bimap:help file}."
+			exit 
+		}	
+		
+		if "`cut'" == "custom" & ("`cutx'"=="" | "`cuty'"=="") {
+			di as error "with {it:cut(custom)}, {it:cutx(val1 val2)} and {it:cuty(val1 val2)} need to be specified. See {stata help bimap:help file}."
+			exit
+		}
+		
 	
 	
 		***** Get the cuts
@@ -80,7 +97,7 @@ qui {
 		
 		if "`cut'" == "equal" {
 			
-			summ `var1'
+			summ `var1', meanonly
 			local interv = (r(max) - r(min)) / 3
 							
 				local cut0 = r(min)
@@ -91,7 +108,7 @@ qui {
 			egen `cat_`var1'' = cut(`var1') if `touse', at(`cut0', `cut1' , `cut2', `cut3') icodes
 
 			
-			summ `var2'
+			summ `var2', meanonly
 			local interv = (r(max) - r(min)) / 3
 							
 				local cut0 = r(min)
@@ -105,6 +122,34 @@ qui {
 			replace `cat_`var1'' = `cat_`var1'' + 1 
 			replace `cat_`var2'' = `cat_`var2'' + 1
 		}	
+	
+		if "`cut'" == "custom" {
+			
+			summ `var1', meanonly
+				local cut0 = r(min)
+				local cut3 = r(max)
+			
+			tokenize `cutx'
+				local cut1 = `1'
+				local cut2 = `2'
+				
+			egen `cat_`var1'' = cut(`var1') if `touse', at(`cut0', `cut1' , `cut2', `cut3') icodes
+
+				
+			summ `var2', meanonly
+				local cut0 = r(min)
+				local cut3 = r(max)
+			
+			tokenize `cuty'
+				local cut1 = `1'
+				local cut2 = `2'
+			
+			egen `cat_`var2'' = cut(`var2') if `touse', at(`cut0', `cut1' , `cut2', `cut3') icodes
+			
+			replace `cat_`var1'' = `cat_`var1'' + 1 
+			replace `cat_`var2'' = `cat_`var2'' + 1
+			
+		}
 	
 		
 		
@@ -155,11 +200,7 @@ qui {
 		
 		// grp order: 1 = 1 1, 2 = 1 2, 3 = 1 3, 4 = 2 1, 5 = 2 2, 6 = 2 3, 7 = 3 1, 8 = 3 2, 9 = 3 3
 		
-		if "`count'" != "" & "`percent'" != "" {
-			di as error "Please specify either {it:count} or {it:percent} option."
-			exit 
-		}
-		
+	
 		
 		if "`count'" != "" {			
 
@@ -201,7 +242,7 @@ qui {
 			}
 			
 			if !`check' {
-				di in yellow "Wrong palette specified. The supported palettes are {ul:pinkgreen}, {ul:bluered}, {ul:greenblue}, {ul:purpleyellow}, {ul:yellowblue}, {ul:orangeblue}, {ul:brew1}, {ul:brew2}, {ul:brew3}, {ul:census}."
+				di in yellow "Wrong palette specified. The supported palettes are {ul:pinkgreen}, {ul:bluered}, {ul:greenblue}, {ul:purpleyellow}, {ul:yellowblue}, {ul:orangeblue}, {ul:brew1}, {ul:brew2}, {ul:brew3}, {ul:census}. See {stata help bimap:help file}."
 				exit 198
 			}
 		}
@@ -265,18 +306,20 @@ qui {
 		
 		local ndf = cond("`ndfcolor'" == "", "gs8", "`ndfcolor'")
 		
+		local leg = cond("`showlegend'"=="", "legend(off)", "`legend'")
+		
 		// finally the map!
 		
 		colorpalette `color', nograph 
 		local colors `r(p)'
 
 		spmap `grp_cut' using "`using'", ///
-			id(_ID) clm(custom) clb(0 1 2 3 4 5 6 7 8 9)  fcolor("`colors'") ///
-			ocolor(`lc' ..) osize(`lw' ..) ///	
-			ndocolor(`ndo' ..) ndsize(`lw' ..) ndfcolor(`ndf' ..)  ///
-			`polygon' `line' `point' `label'  ///
-			legend(off)  ///
-			name(_map, replace) nodraw
+			id(_ID) clm(custom) clb(0 1 2 3 4 5 6 7 8 9) fcolor("`colors'") ///
+				ocolor(`lc' ..) osize(`lw' ..) ///	
+				ndocolor(`ndo' ..) ndsize(`lw' ..) ndfcolor(`ndf' ..)  ///
+				`polygon' `line' `point' `label'  ///
+				`leg' `legstyle' `legenda' `legendstyle' `legjunction' `legcount' `legorder' `legtitle'  ///  // v1.4 legend passthrus
+					name(_map, replace) nodraw
 	
 
 	

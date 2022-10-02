@@ -1,7 +1,7 @@
 {smcl}
-{* 29Dep2022}{...}
+{* 02Oct2022}{...}
 {hi:help bimap}{...}
-{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v1.33 (GitHub)}}
+{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v1.4 (GitHub)}}
 
 {hline}
 
@@ -15,9 +15,9 @@ The {cmd:bimap} command is a wrapper for {stata help spmap:spmap}. Therefore it 
 {marker syntax}{title:Syntax}
 {p 8 15 2}
 
-{cmd:bimap} {it:vary varx} {ifin}, {cmd:cut}({it:option}) {cmd:palette}({it:option}) 
-		{cmd:[} {cmd:count} {cmd:percent} {cmd:values} {cmd:ocolor}({it:str}) {cmd:osize}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str}) 
-		{cmd:polygon}({it:options}) {cmd:line}({it:options}) {cmd:point}({it:options}) {cmd:label}({it:options}) 
+{cmd:bimap} {it:vary varx} {ifin}, {cmd:palette}({it:option}) {cmd:cut}({it:option}) 
+		{cmd:[} {cmd:cutx}({it:val1 val2}) {cmd:cuty}({it:val1 val2}) {cmd:values} {cmd:count} {cmd:percent}  {cmd:ocolor}({it:str}) {cmd:osize}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str}) 
+		{cmd:polygon}({it:options}) {cmd:line}({it:options}) {cmd:point}({it:options}) {cmd:label}({it:options}) {cmdab:showleg:end}
 		{cmd:textx}({it:string}) {cmd:texty}({it:str}) {cmdab:textg:ap}({it:num}) {cmdab:textlabs:ize}({it:num}) {cmdab:texts:ize}({it:num}) {cmdab:box:size}({it:num}) {cmd:xscale}({it:num}) {cmd:yscale}({it:num}) 
 		{cmd:title}({it:str}) {cmd:subtitle}({it:str}) {cmd:note}({it:str}) {cmd:name}({it:str}) {cmd:scheme}({it:str}) {cmd:]}
 
@@ -31,35 +31,44 @@ The options are described as follows:
 
 {p2coldent : {opt bimap} {it:vary varx}}The command requires numeric {it:vary} and {it:varx} variables.{p_end}
 
-{p2coldent : {opt cut(option)}}Here {cmd:cut} can take on two values: {ul:{it:pctile}} for percentiles or terciles in this case, 
-OR {ul:{it:equal}} for equal intervals. These cutoff values can be displayed using the {cmd:values} option. See below.{p_end}
+{p2coldent : {opt cut(option)}}Here {cmd:cut} take on three options: {cmd:cutcut({it:pctile})} for percentiles or terciles in this case, 
+OR {cmd:cut({it:equal})} for equal intervals, OR {cmd:cut({{it:custom})} for custom cut-offs.
+If {ul:{it:custom}} is specified, then {cmd:cutx()} and {cmd:cuty()} need to be defined.{p_end}
+
+{p2coldent : {opt cutx(val1 val2)}, {opt cuty(val1 val2)}}Define the middle two cut-off points for the x and y variables.
+The minimum and maximum cut-offs will be estimated directly by the program.
+Use these options carefully. If values are outside of the variable range, then the program will throw an error.{p_end}
 
 {p2coldent : {opt palette(option)}}Palette options for bi-variate maps are: {ul:{it:pinkgreen}}, {ul:{it:bluered}}, {ul:{it:greenblue}}, {ul:{it:purpleyellow}}, {ul:{it:yellowblue}}, {ul:{it:orangeblue}},
-{ul:{it:brew1}}, {ul:{it:brew2}}, {ul:{it:brew3}}, {ul:{it:census}}. See {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub} for palette examples.{p_end}
+{ul:{it:brew1}}, {ul:{it:brew2}}, {ul:{it:brew3}}, {ul:{it:census}}.
+See {stata help bimap:help file} for details and {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub} for palette examples.{p_end}
 
 {p2coldent : {opt osize(string)}}Line width of polygons. Same as in {cmd:spmap}. Default value is {it:0.02}. Also applied to polygons with no data.{p_end}
 
-{p2coldent : {opt ocolor(string)}}Outline color of polygons with data. Same as in {cmd:spmap}. Default value is {it:white}.{p_end}
+{p2coldent : {opt ocolor(str)}}Outline color of polygons with data. Same as in {cmd:spmap}. Default value is {it:white}.{p_end}
 
-{p2coldent : {opt ndocolor(string)}}Outline color of polygons with no data. Same as in {cmd:spmap}. Default value is {it:gs12}.{p_end}
+{p2coldent : {opt ndocolor(str)}}Outline color of polygons with no data. Same as in {cmd:spmap}. Default value is {it:gs12}.{p_end}
 
-{p2coldent : {opt ndfcolor(string)}}Fill color of polygons with no data. Same as in {cmd:spmap}. Default value is {it:gs8}.{p_end}
+{p2coldent : {opt ndfcolor(str)}}Fill color of polygons with no data. Same as in {cmd:spmap}. Default value is {it:gs8}.{p_end}
 
 {p2coldent : {opt polygon}(), {opt line}(), {opt point}(), {opt label}()}These are {cmd:spmap} passthru options for additional layers. See {stata help spmap} for details.{p_end}
 
-{p2coldent : {opt title, subtitle, note, name}}These are standard twoway graph options.{p_end}
+{p2coldent : {opt showleg:end}}If this option is specified, then the following {stata help spmap:spmap} options are enabled: {cmd:legend}(), {cmd:legenda}(), {cmdab:legs:tyle}(), {cmdab:legj:unction}(), {cmdab:legc:ount}(), {cmdab:lego:rder()},
+{cmdab:legt:title}(), plus additional options that can be specified inside addtional layers: {cmd:polygon}(), {cmd:line}(), {cmd:point}(), {cmd:label}().
+{cmdab:showleg:end} can be used for describing additional layers, like boundaries, points, lines etc.
+It is also highly recommended to turn off the base layer legend by adding {cmd:legenda}(off) since this shows up in the bimap legend on the right.{p_end}
+
+{p2coldent : {opt title}(), {opt subtitle}(), {opt note}(), {opt name}()}These are standard twoway graph options.{p_end}
 
 
 {p 4 4 2}
-{it:{ul:Legend options}:}
+{it:{ul:Bi-variate legend}:}
 
 {p2coldent : {opt count} {it:or} {opt percent}}Display the count or percent of categories in each box in the bi-variate map legend.{p_end}
 
-{p2coldent : {opt values}}Display the cut off values in the bi-variate map legend.{p_end}
+{p2coldent : {opt values}}Display the cut-off values in the bi-variate map legend axes.{p_end}
 
-{p2coldent : {opt texty(str)}}The label of legend variable on the y-axis. The default value is the variable name of {textit:vary}.{p_end}
-
-{p2coldent : {opt textx(str)}}The label of legend variable on the x-axis. The default value is the variable name of {textit:varx}.{p_end}
+{p2coldent : {opt textx(str)}, {opt texty(str)}}The axes labels bi-variate legend. The default values are the variable names.{p_end}
 
 {p2coldent : {opt textg:ap(num)}}The gap of the axes labels from the lines. The default value is {it:2}.{p_end}
 
@@ -128,8 +137,8 @@ Additional examples on {browse "https://github.com/asjadnaqvi/stata-bimap":GitHu
 
 {title:Package details}
 
-Version      : {bf:bimap} v1.33
-This release : 29 Sep 2022
+Version      : {bf:bimap} v1.4
+This release : 02 Oct 2022
 First release: 08 Apr 2022
 Repository   : {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub}
 Keywords     : Stata, graph, bi-variate, map
