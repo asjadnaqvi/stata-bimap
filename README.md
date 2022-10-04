@@ -59,7 +59,7 @@ The syntax for **v1.4** is as follows:
 bimap vary varx [if] [in],  palette(option) cut(option) 
 		[ count percent values cutx(val1 val2) cuty(val1 val2) ocolor(str) osize(str) 
 		ndocolor(str) ndsize(str) ndocolor(str) showlegend
-		polygon(str) line(str) point(str) label(str) 
+		polygon(str) line(str) point(str) label(str) formatx(str) formaty(str)
 		textx(string) texty(str) TEXTLABSize(num) TEXTSize(num) TEXGap(num) BOXsize(num) xscale(num) yscale(num) 
 		title(str) subtitle(str) note(str) name(srt) scheme(str) ]
 ```
@@ -116,14 +116,14 @@ Test whether the `spmap` is working properly:
 spmap share_afam using usa_county_shp_clean, id(_ID) clm(custom) clb(0(10)100) fcolor(Heat)
 ```
 
-<img src="/figures/bimap1_1.png" height="600">
+<img src="/figures/bimap1_1.png" height="500">
 
 
 ```
 spmap share_hisp using usa_county_shp_clean, id(_ID) clm(custom) clb(0(10)100) fcolor(Heat)
 ```
 
-<img src="/figures/bimap1_2.png" height="600">
+<img src="/figures/bimap1_2.png" height="500">
 
 
 
@@ -134,21 +134,21 @@ Let's test the `bimap` command:
 bimap share_hisp share_afam using usa_county_shp_clean, cut(pctile) palette(pinkgreen) 	
 ```
 
-<img src="/figures/bimap2.png" height="600">
+<img src="/figures/bimap2.png" height="500">
 
 
 ```
 bimap share_hisp share_afam using usa_county_shp_clean, cut(pctile) palette(pinkgreen) count values
 ```
 
-<img src="/figures/bimap2_1.png" height="600">
+<img src="/figures/bimap2_1.png" height="500">
 
 
 ```
 bimap share_hisp share_afam using usa_county_shp_clean, cut(equal) palette(pinkgreen) count values
 ```
 
-<img src="/figures/bimap2_2.png" height="600">
+<img src="/figures/bimap2_2.png" height="500">
 
 
 ### Palettes
@@ -179,7 +179,7 @@ bimap share_asian share_afam using usa_county_shp_clean, cut(pctile) palette(blu
 		 polygon(data("usa_state_shp_clean") ocolor(white) osize(0.3))
 ```
 
-<img src="/figures/bimap4.png" height="600">
+<img src="/figures/bimap4.png" height="500">
 
 
 ```
@@ -190,7 +190,7 @@ bimap share_asian share_afam using usa_county_shp_clean, cut(pctile) palette(yel
 		 polygon(data("usa_state_shp_clean") ocolor(black) osize(0.2)) 
 ```
 
-<img src="/figures/bimap6.png" height="600">
+<img src="/figures/bimap6.png" height="500">
 
 
 ```
@@ -201,7 +201,7 @@ bimap share_asian share_hisp  using usa_county_shp_clean, cut(pctile) palette(or
 		 polygon(data("usa_state_shp_clean") ocolor(black) osize(0.2)) 
 ```
 
-<img src="/figures/bimap7.png" height="600">
+<img src="/figures/bimap7.png" height="500">
 
 
 
@@ -217,7 +217,7 @@ bimap share_hisp share_afam using usa_county_shp_clean, cut(pctile) palette(pink
 		 point(data("usa_county2") x(_CX) y(_CY) select(keep if tot_pop>100000) proportional(tot_pop) psize(absolute) fcolor(lime%85) ocolor(black) osize(0.12) size(0.9))
 ```
 
-<img src="/figures/bimap8.png" height="600">
+<img src="/figures/bimap8.png" height="500">
 
 
 
@@ -233,7 +233,7 @@ bimap share_hisp share_afam using usa_county_shp_clean, cut(pctile) palette(oran
 		 polygon(data("usa_state_shp_clean") ocolor(black) osize(0.2)) 
 ```
 
-<img src="/figures/bimap9_0.png" height="600">
+<img src="/figures/bimap9_0.png" height="500">
 
 we can now modify the cut-offs as follows:
 
@@ -245,9 +245,22 @@ bimap share_hisp share_afam using usa_county_shp_clean, cut(custom) cuty(3 10) c
 		 polygon(data("usa_state_shp_clean") ocolor(black) osize(0.2)) 
 ```
 
-<img src="/figures/bimap9.png" height="600">
+<img src="/figures/bimap10.png" height="500">
 
-We now also enable and pass `spmap` legend options to explain additional layers:
+Cut-off's can be formatted as follows:
+
+```
+bimap share_hisp share_afam using usa_county_shp_clean, cut(custom) cuty(3 10) formatx(%3.0f) formaty(%3.0f) cutx(3 10) palette(orangeblue)    ///
+		 note("Data from the US Census Bureau.") ///	
+		 texty("Share of Hispanics") textx("Share of African Americans") texts(3.5) textlabs(3) values percent  ///
+		 ocolor() osize(none) ///
+		 polygon(data("usa_state_shp_clean") ocolor(black) osize(0.2)) 
+```
+
+
+<img src="/figures/bimap11.png" height="500">
+
+We can now also pass `spmap` legend options to `bimap` to describe additional layers:
 
 
 ```
@@ -259,7 +272,9 @@ bimap share_hisp share_afam using usa_county_shp_clean, cut(pctile) palette(cens
 		 showleg legenda(off) legend(pos(7) size(5)) legstyle(2) 
 ```
 
-<img src="/figures/bimap10.png" height="600">
+<img src="/figures/bimap10.png" height="500">
+
+
 
 
 
@@ -270,8 +285,9 @@ Please open an [issue](https://github.com/asjadnaqvi/stata-bimap/issues) to repo
 
 ## Versions
 
-**v1.4  (02 Oct 2022)**
+**v1.4  (04 Oct 2022)**
 - Added the option to add custom cut-offs.
+- Added the option to format cut-offs,
 - Added the option to show default `spmap` legends.
 - Code clean up. New error checks.
 

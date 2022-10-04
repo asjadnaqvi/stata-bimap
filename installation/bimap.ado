@@ -1,7 +1,7 @@
-*! bimap v1.4 (2 Oct 2022)
+*! bimap v1.4 (4 Oct 2022)
 *! Asjad Naqvi (asjadnaqvi@gmail.com)
 *
-* v1.4  (02 Oct 2022): custom cut-off points added.
+* v1.4  (02 Oct 2022): custom cut-off points added. formatting cut's added.
 * v1.33 (29 Sep 2022): Passthru options fixed.
 * v1.32 (19 Aug 2022): Fixed a bug in variable comparisons
 * v1.31 (20 Jun 2022): Fixed a floating point error and issue with color assignments.
@@ -28,7 +28,7 @@ version 15
  
 	syntax varlist(min=2 max=2 numeric) [if] [in] using/ , ///
 		cut(string) palette(string)  ///
-		[ count percent BOXsize(real 8) textx(string) texty(string) TEXTGap(real 2) xscale(real 30) yscale(real 100) TEXTLABSize(real 2)  TEXTSize(real 2.5) values ] ///
+		[ count percent BOXsize(real 8) textx(string) texty(string) formatx(string) formaty(string) TEXTGap(real 2) xscale(real 30) yscale(real 100) TEXTLABSize(real 2)  TEXTSize(real 2.5) values ] ///
 		[ polygon(passthru) line(passthru) point(passthru) label(passthru) ] ///
 		[ ocolor(string) osize(string) ]   ///
 		[ ndocolor(string) ndsize(string) ndfcolor(string) ]   ///
@@ -126,25 +126,25 @@ qui {
 		if "`cut'" == "custom" {
 			
 			summ `var1', meanonly
-				local cut0 = r(min)
-				local cut3 = r(max)
+				local cutx0 = r(min)
+				local cutx3 = r(max)
 			
 			tokenize `cutx'
-				local cut1 = `1'
-				local cut2 = `2'
+				local cutx1 = `1'
+				local cutx2 = `2'
 				
-			egen `cat_`var1'' = cut(`var1') if `touse', at(`cut0', `cut1' , `cut2', `cut3') icodes
+			egen `cat_`var1'' = cut(`var1') if `touse', at(`cutx0', `cutx1' , `cutx2', `cutx3') icodes
 
 				
 			summ `var2', meanonly
-				local cut0 = r(min)
-				local cut3 = r(max)
+				local cuty0 = r(min)
+				local cuty3 = r(max)
 			
 			tokenize `cuty'
-				local cut1 = `1'
-				local cut2 = `2'
+				local cuty1 = `1'
+				local cuty2 = `2'
 			
-			egen `cat_`var2'' = cut(`var2') if `touse', at(`cut0', `cut1' , `cut2', `cut3') icodes
+			egen `cat_`var2'' = cut(`var2') if `touse', at(`cuty0', `cuty1' , `cuty2', `cuty3') icodes
 			
 			replace `cat_`var1'' = `cat_`var1'' + 1 
 			replace `cat_`var2'' = `cat_`var2'' + 1
@@ -173,29 +173,41 @@ qui {
 	
 		***** store the cut-offs for labels	
 		
+		if "`formatx'" =="" local formatx = "%05.1f"
+		if "`formaty'" =="" local formaty = "%05.1f"
+		
+		
 		summ `var1' if `cat_`var1'' == 1
 		local var11 = r(max)
-		local var11 : di %05.1f `var11'
+		local var11 : di `formatx' `var11'
+		
+		if "`cut'" == "custom" local var11 : di `formatx' `cutx1'
 		
 		summ `var1' if `cat_`var1'' == 2
 		local var12 = r(max)
-		local var12 : di %05.1f `var12'
+		local var12 : di `formatx' `var12'
+		
+		if "`cut'" == "custom" local var12 : di `formatx' `cutx2'
 		
 		summ `var1' if `cat_`var1'' == 3
 		local var13 = r(max)
-		local var13 : di %05.1f `var13'
+		local var13 : di `formatx' `var13'
 		
 		summ `var2' if `cat_`var2'' == 1
 		local var21 = r(max)
-		local var21 : di %05.1f `var21'
+		local var21 : di `formaty' `var21'
+		
+		if "`cut'" == "custom" local var21 : di `formaty' `cuty1'
 		
 		summ `var2' if `cat_`var2'' == 2
 		local var22 = r(max)
-		local var22 : di %05.1f `var22'
+		local var22 : di `formaty' `var22'
+		
+		if "`cut'" == "custom" local var22 : di `formaty' `cuty2'
 		
 		summ `var2' if `cat_`var2'' == 3
 		local var23 = r(max)
-		local var23 : di %05.1f `var23'
+		local var23 : di `formaty' `var23'
 		
 		
 		// grp order: 1 = 1 1, 2 = 1 2, 3 = 1 3, 4 = 2 1, 5 = 2 2, 6 = 2 3, 7 = 3 1, 8 = 3 2, 9 = 3 3

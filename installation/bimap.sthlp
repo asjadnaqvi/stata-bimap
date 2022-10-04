@@ -8,16 +8,16 @@
 {title:bimap}: A Stata package for bi-variate maps. 
 
 {p 4 4 2}
-The package is based on the following guide on Medium: {browse "https://medium.com/the-stata-guide/stata-graphs-bi-variate-maps-b1e96dd4c2be":Bi-variate maps}.
-
-The {cmd:bimap} command is a wrapper for {stata help spmap:spmap}. Therefore it assumes that geographic boundaries are available and you are familar with making maps in Stata.
+The package is based on the {browse "https://medium.com/the-stata-guide/stata-graphs-bi-variate-maps-b1e96dd4c2be":Bi-variate maps} guide on Medium. The {cmd:bimap} command is a wrapper for {stata help spmap:spmap}.
+Therefore it assumes that geographic boundaries are available, and you are familar with making maps in Stata. 
+Note that {cmd:bimap} only works in your have processed the shapefiles using Stata's {stata help spshape2dta:spshape2dta} command.
 
 {marker syntax}{title:Syntax}
 {p 8 15 2}
 
 {cmd:bimap} {it:vary varx} {ifin}, {cmd:palette}({it:option}) {cmd:cut}({it:option}) 
 		{cmd:[} {cmd:cutx}({it:val1 val2}) {cmd:cuty}({it:val1 val2}) {cmd:values} {cmd:count} {cmd:percent}  {cmd:ocolor}({it:str}) {cmd:osize}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str}) 
-		{cmd:polygon}({it:options}) {cmd:line}({it:options}) {cmd:point}({it:options}) {cmd:label}({it:options}) {cmdab:showleg:end}
+		{cmd:polygon}({it:options}) {cmd:line}({it:options}) {cmd:point}({it:options}) {cmd:label}({it:options}) {cmdab:showleg:end} {cmd:formatx}({it:str}) {cmd:formaty}({it:str}) 
 		{cmd:textx}({it:string}) {cmd:texty}({it:str}) {cmdab:textg:ap}({it:num}) {cmdab:textlabs:ize}({it:num}) {cmdab:texts:ize}({it:num}) {cmdab:box:size}({it:num}) {cmd:xscale}({it:num}) {cmd:yscale}({it:num}) 
 		{cmd:title}({it:str}) {cmd:subtitle}({it:str}) {cmd:note}({it:str}) {cmd:name}({it:str}) {cmd:scheme}({it:str}) {cmd:]}
 
@@ -54,9 +54,10 @@ See {stata help bimap:help file} for details and {browse "https://github.com/asj
 {p2coldent : {opt polygon}(), {opt line}(), {opt point}(), {opt label}()}These are {cmd:spmap} passthru options for additional layers. See {stata help spmap} for details.{p_end}
 
 {p2coldent : {opt showleg:end}}If this option is specified, then the following {stata help spmap:spmap} options are enabled: {cmd:legend}(), {cmd:legenda}(), {cmdab:legs:tyle}(), {cmdab:legj:unction}(), {cmdab:legc:ount}(), {cmdab:lego:rder()},
-{cmdab:legt:title}(), plus additional options that can be specified inside addtional layers: {cmd:polygon}(), {cmd:line}(), {cmd:point}(), {cmd:label}().
+{cmdab:legt:title}(), plus additional options that can be specified for supplementary layers: {cmd:polygon}(), {cmd:line}(), {cmd:point}(), {cmd:label}().
 {cmdab:showleg:end} can be used for describing additional layers, like boundaries, points, lines etc.
-It is also highly recommended to turn off the base layer legend by adding {cmd:legenda}(off) since this shows up in the bimap legend on the right.{p_end}
+It is also highly recommended to turn off the base layer legend by using {cmd:legenda}(off) since this shows up in the bimap legend on the right.
+This option is still {it:beta}, so suggestions for improvement are appreciated.{p_end}
 
 {p2coldent : {opt title}(), {opt subtitle}(), {opt note}(), {opt name}()}These are standard twoway graph options.{p_end}
 
@@ -64,11 +65,13 @@ It is also highly recommended to turn off the base layer legend by adding {cmd:l
 {p 4 4 2}
 {it:{ul:Bi-variate legend}:}
 
-{p2coldent : {opt count} {it:or} {opt percent}}Display the count or percent of categories in each box in the bi-variate map legend.{p_end}
+{p2coldent : {opt count} {it:or} {opt percent}}Display the count or percent of categories in each box in the map legend.{p_end}
 
-{p2coldent : {opt values}}Display the cut-off values in the bi-variate map legend axes.{p_end}
+{p2coldent : {opt values}}Display the cut-off values on the legend axes.{p_end}
 
-{p2coldent : {opt textx(str)}, {opt texty(str)}}The axes labels bi-variate legend. The default values are the variable names.{p_end}
+{p2coldent : {opt formatx}(str), {opt formaty}(str)}Format the values on the legend axes. Default format is {it:%5.1f}.{p_end}
+
+{p2coldent : {opt textx(str)}, {opt texty(str)}}The axes labels of the legend. The default values are the variable names.{p_end}
 
 {p2coldent : {opt textg:ap(num)}}The gap of the axes labels from the lines. The default value is {it:2}.{p_end}
 
@@ -76,12 +79,13 @@ It is also highly recommended to turn off the base layer legend by adding {cmd:l
 
 {p2coldent : {opt textlabs:ize(str)}}The text size of the cut-off values. The default value is {it:2}.{p_end}
 
-{p2coldent : {opt boxs:ize(num)}}Size of the square grids in the legend. Default value is {it:8}. This is an advanced option and use it with caution.{p_end}
-
-{p2coldent : {opt xscale(num)}}The scale of the legend on the x-axis. Default value is {it:30}. This is an advanced option so use it with caution. This option also requires adjusting the {cmd:boxsize}.
+{p2coldent : {opt boxs:ize(num)}}Size of the square grids in the legend. Default value is {it:8}. This is an advanced option so use it with caution.
 Ideally don't touch this.{p_end}
 
-{p2coldent : {opt yscale(num)}}The scale of the legend on the y-axis. Default value is {it:100}. This is an advanced option so use it with caution. This option also requires adjusting the {cmd:boxsize}. 
+{p2coldent : {opt xscale(num)}}The scale of the legend on the x-axis. Default value is {it:30}. This option also requires adjusting the {cmd:boxsize}. This is an advanced option so use it with caution. 
+Ideally don't touch this.{p_end}
+
+{p2coldent : {opt yscale(num)}}The scale of the legend on the y-axis. Default value is {it:100}. This option also requires adjusting the {cmd:boxsize}. This is an advanced option so use it with caution. 
 Ideally don't touch this.{p_end}
 
 {synoptline}
@@ -138,7 +142,7 @@ Additional examples on {browse "https://github.com/asjadnaqvi/stata-bimap":GitHu
 {title:Package details}
 
 Version      : {bf:bimap} v1.4
-This release : 02 Oct 2022
+This release : 04 Oct 2022
 First release: 08 Apr 2022
 Repository   : {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub}
 Keywords     : Stata, graph, bi-variate, map
@@ -152,16 +156,20 @@ Twitter      : {browse "https://twitter.com/AsjadNaqvi":@AsjadNaqvi}
 
 {title:Acknowledgements}
 
-Ruth Watkinson found an error in the grouping code. Pierre-Henri Bono suggested {it:passthru} options for {cmd:spmap}. Kit Baum requested the {it:percent} option and fixes to label colors. Mattias Öhman found an error in cut-offs and color assignments with missing groups.
+{p 4 4 2}
+Ruth Watkinson found an error in the grouping code. Pierre-Henri Bono suggested {it:passthru} options for {cmd:spmap}. 
+Kit Baum requested the {it:percent} option and fixes to label colors. 
+Mattias Öhman found an error in cut-offs and color assignments with missing groups.
 Cristian Jordan Diaz found and error in variable name comparisons.
 
 {title:Feedback}
 
+{p 4 4 2}
 If you find bugs or have feature requests, then please open an {browse "https://github.com/asjadnaqvi/stata-bimap/issues":issue} on GitHub.
 
 {title:References}
 
-{p 4 8 2}Pisati, B. (2018). {browse "help spmap":spmap} v1.3.2. SSC.
+{p 4 8 2}Pisati, B. (2018). {browse "help spmap":spmap} v1.3.2.
 
 {p 4 8 2}Jann, B. (2018). {browse "https://www.stata-journal.com/article.html?article=gr0075":Color palettes for Stata graphics}. The Stata Journal 18(4): 765-785.
 
