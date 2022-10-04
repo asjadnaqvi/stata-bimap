@@ -10,7 +10,7 @@
 {p 4 4 2}
 The package is based on the {browse "https://medium.com/the-stata-guide/stata-graphs-bi-variate-maps-b1e96dd4c2be":Bi-variate maps} guide on Medium. The {cmd:bimap} command is a wrapper for {stata help spmap:spmap}.
 Therefore it assumes that geographic boundaries are available, and you are familar with making maps in Stata. 
-Note that {cmd:bimap} only works in your have processed the shapefiles using Stata's {stata help spshape2dta:spshape2dta} command.
+Note that {cmd:bimap} only works if you have processed the shapefiles using Stata's {stata help spshape2dta:spshape2dta} command.
 
 {marker syntax}{title:Syntax}
 {p 8 15 2}
@@ -18,7 +18,7 @@ Note that {cmd:bimap} only works in your have processed the shapefiles using Sta
 {cmd:bimap} {it:vary varx} {ifin}, {cmd:palette}({it:option}) {cmd:cut}({it:option}) 
 		{cmd:[} {cmd:cutx}({it:val1 val2}) {cmd:cuty}({it:val1 val2}) {cmd:values} {cmd:count} {cmd:percent}  {cmd:ocolor}({it:str}) {cmd:osize}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str}) 
 		{cmd:polygon}({it:options}) {cmd:line}({it:options}) {cmd:point}({it:options}) {cmd:label}({it:options}) {cmdab:showleg:end} {cmd:formatx}({it:str}) {cmd:formaty}({it:str}) 
-		{cmd:textx}({it:string}) {cmd:texty}({it:str}) {cmdab:textg:ap}({it:num}) {cmdab:textlabs:ize}({it:num}) {cmdab:texts:ize}({it:num}) {cmdab:box:size}({it:num}) {cmd:xscale}({it:num}) {cmd:yscale}({it:num}) 
+		{cmd:textx}({it:str}) {cmd:texty}({it:str}) {cmdab:textg:ap}({it:num}) {cmdab:textlabs:ize}({it:num}) {cmdab:texts:ize}({it:num}) {cmdab:box:size}({it:num}) {cmd:xscale}({it:num}) {cmd:yscale}({it:num}) 
 		{cmd:title}({it:str}) {cmd:subtitle}({it:str}) {cmd:note}({it:str}) {cmd:name}({it:str}) {cmd:scheme}({it:str}) {cmd:]}
 
 
@@ -33,11 +33,11 @@ The options are described as follows:
 
 {p2coldent : {opt cut(option)}}Here {cmd:cut} take on three options: {cmd:cutcut({it:pctile})} for percentiles or terciles in this case, 
 OR {cmd:cut({it:equal})} for equal intervals, OR {cmd:cut({{it:custom})} for custom cut-offs.
-If {ul:{it:custom}} is specified, then {cmd:cutx()} and {cmd:cuty()} need to be defined.{p_end}
+If {ul:{it:custom}} is specified, then either {cmd:cutx()} or {cmd:cuty()}, or both need to be defined.{p_end}
 
-{p2coldent : {opt cutx(val1 val2)}, {opt cuty(val1 val2)}}Define the middle two cut-off points for the x and y variables.
-The minimum and maximum cut-offs will be estimated directly by the program.
-Use these options carefully. If values are outside of the variable range, then the program will throw an error.{p_end}
+{p2coldent : {opt cutx(val1 val2)}, {opt cuty(val1 val2)}}Define the middle two cut-off points for the x and y variables. Either one of the two, or both options need to be specified.
+If only one option is specified, then the other will automatically take the {it:pctile} cut-offs. The minimum and maximum cut-offs will be estimated directly by the program.
+If values are outside of the variable range, then the program will throw an error.{p_end}
 
 {p2coldent : {opt palette(option)}}Palette options for bi-variate maps are: {ul:{it:pinkgreen}}, {ul:{it:bluered}}, {ul:{it:greenblue}}, {ul:{it:purpleyellow}}, {ul:{it:yellowblue}}, {ul:{it:orangeblue}},
 {ul:{it:brew1}}, {ul:{it:brew2}}, {ul:{it:brew3}}, {ul:{it:census}}.

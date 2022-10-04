@@ -1,7 +1,7 @@
 *! bimap v1.4 (4 Oct 2022)
 *! Asjad Naqvi (asjadnaqvi@gmail.com)
 *
-* v1.4  (02 Oct 2022): custom cut-off points added. formatting cut's added.
+* v1.4  (02 Oct 2022): custom cut-off points added. cut'offs can be formatted. spmap legend passthru.
 * v1.33 (29 Sep 2022): Passthru options fixed.
 * v1.32 (19 Aug 2022): Fixed a bug in variable comparisons
 * v1.31 (20 Jun 2022): Fixed a floating point error and issue with color assignments.
@@ -75,8 +75,8 @@ version 15
 			exit 
 		}	
 		
-		if "`cut'" == "custom" & ("`cutx'"=="" | "`cuty'"=="") {
-			di as error "with {it:cut(custom)}, {it:cutx(val1 val2)} and {it:cuty(val1 val2)} need to be specified. See {stata help bimap:help file}."
+		if "`cut'" == "custom" & "`cutx'"=="" & "`cuty'"=="" {
+			di as error "With {it:cut(custom)}, either {it:cutx(val1 val2)} or {it:cuty(val1 val2)}, or both need to be specified. See {stata help bimap:help file}."
 			exit
 		}
 		
@@ -88,11 +88,12 @@ version 15
 qui {
 		
 	preserve	
+		keep if `touse'
 		tempvar cat_`var1' cat_`var2'
 		
 		if "`cut'" == "pctile" {
-			xtile `cat_`var1'' = `var1' if `touse', n(3)
-			xtile `cat_`var2'' = `var2' if `touse', n(3)
+			xtile `cat_`var1'' = `var1', n(3)
+			xtile `cat_`var2'' = `var2', n(3)
 		}
 		
 		if "`cut'" == "equal" {
@@ -100,63 +101,67 @@ qui {
 			summ `var1', meanonly
 			local interv = (r(max) - r(min)) / 3
 							
-				local cut0 = r(min)
-				local cut1 = `cut0' + `interv'
-				local cut2 = `cut1' + `interv'
-				local cut3 = r(max) + 1    // floating point fix
+				local cutx0 = r(min)
+				local cutx1 = `cutx0' + `interv'
+				local cutx2 = `cutx1' + `interv'
+				local cutx3 = r(max) + 1   
 			
-			egen `cat_`var1'' = cut(`var1') if `touse', at(`cut0', `cut1' , `cut2', `cut3') icodes
-
+			egen `cat_`var1'' = cut(`var1'), at(`cutx0', `cutx1' , `cutx2', `cutx3') icodes
+			replace `cat_`var1'' = `cat_`var1'' + 1 
 			
 			summ `var2', meanonly
 			local interv = (r(max) - r(min)) / 3
 							
-				local cut0 = r(min)
-				local cut1 = `cut0' + `interv'
-				local cut2 = `cut1' + `interv'
-				local cut3 = r(max) + 1		// floating point fix	
+				local cuty0 = r(min)
+				local cuty1 = `cuty0' + `interv'
+				local cuty2 = `cuty1' + `interv'
+				local cuty3 = r(max) + 1		// floating point fix	
 			
-			egen `cat_`var2'' = cut(`var2') if `touse', at(`cut0', `cut1' , `cut2', `cut3') icodes
-			
-			
-			replace `cat_`var1'' = `cat_`var1'' + 1 
+			egen `cat_`var2'' = cut(`var2'), at(`cuty0', `cuty1' , `cuty2', `cuty3') icodes
 			replace `cat_`var2'' = `cat_`var2'' + 1
 		}	
 	
 		if "`cut'" == "custom" {
 			
-			summ `var1', meanonly
-				local cutx0 = r(min)
-				local cutx3 = r(max)
-			
-			tokenize `cutx'
-				local cutx1 = `1'
-				local cutx2 = `2'
+			if "`cutx'" != "" {
+				summ `var1', meanonly
+					local cutx0 = r(min)
+					local cutx3 = r(max)
 				
-			egen `cat_`var1'' = cut(`var1') if `touse', at(`cutx0', `cutx1' , `cutx2', `cutx3') icodes
-
-				
-			summ `var2', meanonly
-				local cuty0 = r(min)
-				local cuty3 = r(max)
-			
-			tokenize `cuty'
-				local cuty1 = `1'
-				local cuty2 = `2'
-			
-			egen `cat_`var2'' = cut(`var2') if `touse', at(`cuty0', `cuty1' , `cuty2', `cuty3') icodes
-			
-			replace `cat_`var1'' = `cat_`var1'' + 1 
-			replace `cat_`var2'' = `cat_`var2'' + 1
-			
-		}
-	
+				tokenize `cutx'
+					local cutx1 = `1'
+					local cutx2 = `2'
+					
+				egen `cat_`var1'' = cut(`var1'), at(`cutx0', `cutx1' , `cutx2', `cutx3') icodes
+				replace `cat_`var1'' = `cat_`var1'' + 1 
+			}
+			else {
+				xtile `cat_`var1'' = `var1', n(3)
+			}
 		
+		
+			if "`cuty'" != "" {
+				summ `var2', meanonly
+					local cuty0 = r(min)
+					local cuty3 = r(max)
+				
+				tokenize `cuty'
+					local cuty1 = `1'
+					local cuty2 = `2'
+				
+				egen `cat_`var2'' = cut(`var2'), at(`cuty0', `cuty1' , `cuty2', `cuty3') icodes
+				replace `cat_`var2'' = `cat_`var2'' + 1
+			}
+			else {
+				xtile `cat_`var2'' = `var2', n(3)
+			}
+		}
+		
+
 		
 		sort `cat_`var1'' `cat_`var2''
 		
 		tempvar grp_cut
-		
 		gen `grp_cut' = .
 		
 		replace `grp_cut' = 1 if `cat_`var2''==1 & `cat_`var1''==1
@@ -181,13 +186,13 @@ qui {
 		local var11 = r(max)
 		local var11 : di `formatx' `var11'
 		
-		if "`cut'" == "custom" local var11 : di `formatx' `cutx1'
+		if ("`cut'" == "custom" & "`cutx'" != "") local var11 : di `formatx' `cutx1'
 		
 		summ `var1' if `cat_`var1'' == 2
 		local var12 = r(max)
 		local var12 : di `formatx' `var12'
 		
-		if "`cut'" == "custom" local var12 : di `formatx' `cutx2'
+		if ("`cut'" == "custom" & "`cutx'" != "") local var12 : di `formatx' `cutx2'
 		
 		summ `var1' if `cat_`var1'' == 3
 		local var13 = r(max)
@@ -197,13 +202,13 @@ qui {
 		local var21 = r(max)
 		local var21 : di `formaty' `var21'
 		
-		if "`cut'" == "custom" local var21 : di `formaty' `cuty1'
+		if ("`cut'" == "custom" & "`cuty'" != "") local var21 : di `formaty' `cuty1'
 		
 		summ `var2' if `cat_`var2'' == 2
 		local var22 = r(max)
 		local var22 : di `formaty' `var22'
 		
-		if "`cut'" == "custom" local var22 : di `formaty' `cuty2'
+		if ("`cut'" == "custom" & "`cuty'" != "") local var22 : di `formaty' `cuty2'
 		
 		summ `var2' if `cat_`var2'' == 3
 		local var23 = r(max)
@@ -213,7 +218,6 @@ qui {
 		// grp order: 1 = 1 1, 2 = 1 2, 3 = 1 3, 4 = 2 1, 5 = 2 2, 6 = 2 3, 7 = 3 1, 8 = 3 2, 9 = 3 3
 		
 	
-		
 		if "`count'" != "" {			
 
 			forval i = 1/3 {
@@ -498,8 +502,8 @@ qui {
 				xsize(1) ysize(1) ///
 				fxsize(`xscale') fysize(`yscale') ///
 				legend(off)		///
-					ytitle("`laby'") 	xtitle("`labx'") ///
-					name(_legend, replace)  nodraw   
+				ytitle("`laby'") xtitle("`labx'") ///
+				name(_legend, replace)  nodraw   
 
 			
 		restore			

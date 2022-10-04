@@ -245,7 +245,22 @@ bimap share_hisp share_afam using usa_county_shp_clean, cut(custom) cuty(3 10) c
 		 polygon(data("usa_state_shp_clean") ocolor(black) osize(0.2)) 
 ```
 
+<img src="/figures/bimap9.png" height="500">
+
+
+
+If we define only one custom cut-off, the other will automatically take on the pctile values:
+
+```
+bimap share_hisp share_afam using usa_county_shp_clean, cut(custom) cutx(3 10)  palette(orangeblue)    ///
+		 note("Data from the US Census Bureau.") ///	
+		 texty("Share of Hispanics") textx("Share of African Americans") texts(3.5) textlabs(3) values percent  ///
+		 ocolor() osize(none) ///
+		 polygon(data("usa_state_shp_clean") ocolor(black) osize(0.2)) 
+```
+
 <img src="/figures/bimap10.png" height="500">
+
 
 Cut-off's can be formatted as follows:
 
@@ -257,10 +272,9 @@ bimap share_hisp share_afam using usa_county_shp_clean, cut(custom) cuty(3 10) f
 		 polygon(data("usa_state_shp_clean") ocolor(black) osize(0.2)) 
 ```
 
-
 <img src="/figures/bimap11.png" height="500">
 
-We can now also pass `spmap` legend options to `bimap` to describe additional layers:
+`spmap` legend options can be passed to `bimap` to describe additional layers:
 
 
 ```
@@ -272,7 +286,7 @@ bimap share_hisp share_afam using usa_county_shp_clean, cut(pctile) palette(cens
 		 showleg legenda(off) legend(pos(7) size(5)) legstyle(2) 
 ```
 
-<img src="/figures/bimap10.png" height="500">
+<img src="/figures/bimap12.png" height="500">
 
 
 
