@@ -57,8 +57,8 @@ The syntax for **v1.4** is as follows:
 ```
 
 bimap vary varx [if] [in],  palette(option) cut(option) 
-		[ count percent values cutx(val1 val2) cuty(val1 val2) ocolor(str) osize(str) 
-		ndocolor(str) ndsize(str) ndocolor(str) showlegend
+		[ count percent values formatx(str) formaty(str) cutx(val1 val2) cuty(val1 val2) 
+		ocolor(str) osize(str) ndocolor(str) ndsize(str) ndocolor(str) showlegend
 		polygon(str) line(str) point(str) label(str) formatx(str) formaty(str)
 		textx(string) texty(str) TEXTLABSize(num) TEXTSize(num) TEXGap(num) BOXsize(num) xscale(num) yscale(num) 
 		title(str) subtitle(str) note(str) name(srt) scheme(str) ]
