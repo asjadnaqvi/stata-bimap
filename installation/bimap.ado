@@ -1,6 +1,7 @@
-*! bimap v1.4 (4 Oct 2022)
+*! bimap v1.5 (5 Nov 2022)
 *! Asjad Naqvi (asjadnaqvi@gmail.com)
-*
+
+* v1.5  (05 Nov 2022): 3 new colors: rgb, gscale, viridis. arrow, scalebar, diagram passthrus added.
 * v1.4  (02 Oct 2022): custom cut-off points added. cut'offs can be formatted. spmap legend passthru.
 * v1.33 (29 Sep 2022): Passthru options fixed.
 * v1.32 (19 Aug 2022): Fixed a bug in variable comparisons
@@ -28,14 +29,14 @@ version 15
  
 	syntax varlist(min=2 max=2 numeric) [if] [in] using/ , ///
 		cut(string) palette(string)  ///
-		[ count percent BOXsize(real 8) textx(string) texty(string) formatx(string) formaty(string) TEXTGap(real 2) xscale(real 30) yscale(real 100) TEXTLABSize(real 2)  TEXTSize(real 2.5) values ] ///
+		[ count percent BOXsize(real 8) textx(string) texty(string) formatx(string) formaty(string) TEXTGap(real 2) xscale(real 30) yscale(real 100) TEXTLABSize(real 2) TEXTSize(real 2.5) values ] ///
 		[ polygon(passthru) line(passthru) point(passthru) label(passthru) ] ///
 		[ ocolor(string) osize(string) ]   ///
 		[ ndocolor(string) ndsize(string) ndfcolor(string) ]   ///
 		[ title(passthru) subtitle(passthru) note(passthru) name(passthru)  ] ///
 		[ cutx(numlist min=2 max=2)  cuty(numlist min=2 max=2) SHOWLEGend  ] ///  // 1.4 updates
-		[ LEGend(passthru) legenda(passthru) LEGStyle(passthru) LEGJunction(passthru) LEGCount(passthru) LEGOrder(passthru) LEGTitle(passthru)  ]   // 1.4 legend controls as passthru
-		
+		[ LEGend(passthru) legenda(passthru) LEGStyle(passthru) LEGJunction(passthru) LEGCount(passthru) LEGOrder(passthru) LEGTitle(passthru)  ] ///  // 1.4 legend controls as passthru
+		[ arrow(passthru) diagram(passthru) scalebar(passthru) ]  // 1.5
 		
 		if (substr(reverse("`using'"),1,4) != "atd.") local using "`using'.dta"  // from spmap to check for extension
 		
@@ -178,8 +179,8 @@ qui {
 	
 		***** store the cut-offs for labels	
 		
-		if "`formatx'" =="" local formatx = "%05.1f"
-		if "`formaty'" =="" local formaty = "%05.1f"
+		if "`formatx'" =="" local formatx "%5.1f"
+		if "`formaty'" =="" local formaty "%5.1f"
 		
 		
 		summ `var1' if `cat_`var1'' == 1
@@ -248,7 +249,7 @@ qui {
 		// from spmap
    
 		if "`palette'" != "" {
-			local LIST "pinkgreen bluered greenblue purpleyellow yellowblue orangeblue brew1 brew2 brew3 census"
+			local LIST "pinkgreen bluered greenblue purpleyellow yellowblue orangeblue brew1 brew2 brew3 census rgb viridis gscale"
 			local LEN = length("`palette'")
 			local check = 0
 			foreach z of local LIST { 
@@ -258,12 +259,13 @@ qui {
 			}
 			
 			if !`check' {
-				di in yellow "Wrong palette specified. The supported palettes are {ul:pinkgreen}, {ul:bluered}, {ul:greenblue}, {ul:purpleyellow}, {ul:yellowblue}, {ul:orangeblue}, {ul:brew1}, {ul:brew2}, {ul:brew3}, {ul:census}. See {stata help bimap:help file}."
+				di in yellow "Wrong palette specified. The supported palettes are {it:pinkgreen}, {it:bluered}, {it:greenblue}, {it:purpleyellow}, {it:yellowblue}, {it:orangeblue}, {it:brew1}, {it:brew2}, {it:brew3}, {it:census}, {it:rgb}, {it:viridis}, {it:gscale}."
+				di in yellow "See {stata help bimap:help file}."
 				exit 198
 			}
 		}
 
-		** bottom left to bottom top, bottom middle to top middle, bottom right to top right
+		** bottom left > top left, bottom middle > top middle, bottom right > top right
 
 		if "`palette'" == "pinkgreen" {
 			local color #e8e8e8 #dfb0d6 #be64ac #ace4e4 #a5add3 #8c62aa #5ac8c8 #5698b9 #3b4994
@@ -305,7 +307,20 @@ qui {
 			local color #fffdef #e6f1df #d2e4f6 #fef3a9 #bedebc #a1c8ea #efd100 #4eb87b #007fc4
 		}
 		
-	
+		if "`palette'" == "rgb" {   
+			local color #F5F402 #8EBA13 #2A8F25 #FE870D #B8A5D2 #3092FA #FF4343 #D052EB #5148BA
+		}
+
+		
+		if "`palette'" == "gscale" {   
+			local color #e5e5e5 #d4d4d4 #bbbbbb #a2a2a2 #8a8a8a #727272 #5b5b5b #444444 #262626
+		}				
+		
+		if "`palette'" == "viridis" {   
+			local color #FDE724 #D2E11B #A5DA35 #35B778 #29788E #38568B #462F7C #48196B #440154
+		}
+		
+		
 		if "`polygon'" == "" {
 			local polyadd 
 		}
@@ -335,6 +350,7 @@ qui {
 				ndocolor(`ndo' ..) ndsize(`lw' ..) ndfcolor(`ndf' ..)  ///
 				`polygon' `line' `point' `label'  ///
 				`leg' `legstyle' `legenda' `legendstyle' `legjunction' `legcount' `legorder' `legtitle'  ///  // v1.4 legend passthrus
+				`arrow' `diagram' `scalebar' ///  // v1.5 passthrus
 					name(_map, replace) nodraw
 	
 

@@ -1,7 +1,7 @@
 
 ![StataMin](https://img.shields.io/badge/stata-2015-blue) ![issues](https://img.shields.io/github/issues/asjadnaqvi/stata-bimap) ![license](https://img.shields.io/github/license/asjadnaqvi/stata-bimap) ![Stars](https://img.shields.io/github/stars/asjadnaqvi/stata-bimap) ![version](https://img.shields.io/github/v/release/asjadnaqvi/stata-bimap) ![release](https://img.shields.io/github/release-date/asjadnaqvi/stata-bimap)
 
-# bimap v1.4
+# bimap v1.5
 
 This package provides the ability to draw bi-variate maps in Stata. It is based on the [Bi-variate maps Guide](https://medium.com/the-stata-guide/stata-graphs-bi-variate-maps-b1e96dd4c2be).
 
@@ -15,7 +15,7 @@ The package can be installed from SSC (**v1.32**):
 ssc install bimap, replace
 ```
 
-Or it can be installed from GitHub (**v1.4**):
+Or it can be installed from GitHub (**v1.5**):
 
 ```
 net install bimap, from("https://raw.githubusercontent.com/asjadnaqvi/stata-bimap/main/installation/") replace
@@ -52,7 +52,7 @@ This command is a wrapper for `spmap` and assumes that you have shapefiles in St
 
 ## Syntax
 
-The syntax for **v1.4** is as follows:
+The syntax for **v1.5** is as follows:
 
 ```
 
@@ -60,6 +60,7 @@ bimap vary varx [if] [in],  palette(option) cut(option)
 		[ count percent values formatx(str) formaty(str) cutx(val1 val2) cuty(val1 val2) 
 		ocolor(str) osize(str) ndocolor(str) ndsize(str) ndocolor(str) showlegend
 		polygon(str) line(str) point(str) label(str) formatx(str) formaty(str)
+		arrow(str) diagram(str) scalebar(str) 
 		textx(string) texty(str) TEXTLABSize(num) TEXTSize(num) TEXGap(num) BOXsize(num) xscale(num) yscale(num) 
 		title(str) subtitle(str) note(str) name(srt) scheme(str) ]
 ```
@@ -156,24 +157,27 @@ bimap share_hisp share_afam using usa_county_shp_clean, cut(equal) palette(pinkg
 ```
 local i = 1
 
-foreach x in pinkgreen bluered greenblue purpleyellow yellowblue orangeblue brew1 brew2 brew3 census {
+foreach x in pinkgreen bluered greenblue purpleyellow yellowblue orangeblue brew1 brew2 brew3 census rgb viridis gscale {
+
 		bimap share_hisp share_afam using usa_county_shp_clean, cut(pctile) palette(`x') percent title("Scheme: `x'") 
 		graph export bimap3_`i'.png, replace wid(2000)	
-			local i = `i' + 1
+
+		local i = `i' + 1
 }
 ```
 
 <img src="/figures/bimap3_1.png" height="250"><img src="/figures/bimap3_2.png" height="250"><img src="/figures/bimap3_3.png" height="250">
 <img src="/figures/bimap3_4.png" height="250"><img src="/figures/bimap3_5.png" height="250"><img src="/figures/bimap3_6.png" height="250">
 <img src="/figures/bimap3_7.png" height="250"><img src="/figures/bimap3_8.png" height="250"><img src="/figures/bimap3_9.png" height="250">
-<img src="/figures/bimap3_10.png" height="250">
+<img src="/figures/bimap3_10.png" height="250"><img src="/figures/bimap3_11.png" height="250"><img src="/figures/bimap3_12.png" height="250">
+<img src="/figures/bimap3_13.png" height="250">
 
 
 ### Advanced examples
 
 ```
 bimap share_asian share_afam using usa_county_shp_clean, cut(pctile) palette(bluered)  ///
-	title("{fontface Arial Bold:My first bivariate map}") subtitle("Made with Stata") note("Data from the US Census Bureau.") ///	
+	title("{fontface Arial Bold:A Stata bivariate map}") note("Data from the US Census Bureau.") ///	
 		 textx("Share of African Americans") texty("Share of Asians") texts(3.5) textlabs(3) values count ///
 		 ocolor() osize(none) ///
 		 polygon(data("usa_state_shp_clean") ocolor(white) osize(0.3))
@@ -184,10 +188,10 @@ bimap share_asian share_afam using usa_county_shp_clean, cut(pctile) palette(blu
 
 ```
 bimap share_asian share_afam using usa_county_shp_clean, cut(pctile) palette(yellowblue)  ///
-	title("{fontface Arial Bold:My first bivariate map}") subtitle("Made with Stata") note("Data from the US Census Bureau.") ///	
+	title("{fontface Arial Bold:A Stata bivariate map}") note("Data from the US Census Bureau.") ///		
 		 textx("Share of African Americans") texty("Share of Asians") texts(3.5) textlabs(3) values count ///
 		 ocolor() osize(none) ///
-		 polygon(data("usa_state_shp_clean") ocolor(black) osize(0.2)) 
+		 polygon(data("usa_state_shp_clean") ocolor(black) osize(0.2))
 ```
 
 <img src="/figures/bimap6.png" height="500">
@@ -195,7 +199,7 @@ bimap share_asian share_afam using usa_county_shp_clean, cut(pctile) palette(yel
 
 ```
 bimap share_asian share_hisp  using usa_county_shp_clean, cut(pctile) palette(orangeblue)  ///
-	title("{fontface Arial Bold:My first bivariate map}") subtitle("Made with Stata") note("Data from the US Census Bureau.") ///	
+	title("{fontface Arial Bold:A Stata bivariate map}") note("Data from the US Census Bureau.") ///	
 		 textx("Share of Hispanics") texty("Share of Asians") texts(3.5) textlabs(3) values count ///
 		 ocolor() osize(none) ///
 		 polygon(data("usa_state_shp_clean") ocolor(black) osize(0.2)) 
@@ -209,12 +213,12 @@ Since `bimap` is a wrapper of `spmap`, we can pass information for other layers 
 
 ```
 bimap share_hisp share_afam using usa_county_shp_clean, cut(pctile) palette(pinkgreen) percent  ///
-	title("{fontface Arial Bold:My first bivariate map}") subtitle("Made with Stata") ///
+	title("{fontface Arial Bold:A Stata bivariate map}") ///
 	note("Data from the US Census Bureau. Counties with population > 100k plotted as proportional dots.", size(1.8)) ///	
 		 textx("Share of African Americans") texty("Share of Hispanics") texts(3.5) textlabs(3) values  ///
-		 osize(none) ///
+		 ocolor() osize(none) ///
 		 polygon(data("usa_state_shp_clean") ocolor(white) osize(0.3)) ///
-		 point(data("usa_county2") x(_CX) y(_CY) select(keep if tot_pop>100000) proportional(tot_pop) psize(absolute) fcolor(lime%85) ocolor(black) osize(0.12) size(0.9))
+		 point(data("usa_county2") x(_CX) y(_CY) select(keep if tot_pop>100000) proportional(tot_pop) psize(absolute) fcolor(lime%85) ocolor(black) osize(0.12) size(0.9) )  
 ```
 
 <img src="/figures/bimap8.png" height="500">
@@ -299,7 +303,11 @@ Please open an [issue](https://github.com/asjadnaqvi/stata-bimap/issues) to repo
 
 ## Versions
 
-**v1.4  (04 Oct 2022)**
+**v1.5 (05 Nov 2022)**
+- Three new palettes added: `rgb`, `viridis`, `gscale`.
+- Added `spmap` passthru options for `arrow`, `diagram`, and `scalebar`.
+
+**v1.4 (04 Oct 2022)**
 - Added the option to add custom cut-offs.
 - Added the option to format cut-offs,
 - Added the option to show default `spmap` legends.
@@ -335,9 +343,6 @@ Please open an [issue](https://github.com/asjadnaqvi/stata-bimap/issues) to repo
 
 **v1.0 (08 Apr 2022)**
 - Public release.
-
-
-
 
 
 

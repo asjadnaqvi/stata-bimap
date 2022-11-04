@@ -1,7 +1,7 @@
 {smcl}
-{* 02Oct2022}{...}
+{* 05Nov2022}{...}
 {hi:help bimap}{...}
-{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v1.4 (GitHub)}}
+{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v1.5 (GitHub)}}
 
 {hline}
 
@@ -17,7 +17,8 @@ Note that {cmd:bimap} only works if you have processed the shapefiles using Stat
 
 {cmd:bimap} {it:vary varx} {ifin}, {cmd:palette}({it:option}) {cmd:cut}({it:option}) 
 		{cmd:[} {cmd:cutx}({it:val1 val2}) {cmd:cuty}({it:val1 val2}) {cmd:values} {cmd:count} {cmd:percent}  {cmd:ocolor}({it:str}) {cmd:osize}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str}) 
-		{cmd:polygon}({it:options}) {cmd:line}({it:options}) {cmd:point}({it:options}) {cmd:label}({it:options}) {cmdab:showleg:end} {cmd:formatx}({it:str}) {cmd:formaty}({it:str}) 
+		{cmdab:showleg:end} {cmd:formatx}({it:str}) {cmd:formaty}({it:str}) 
+		{cmd:polygon}({it:options}) {cmd:line}({it:options}) {cmd:point}({it:options}) {cmd:label}({it:options}) {cmd:arrow}({it:options}) {cmd:diagram}({it:options}) {cmd:scalebar}({it:options}) 
 		{cmd:textx}({it:str}) {cmd:texty}({it:str}) {cmdab:textg:ap}({it:num}) {cmdab:textlabs:ize}({it:num}) {cmdab:texts:ize}({it:num}) {cmdab:box:size}({it:num}) {cmd:xscale}({it:num}) {cmd:yscale}({it:num}) 
 		{cmd:title}({it:str}) {cmd:subtitle}({it:str}) {cmd:note}({it:str}) {cmd:name}({it:str}) {cmd:scheme}({it:str}) {cmd:]}
 
@@ -31,17 +32,17 @@ The options are described as follows:
 
 {p2coldent : {opt bimap} {it:vary varx}}The command requires numeric {it:vary} and {it:varx} variables.{p_end}
 
-{p2coldent : {opt cut(option)}}Here {cmd:cut} take on three options: {cmd:cutcut({it:pctile})} for percentiles or terciles in this case, 
-OR {cmd:cut({it:equal})} for equal intervals, OR {cmd:cut({{it:custom})} for custom cut-offs.
-If {ul:{it:custom}} is specified, then either {cmd:cutx()} or {cmd:cuty()}, or both need to be defined.{p_end}
+{p2coldent : {opt cut(option)}}Here {cmd:cut} take on three options: {cmd:cut({it:pctile})} for terciles, 
+{cmd:cut({it:equal})} for equal intervals, or {cmd:cut({it:custom})} for custom cut-offs.
+{cmd:cut({it:custom})} is specified, then either {cmd:cutx()}, or {cmd:cuty()}, or both need to be defined.{p_end}
 
 {p2coldent : {opt cutx(val1 val2)}, {opt cuty(val1 val2)}}Define the middle two cut-off points for the x and y variables. Either one of the two, or both options need to be specified.
 If only one option is specified, then the other will automatically take the {it:pctile} cut-offs. The minimum and maximum cut-offs will be estimated directly by the program.
 If values are outside of the variable range, then the program will throw an error.{p_end}
 
-{p2coldent : {opt palette(option)}}Palette options for bi-variate maps are: {ul:{it:pinkgreen}}, {ul:{it:bluered}}, {ul:{it:greenblue}}, {ul:{it:purpleyellow}}, {ul:{it:yellowblue}}, {ul:{it:orangeblue}},
-{ul:{it:brew1}}, {ul:{it:brew2}}, {ul:{it:brew3}}, {ul:{it:census}}.
-See {stata help bimap:help file} for details and {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub} for palette examples.{p_end}
+{p2coldent : {opt palette(option)}}Palette options for bi-variate maps are: {it:pinkgreen}, {it:bluered}, {it:greenblue}, {it:purpleyellow}, {it:yellowblue}, {it:orangeblue},
+{it:brew1}, {it:brew2}, {it:brew3}, {it:census}, {it:rgb}, {it:viridis}, {it:gscale}.
+See {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub} for palette examples.{p_end}
 
 {p2coldent : {opt osize(string)}}Line width of polygons. Same as in {cmd:spmap}. Default value is {it:0.02}. Also applied to polygons with no data.{p_end}
 
@@ -52,6 +53,8 @@ See {stata help bimap:help file} for details and {browse "https://github.com/asj
 {p2coldent : {opt ndfcolor(str)}}Fill color of polygons with no data. Same as in {cmd:spmap}. Default value is {it:gs8}.{p_end}
 
 {p2coldent : {opt polygon}(), {opt line}(), {opt point}(), {opt label}()}These are {cmd:spmap} passthru options for additional layers. See {stata help spmap} for details.{p_end}
+
+{p2coldent : {opt arrow}(), {opt diagram}(), {opt scalebar}()}These are {cmd:spmap} passthru options for additional layers. See {stata help spmap} for details.{p_end}
 
 {p2coldent : {opt showleg:end}}If this option is specified, then the following {stata help spmap:spmap} options are enabled: {cmd:legend}(), {cmd:legenda}(), {cmdab:legs:tyle}(), {cmdab:legj:unction}(), {cmdab:legc:ount}(), {cmdab:lego:rder()},
 {cmdab:legt:title}(), plus additional options that can be specified for supplementary layers: {cmd:polygon}(), {cmd:line}(), {cmd:point}(), {cmd:label}().
@@ -141,8 +144,8 @@ Additional examples on {browse "https://github.com/asjadnaqvi/stata-bimap":GitHu
 
 {title:Package details}
 
-Version      : {bf:bimap} v1.4
-This release : 04 Oct 2022
+Version      : {bf:bimap} v1.5
+This release : 04 Nov 2022
 First release: 08 Apr 2022
 Repository   : {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub}
 Keywords     : Stata, graph, bi-variate, map
@@ -157,10 +160,14 @@ Twitter      : {browse "https://twitter.com/AsjadNaqvi":@AsjadNaqvi}
 {title:Acknowledgements}
 
 {p 4 4 2}
-Ruth Watkinson found an error in the grouping code. Pierre-Henri Bono suggested {it:passthru} options for {cmd:spmap}. 
-Kit Baum requested the {it:percent} option and fixes to label colors. 
-Mattias Öhman found an error in cut-offs and color assignments with missing groups.
-Cristian Jordan Diaz found and error in variable name comparisons.
+Tyson King-Meadows and Vishakha Agarwal requested a greyscale palette (v1.5).
+Souradet Shaw requested scalebar and arrow passthrus (v1.5). 
+Paul Frissard Martínez requested spmap legend options (v1.4). 
+Ruth Watkinson found an error in the grouping code (v1.3). 
+Pierre-Henri Bono suggested core passthrus for additional {stata help spmap:spmap} layers (v1.3). 
+Kit Baum requested the {it:percent} option and fixes to label colors (v1.3). 
+Mattias Öhman found an error in cut-offs and color assignments with missing groups (v1.3).
+Cristian Jordan Diaz found and error in variable name comparisons (v1.2).
 
 {title:Feedback}
 
