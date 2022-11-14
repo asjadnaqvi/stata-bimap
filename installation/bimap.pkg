@@ -1,4 +1,4 @@
-v 1.5
+v 1.51
 d {bf:BIMAP}: Bi-variate maps
 d
 d
@@ -10,7 +10,7 @@ d KW: map
 d KW: bivariate map
 d Distribution-Date: 20221105
 d
-d This  version: 05 Nov 2022
+d This  version: 14 Nov 2022
 d First version: 08 Apr 2022
 d License: MIT
 d

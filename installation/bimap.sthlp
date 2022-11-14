@@ -1,7 +1,7 @@
 {smcl}
-{* 05Nov2022}{...}
+{* 14Nov2022}{...}
 {hi:help bimap}{...}
-{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v1.5 (GitHub)}}
+{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v1.51 (GitHub)}}
 
 {hline}
 
@@ -144,8 +144,8 @@ Additional examples on {browse "https://github.com/asjadnaqvi/stata-bimap":GitHu
 
 {title:Package details}
 
-Version      : {bf:bimap} v1.5
-This release : 04 Nov 2022
+Version      : {bf:bimap} v1.51
+This release : 14 Nov 2022
 First release: 08 Apr 2022
 Repository   : {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub}
 Keywords     : Stata, graph, bi-variate, map

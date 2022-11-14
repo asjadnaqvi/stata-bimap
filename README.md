@@ -1,7 +1,7 @@
 
 ![StataMin](https://img.shields.io/badge/stata-2015-blue) ![issues](https://img.shields.io/github/issues/asjadnaqvi/stata-bimap) ![license](https://img.shields.io/github/license/asjadnaqvi/stata-bimap) ![Stars](https://img.shields.io/github/stars/asjadnaqvi/stata-bimap) ![version](https://img.shields.io/github/v/release/asjadnaqvi/stata-bimap) ![release](https://img.shields.io/github/release-date/asjadnaqvi/stata-bimap)
 
-# bimap v1.5
+# bimap v1.51
 
 This package provides the ability to draw bi-variate maps in Stata. It is based on the [Bi-variate maps Guide](https://medium.com/the-stata-guide/stata-graphs-bi-variate-maps-b1e96dd4c2be).
 
@@ -15,7 +15,7 @@ The package can be installed from SSC (**v1.5**):
 ssc install bimap, replace
 ```
 
-Or it can be installed from GitHub (**v1.5**):
+Or it can be installed from GitHub (**v1.51**):
 
 ```
 net install bimap, from("https://raw.githubusercontent.com/asjadnaqvi/stata-bimap/main/installation/") replace
@@ -52,7 +52,7 @@ This command is a wrapper for `spmap` and assumes that you have shapefiles in St
 
 ## Syntax
 
-The syntax for **v1.5** is as follows:
+The syntax for **v1.51** is as follows:
 
 ```
 
@@ -302,6 +302,9 @@ Please open an [issue](https://github.com/asjadnaqvi/stata-bimap/issues) to repo
 
 
 ## Versions
+
+**v1.51 (14 Nov 2022)** 
+- Minor fixes to legend text options.
 
 **v1.5 (05 Nov 2022)**
 - Three new palettes added: `rgb`, `viridis`, `gscale`.

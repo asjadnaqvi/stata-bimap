@@ -1,6 +1,7 @@
-*! bimap v1.5 (5 Nov 2022)
+*! bimap v1.51 (5 Nov 2022)
 *! Asjad Naqvi (asjadnaqvi@gmail.com)
 
+* v1.51 (14 Nov 2022): Minor legend fixes
 * v1.5  (05 Nov 2022): 3 new colors: rgb, gscale, viridis. arrow, scalebar, diagram passthrus added.
 * v1.4  (02 Oct 2022): custom cut-off points added. cut'offs can be formatted. spmap legend passthru.
 * v1.33 (29 Sep 2022): Passthru options fixed.
@@ -381,19 +382,9 @@ qui {
 	
 		cap drop spike*
 	
-		if "`textx'" == "" {
-			local labx = "`var1'"
-		}
-		else {
-			local labx = "`textx'"
-		}
+		if "`textx'" == "" 	local textx = "`var1'" 
+		if "`texty'" == "" 	local texty = "`var2'"
 		
-		if "`texty'" == "" {
-			local laby = "`var2'"
-		}
-		else {
-			local laby = "`texty'"
-		}
 	
 	
 		// arrows
@@ -401,13 +392,11 @@ qui {
 		gen spike1_x2  = 3.6 		in 1 
 		gen spike1_y1  = 0.35 		in 1	
 		gen spike1_y2  = 0.35 		in 1	
-		gen spike1_m   = "`labx'" 	in 1
 			
 		gen spike2_y1  = 0.35 		in 1
 		gen spike2_y2  = 3.6 		in 1 
 		gen spike2_x1  = 0.35 		in 1		
 		gen spike2_x2  = 0.35 		in 1		
-		gen spike2_m   = "`laby'" 	in 1
 		
 		// ticks
 		gen xvalx = .
@@ -446,11 +435,11 @@ qui {
 		
 		replace labx = 2 		in 1
 		replace laby = 0 		in 1
-		replace labn = "`labx'" in 1
+		replace labn = "`textx'" in 1
 		
 		replace labx = 0 		in 2
 		replace laby = 3 		in 2
-		replace labn = "`laby'" in 2
+		replace labn = "`texty'" in 2
 	
 	
 		// colors
@@ -512,14 +501,13 @@ qui {
 			`yvals' ///
 			, ///
 				xlabel(, nogrid) ylabel(, nogrid) ///
-				yscale(range(0 4)) xscale(range(0 4)) ///
-				xscale(off) yscale(off) ///
+				yscale(range(0 4) off) xscale(range(0 4) off) ///
 				aspectratio(1) ///
 				xsize(1) ysize(1) ///
 				fxsize(`xscale') fysize(`yscale') ///
 				legend(off)		///
-				ytitle("`laby'") xtitle("`labx'") ///
 				name(_legend, replace)  nodraw   
+
 
 			
 		restore			
