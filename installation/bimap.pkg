@@ -1,4 +1,4 @@
-v 1.51
+v 1.6
 d {bf:BIMAP}: Bi-variate maps
 d
 d
@@ -8,9 +8,9 @@ d KW: Stata
 d KW: graphs
 d KW: map
 d KW: bivariate map
-d Distribution-Date: 20221105
+d Distribution-Date: 20230316
 d
-d This  version: 14 Nov 2022
+d This  version: 16 Mar 2023
 d First version: 08 Apr 2022
 d License: MIT
 d

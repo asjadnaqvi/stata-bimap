@@ -1,7 +1,7 @@
 {smcl}
-{* 14Nov2022}{...}
+{* 16Mar2023}{...}
 {hi:help bimap}{...}
-{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v1.51 (GitHub)}}
+{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v1.6 (GitHub)}}
 
 {hline}
 
@@ -15,11 +15,11 @@ Note that {cmd:bimap} only works if you have processed the shapefiles using Stat
 {marker syntax}{title:Syntax}
 {p 8 15 2}
 
-{cmd:bimap} {it:vary varx} {ifin}, {cmd:palette}({it:option}) {cmd:cut}({it:option}) 
-		{cmd:[} {cmd:cutx}({it:val1 val2}) {cmd:cuty}({it:val1 val2}) {cmd:values} {cmd:count} {cmd:percent}  {cmd:ocolor}({it:str}) {cmd:osize}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str}) 
-		{cmdab:showleg:end} {cmd:formatx}({it:str}) {cmd:formaty}({it:str}) 
+{cmd:bimap} {it:vary varx} {ifin}, {cmd:[} {cmd:palette}({it:name}) reverse  {cmd:clr0}({it:str}) {cmd:clrx}({it:str}) {cmd:clry}({it:str}) {cmdab:clrsat:urate}({it:num})
+		{cmd:cut}({it:pctile}|{it:equal}|{it:custom}) {cmd:cutx}({it:numlist}) {cmd:cuty}({it:numlist}) {cmd:binsproper} {cmd:bins}({it:num >=2}) {cmd:binx}({it:num >=2}) {cmd:biny}({it:num >=2})
+		{cmd:values} {cmd:count} {cmd:percent} {cmdab:showleg:end} {cmd:ocolor}({it:str}) {cmd:osize}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str}) 
+		{cmd:textx}({it:str}) {cmd:texty}({it:str}) {cmdab:textg:ap}({it:num}) {cmdab:textlabs:ize}({it:num}) {cmdab:texts:ize}({it:num}) {cmd:formatx}({it:str}) {cmd:formaty}({it:str}) {cmd:xscale}({it:num}) {cmd:yscale}({it:num}) 
 		{cmd:polygon}({it:options}) {cmd:line}({it:options}) {cmd:point}({it:options}) {cmd:label}({it:options}) {cmd:arrow}({it:options}) {cmd:diagram}({it:options}) {cmd:scalebar}({it:options}) 
-		{cmd:textx}({it:str}) {cmd:texty}({it:str}) {cmdab:textg:ap}({it:num}) {cmdab:textlabs:ize}({it:num}) {cmdab:texts:ize}({it:num}) {cmdab:box:size}({it:num}) {cmd:xscale}({it:num}) {cmd:yscale}({it:num}) 
 		{cmd:title}({it:str}) {cmd:subtitle}({it:str}) {cmd:note}({it:str}) {cmd:name}({it:str}) {cmd:scheme}({it:str}) {cmd:]}
 
 
@@ -30,19 +30,36 @@ The options are described as follows:
 {synopthdr}
 {synoptline}
 
+{p 4 4 2}
+{it:{ul:Map options}}
+
 {p2coldent : {opt bimap} {it:vary varx}}The command requires numeric {it:vary} and {it:varx} variables.{p_end}
 
-{p2coldent : {opt cut(option)}}Here {cmd:cut} take on three options: {cmd:cut({it:pctile})} for terciles, 
-{cmd:cut({it:equal})} for equal intervals, or {cmd:cut({it:custom})} for custom cut-offs.
-{cmd:cut({it:custom})} is specified, then either {cmd:cutx()}, or {cmd:cuty()}, or both need to be defined.{p_end}
+{p2coldent : {opt cut(option)}}Here {opt cut} take on three options: {opt cut(pctile)} for percentiles, or {opt cut(equal)} for equally-spaced intervals. If either
+{opt cutx()}, or {opt cuty()}, or are specified, then they overwrite the defined {opt cut()} options. Default is {opt cut(pctile)}.{p_end}
 
-{p2coldent : {opt cutx(val1 val2)}, {opt cuty(val1 val2)}}Define the middle two cut-off points for the x and y variables. Either one of the two, or both options need to be specified.
-If only one option is specified, then the other will automatically take the {it:pctile} cut-offs. The minimum and maximum cut-offs will be estimated directly by the program.
-If values are outside of the variable range, then the program will throw an error.{p_end}
+{p2coldent : {opt cutx(numlist)}, {opt cuty(numlist)}}For these options, define the {it:middle} cut-off points for the x and y variables. Either one of the two, or both can be specified, and
+they will overwrite the {opt cut()} options. The minimum and maximum cut-offs will be estimated directly by the program, therefore do not specify the end points.{p_end}
 
-{p2coldent : {opt palette(option)}}Palette options for bi-variate maps are: {it:pinkgreen}, {it:bluered}, {it:greenblue}, {it:purpleyellow}, {it:yellowblue}, {it:orangeblue},
-{it:brew1}, {it:brew2}, {it:brew3}, {it:census}, {it:rgb}, {it:viridis}, {it:gscale}.
-See {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub} for palette examples.{p_end}
+{p2coldent : {opt palette(option)}}In version v1.6 and above, palettes are dynamically generated for any number of {opt bins()}. Named palettes are: 
+{it:pinkgreen}, {it:bluered}, {it:greenblue}, {it:purpleyellow}, {it:yellowblue}, {it:orangeblue}. The old legacy palettes are still available and will default to the
+3x3 scheme. Legacy palettes are: {it:pinkgreen}, {it:bluered0}, {it:greenblue0}, {it:purpleyellow0}, {it:yellowblue0}, {it:orangeblue0}, {it:brew1}, {it:brew2}, {it:brew3}, {it:census}, {it:rgb}, {it:viridis}, {it:gscale}.
+If legacy palettes are defined, then number of bins are fixed at 3x3 and other custom binning options will be ignored.
+See {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub} for examples of legacy palettes. Default option is {opt palette(pinkgreen)}.
+Users can also over-write the palettes using the {opt clr} options described below.{p_end}
+
+{p2coldent : {opt clr0()}, {opt clrx()}, {opt clry()}}Users can overwrite the colors end-points using one or more of these options. Option {opt clr0()} is the
+starting bottom-left color. Similarly, {opt clrx()}, {opt clry()} are x-axis bottom-right and y-axis top-left colors. One can either define a "named" Stata color (e.g.
+named colors from {stata colorpalette s2:s2 scheme}), or they need to provide Hex values. DO NOT specify RBG values! For example, true Red has an RGB value 
+of "255 0 0", while its Hex code is #ff0000. In order to convert or select Hex colors, a good option is the {browse "https://g.co/kgs/iKAHGF":Google Color Picker}.
+Otherwise, {stata help colorpalette:colorpalette}, other softwares (including MS Paint), and websites can be used as well.{p_end}
+
+{p2coldent : {opt clrsat:urate(num)}}Change the saturation of the colors. Higher values are for brighter colors. Default is {opt clrsat(6)}.{p_end}
+
+{p2coldent : {opt reverse}}Swap the x- and y-axis colors. This option does not work for legacy palettes.{p_end}
+
+{p2coldent : {opt bins(num)}, {opt binx(num)}, {opt biny(num)}}Users can either defined {it:n}x{it:n} bins by using the option {opt bins(n)}. Otherwise custom bins can
+also be defined using {opt binx()} and/or {opt biny()}. The default is {opt bin(3)}. Bins are also constraint to a minimum dimension of 2.{p_end}
 
 {p2coldent : {opt osize(string)}}Line width of polygons. Same as in {cmd:spmap}. Default value is {it:0.02}. Also applied to polygons with no data.{p_end}
 
@@ -66,30 +83,32 @@ This option is still {it:beta}, so suggestions for improvement are appreciated.{
 
 
 {p 4 4 2}
-{it:{ul:Bi-variate legend}:}
+{it:{ul:Legend options}}
 
 {p2coldent : {opt count} {it:or} {opt percent}}Display the count or percent of categories in each box in the map legend.{p_end}
 
 {p2coldent : {opt values}}Display the cut-off values on the legend axes.{p_end}
 
-{p2coldent : {opt formatx}(str), {opt formaty}(str)}Format the values on the legend axes. Default format is {it:%5.1f}.{p_end}
+{p2coldent : {opt vallabs:ize(str)}}The size of the box values. The default value is {opt vallabs(1.8)}.{p_end}
+
+{p2coldent : {opt formatval}(fmt)}Format of the box values. Default format is {opt formatval(%5.1f)}.{p_end}
+
+{p2coldent : {opt formatx}(fmt), {opt formaty}(fmt)}Format the values on the legend axes. Default format is {opt formatx(%5.1f)}, {opt formaty(%5.1f)}.{p_end}
 
 {p2coldent : {opt textx(str)}, {opt texty(str)}}The axes labels of the legend. The default values are the variable names.{p_end}
 
-{p2coldent : {opt textg:ap(num)}}The gap of the axes labels from the lines. The default value is {it:2}.{p_end}
+{p2coldent : {opt textg:ap(num)}}The gap of the axes labels from the lines. The default value is {opt textg(2)}.{p_end}
 
-{p2coldent : {opt texts:ize(str)}}The text size of the legend axis labels. The default value is {it:2.5}.{p_end}
+{p2coldent : {opt texts:ize(str)}}The text size of the legend axis labels. The default value is {opt texts(2.5)}.{p_end}
 
-{p2coldent : {opt textlabs:ize(str)}}The text size of the cut-off values. The default value is {it:2}.{p_end}
+{p2coldent : {opt textlabs:ize(str)}}The text size of the cut-off values. The default value is {opt textlabs(2)}.{p_end}
 
-{p2coldent : {opt boxs:ize(num)}}Size of the square grids in the legend. Default value is {it:8}. This is an advanced option so use it with caution.
-Ideally don't touch this.{p_end}
+{p2coldent : {opt binsproper}}Show actual cut-off on the axes in the legend. Otherwise equally spaced boxes are shown. The option {opt binsproper} will look
+squished especially if the categories are bunched together. This will most likely cause labels to overlap.{p_end}
 
-{p2coldent : {opt xscale(num)}}The scale of the legend on the x-axis. Default value is {it:30}. This option also requires adjusting the {cmd:boxsize}. This is an advanced option so use it with caution. 
-Ideally don't touch this.{p_end}
+{p2coldent : {opt xscale(num)}}The scale of the legend on the x-axis. Default value is {opt xscale(35)}. This option can be used to change the legend dimensions.{p_end}
 
-{p2coldent : {opt yscale(num)}}The scale of the legend on the y-axis. Default value is {it:100}. This option also requires adjusting the {cmd:boxsize}. This is an advanced option so use it with caution. 
-Ideally don't touch this.{p_end}
+{p2coldent : {opt yscale(num)}}The scale of the legend on the y-axis. Default value is {opt yscale (100)}. This is an advanced option so use it with caution.{p_end}
 
 {synoptline}
 {p2colreset}{...}
@@ -97,7 +116,7 @@ Ideally don't touch this.{p_end}
 
 {title:Dependencies}
 
-{cmd:bimap} requires {stata help spmap:spmap} (Pisati 2018) and {browse "http://repec.sowi.unibe.ch/stata/palettes/index.html":palettes} (Jann 2018):
+{cmd:bimap} requires {stata help spmap:spmap} (Pisati 2018) and {browse "http://repec.sowi.unibe.ch/stata/palettes/index.html":palettes} (Jann 2018, 2022):
 
 {stata ssc install spmap, replace}
 {stata ssc install palettes, replace}
@@ -138,17 +157,17 @@ bimap share_asian share_afam using usa_county_shp_clean, cut(pctile) palette(blu
 		 polygon(data("usa_state_shp_clean") ocolor(white) osize(0.3))
 
 
-Additional examples on {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub}.
+Please see additional examples on {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub}.
 
 {hline}
 
 {title:Package details}
 
-Version      : {bf:bimap} v1.51
-This release : 14 Nov 2022
+Version      : {bf:bimap} v1.6
+This release : 16 Mar 2023
 First release: 08 Apr 2022
 Repository   : {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub}
-Keywords     : Stata, graph, bi-variate, map
+Keywords     : Stata, map, bimap, bi-variate
 License      : {browse "https://opensource.org/licenses/MIT":MIT}
 
 Author       : {browse "https://github.com/asjadnaqvi":Asjad Naqvi}
@@ -172,7 +191,7 @@ Cristian Jordan Diaz found and error in variable name comparisons (v1.2).
 {title:Feedback}
 
 {p 4 4 2}
-If you find bugs or have feature requests, then please open an {browse "https://github.com/asjadnaqvi/stata-bimap/issues":issue} on GitHub.
+If you find bugs and/or have feature requests, then please open an {browse "https://github.com/asjadnaqvi/stata-bimap/issues":issue} on GitHub.
 
 {title:References}
 
@@ -180,4 +199,11 @@ If you find bugs or have feature requests, then please open an {browse "https://
 
 {p 4 8 2}Jann, B. (2018). {browse "https://www.stata-journal.com/article.html?article=gr0075":Color palettes for Stata graphics}. The Stata Journal 18(4): 765-785.
 
+{p 4 8 2}Jann, B. (2022). {browse "https://ideas.repec.org/p/bss/wpaper/43.html":Color palettes for Stata graphics: an update}. University of Bern Social Sciences Working Papers No. 43. 
 
+{title:Other visualization packages}
+
+{psee}
+    {helpb arcplot}, {helpb alluvial}, {helpb bimap}, {helpb circlebar}, {helpb circlepack}, {helpb clipgeo}, {helpb delaunay}, {helpb joyplot}, 
+	{helpb marimekko}, {helpb sankey}, {helpb schemepack}, {helpb spider}, {helpb streamplot}, {helpb sunburst}, {helpb treecluster}, {helpb treemap}.
+	   

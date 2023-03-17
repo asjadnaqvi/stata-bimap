@@ -1,6 +1,7 @@
-*! bimap v1.51 (5 Nov 2022)
+*! bimap v1.6 (17 Mar 2023)
 *! Asjad Naqvi (asjadnaqvi@gmail.com)
 
+* v1.6  (17 Mar 2023): Colors are now dynamically generated for any number of bins. several new options to control colors, bins, saturation, labels
 * v1.51 (14 Nov 2022): Minor legend fixes
 * v1.5  (05 Nov 2022): 3 new colors: rgb, gscale, viridis. arrow, scalebar, diagram passthrus added.
 * v1.4  (02 Oct 2022): custom cut-off points added. cut'offs can be formatted. spmap legend passthru.
@@ -28,16 +29,18 @@ program bimap, sortpreserve
 
 version 15
  
-	syntax varlist(min=2 max=2 numeric) [if] [in] using/ , ///
-		cut(string) palette(string)  ///
-		[ count percent BOXsize(real 8) textx(string) texty(string) formatx(string) formaty(string) TEXTGap(real 2) xscale(real 30) yscale(real 100) TEXTLABSize(real 2) TEXTSize(real 2.5) values ] ///
+	syntax varlist(min=2 max=2 numeric) [if] [in] using/  ///
+		[ , cut(string) palette(string) ]  ///
+		[ count percent BOXsize(real 8) textx(string) texty(string) formatx(string) formaty(string) TEXTGap(real 2) xscale(real 35) yscale(real 100) TEXTLABSize(real 2) TEXTSize(real 2.5) values ] ///
 		[ polygon(passthru) line(passthru) point(passthru) label(passthru) ] ///
 		[ ocolor(string) osize(string) ]   ///
 		[ ndocolor(string) ndsize(string) ndfcolor(string) ]   ///
 		[ title(passthru) subtitle(passthru) note(passthru) name(passthru)  ] ///
-		[ cutx(numlist min=2 max=2)  cuty(numlist min=2 max=2) SHOWLEGend  ] ///  // 1.4 updates
+		[ cutx(numlist min=1)  cuty(numlist min=1) SHOWLEGend  ] ///  // 1.4 updates
 		[ LEGend(passthru) legenda(passthru) LEGStyle(passthru) LEGJunction(passthru) LEGCount(passthru) LEGOrder(passthru) LEGTitle(passthru)  ] ///  // 1.4 legend controls as passthru
-		[ arrow(passthru) diagram(passthru) scalebar(passthru) ]  // 1.5
+		[ arrow(passthru) diagram(passthru) scalebar(passthru) ] ///  // 1.5
+		[ bins(numlist min=1 >=2) binx(numlist min=1 >=2) biny(numlist min=1 >=2) reverse clr0(string) clrx(string) clry(string) CLRSATurate(real 6) binsproper FORMATVal(string) VALLABSize(string) ]  // 1.6
+		
 		
 		if (substr(reverse("`using'"),1,4) != "atd.") local using "`using'.dta"  // from spmap to check for extension
 		
@@ -75,223 +78,112 @@ version 15
 		if "`count'" != "" & "`percent'" != "" {
 			di as error "Please specify either {it:count} or {it:percent}. See {stata help bimap:help file}."
 			exit 
-		}	
-		
-		if "`cut'" == "custom" & "`cutx'"=="" & "`cuty'"=="" {
-			di as error "With {it:cut(custom)}, either {it:cutx(val1 val2)} or {it:cuty(val1 val2)}, or both need to be specified. See {stata help bimap:help file}."
-			exit
 		}
 		
+		if !inlist("`cut'", "", "pctile", "equal") {
+			di as error "Please specify either {it:pctile} or {it:equal} or {it:custom}. See {stata help bimap:help file}."
+			exit 
+		}			
+		
+		
 	
+		if "`bins'"=="" local bins 3
 	
 		***** Get the cuts
 
 	
 qui {
-		
 	preserve	
 		keep if `touse'
 		tempvar cat_`var1' cat_`var2'
 		
-		if "`cut'" == "pctile" {
-			xtile `cat_`var1'' = `var1', n(3)
-			xtile `cat_`var2'' = `var2', n(3)
-		}
-		
-		if "`cut'" == "equal" {
-			
-			summ `var1', meanonly
-			local interv = (r(max) - r(min)) / 3
-							
-				local cutx0 = r(min)
-				local cutx1 = `cutx0' + `interv'
-				local cutx2 = `cutx1' + `interv'
-				local cutx3 = r(max) + 1   
-			
-			egen `cat_`var1'' = cut(`var1'), at(`cutx0', `cutx1' , `cutx2', `cutx3') icodes
-			replace `cat_`var1'' = `cat_`var1'' + 1 
-			
-			summ `var2', meanonly
-			local interv = (r(max) - r(min)) / 3
-							
-				local cuty0 = r(min)
-				local cuty1 = `cuty0' + `interv'
-				local cuty2 = `cuty1' + `interv'
-				local cuty3 = r(max) + 1		// floating point fix	
-			
-			egen `cat_`var2'' = cut(`var2'), at(`cuty0', `cuty1' , `cuty2', `cuty3') icodes
-			replace `cat_`var2'' = `cat_`var2'' + 1
-		}	
-	
-		if "`cut'" == "custom" {
-			
-			if "`cutx'" != "" {
-				summ `var1', meanonly
-					local cutx0 = r(min)
-					local cutx3 = r(max)
-				
-				tokenize `cutx'
-					local cutx1 = `1'
-					local cutx2 = `2'
-					
-				egen `cat_`var1'' = cut(`var1'), at(`cutx0', `cutx1' , `cutx2', `cutx3') icodes
-				replace `cat_`var1'' = `cat_`var1'' + 1 
-			}
-			else {
-				xtile `cat_`var1'' = `var1', n(3)
-			}
-		
-		
-			if "`cuty'" != "" {
-				summ `var2', meanonly
-					local cuty0 = r(min)
-					local cuty3 = r(max)
-				
-				tokenize `cuty'
-					local cuty1 = `1'
-					local cuty2 = `2'
-				
-				egen `cat_`var2'' = cut(`var2'), at(`cuty0', `cuty1' , `cuty2', `cuty3') icodes
-				replace `cat_`var2'' = `cat_`var2'' + 1
-			}
-			else {
-				xtile `cat_`var2'' = `var2', n(3)
-			}
-		}
-		
+		summ `var1', meanonly
+			local xmin = r(min)
+			local xmax = r(max)
 
-		
-		sort `cat_`var1'' `cat_`var2''
-		
-		tempvar grp_cut
-		gen `grp_cut' = .
-		
-		replace `grp_cut' = 1 if `cat_`var2''==1 & `cat_`var1''==1
-		replace `grp_cut' = 2 if `cat_`var2''==2 & `cat_`var1''==1
-		replace `grp_cut' = 3 if `cat_`var2''==3 & `cat_`var1''==1
-		replace `grp_cut' = 4 if `cat_`var2''==1 & `cat_`var1''==2
-		replace `grp_cut' = 5 if `cat_`var2''==2 & `cat_`var1''==2
-		replace `grp_cut' = 6 if `cat_`var2''==3 & `cat_`var1''==2
-		replace `grp_cut' = 7 if `cat_`var2''==1 & `cat_`var1''==3
-		replace `grp_cut' = 8 if `cat_`var2''==2 & `cat_`var1''==3
-		replace `grp_cut' = 9 if `cat_`var2''==3 & `cat_`var1''==3
-		
-		
-	
-		***** store the cut-offs for labels	
-		
-		if "`formatx'" =="" local formatx "%5.1f"
-		if "`formaty'" =="" local formaty "%5.1f"
-		
-		
-		summ `var1' if `cat_`var1'' == 1
-		local var11 = r(max)
-		local var11 : di `formatx' `var11'
-		
-		if ("`cut'" == "custom" & "`cutx'" != "") local var11 : di `formatx' `cutx1'
-		
-		summ `var1' if `cat_`var1'' == 2
-		local var12 = r(max)
-		local var12 : di `formatx' `var12'
-		
-		if ("`cut'" == "custom" & "`cutx'" != "") local var12 : di `formatx' `cutx2'
-		
-		summ `var1' if `cat_`var1'' == 3
-		local var13 = r(max)
-		local var13 : di `formatx' `var13'
-		
-		summ `var2' if `cat_`var2'' == 1
-		local var21 = r(max)
-		local var21 : di `formaty' `var21'
-		
-		if ("`cut'" == "custom" & "`cuty'" != "") local var21 : di `formaty' `cuty1'
-		
-		summ `var2' if `cat_`var2'' == 2
-		local var22 = r(max)
-		local var22 : di `formaty' `var22'
-		
-		if ("`cut'" == "custom" & "`cuty'" != "") local var22 : di `formaty' `cuty2'
-		
-		summ `var2' if `cat_`var2'' == 3
-		local var23 = r(max)
-		local var23 : di `formaty' `var23'
-		
-		
-		// grp order: 1 = 1 1, 2 = 1 2, 3 = 1 3, 4 = 2 1, 5 = 2 2, 6 = 2 3, 7 = 3 1, 8 = 3 2, 9 = 3 3
-		
-	
-		if "`count'" != "" {			
-
-			forval i = 1/3 {
-				forval j = 1/3 {
-					count if `cat_`var1''==`j' & `cat_`var2''==`i' 
-					local grsize`i'`j' = `r(N)'					
-				}
-			}
-		}
-	
-
-		if "`percent'" != "" {	
-	
-		count if `cat_`var1''!=. & `cat_`var2''!=.
-		local grsum = `r(N)'
-	
-			forval i = 1/3 {
-				forval j = 1/3 {
-					count if `cat_`var1''==`j' & `cat_`var2''==`i' 
-					local grsize`i'`j' = (`r(N)'	/ `grsum') * 100
-					local grsize`i'`j' : di %3.1f `grsize`i'`j''
-				}
-			}
-	
-	
-		}
-	
-		// from spmap
+		summ `var2', meanonly
+			local ymin = r(min)
+			local ymax = r(max)
+			
+		// check palettes
    
-		if "`palette'" != "" {
-			local LIST "pinkgreen bluered greenblue purpleyellow yellowblue orangeblue brew1 brew2 brew3 census rgb viridis gscale"
-			local LEN = length("`palette'")
-			local check = 0
-			foreach z of local LIST { 
-				if ("`palette'" == substr("`z'", 1, `LEN')) {
-					local check = 1
-				}
-			}
-			
-			if !`check' {
-				di in yellow "Wrong palette specified. The supported palettes are {it:pinkgreen}, {it:bluered}, {it:greenblue}, {it:purpleyellow}, {it:yellowblue}, {it:orangeblue}, {it:brew1}, {it:brew2}, {it:brew3}, {it:census}, {it:rgb}, {it:viridis}, {it:gscale}."
-				di in yellow "See {stata help bimap:help file}."
-				exit 198
-			}
+		
+		if "`palette'" == "" local palette = "pinkgreen"
+		if "`cut'"     == "" local cut     = "pctile"
+		
+		
+		local check = 0
+		if inlist("`palette'", "pinkgreen0", "bluered0", "greenblue0", "purpleyellow0", "yellowblue0", "orangeblue0") 	local check = 1
+		if inlist("`palette'", "brew1", "brew2", "brew3", "census", "rgb", "viridis", "gscale") 						local check = 1
+	
+		if `check'== 1 { // legacy palettes
+			local binx = 3
+			local biny = 3
 		}
 
-		** bottom left > top left, bottom middle > top middle, bottom right > top right
 
-		if "`palette'" == "pinkgreen" {
+		// scalable schemes
+		if "`palette'" == "pinkgreen0" {
 			local color #e8e8e8 #dfb0d6 #be64ac #ace4e4 #a5add3 #8c62aa #5ac8c8 #5698b9 #3b4994
 		}
 		
-		if "`palette'" == "bluered" {
+		if "`palette'" == "pinkgreen" {
+			local cl0 #e8e8e8 
+			local clx #5ac8c8 
+			local cly #be64ac
+		}
+		
+		if "`palette'" == "bluered0" {
 			local color #e8e8e8 #b0d5df #64acbe #e4acac #ad9ea5 #627f8c #c85a5a #985356 #574249 
 		}
 		
-		if "`palette'" == "greenblue" {
+		if "`palette'" == "bluered" {
+			local cl0 #e8e8e8 
+			local clx #c85a5a
+			local cly #64acbe 
+		}		
+		
+		if "`palette'" == "greenblue0" {
 			local color #e8e8e8 #b8d6be #73ae80 #b5c0da #90b2b3 #5a9178 #6c83b5 #567994 #2a5a5b
-		}	
+		}
+		
+		if "`palette'" == "greenblue" {
+			local cl0 #e8e8e8 
+			local clx #6c83b5
+			local cly #73ae80 
+		}		
 
-		if "`palette'" == "purpleyellow" {
+		if "`palette'" == "purpleyellow0" {
 			local color #e8e8e8 #cbb8d7 #9972af #e4d9ac #c8ada0 #976b82 #c8b35a #af8e53 #804d36
 		}
 		
-		if "`palette'" == "yellowblue" {   // from ArcGIS
-			local color #e8e6f2 #f3d37a #f3b300 #a2c8db #8e916e #7a5a00 #509dc2 #284f61 #424035
-		}		
+		if "`palette'" == "purpleyellow" {
+			local cl0 #e8e8e8 
+			local clx #c8b35a
+			local cly #9972af 
+		}			
 		
-		if "`palette'" == "orangeblue" {   // from ArcGIS
+		if "`palette'" == "yellowblue0" {   // from ArcGIS
+			local color #e8e6f2 #f3d37a #f3b300 #a2c8db #8e916e #7a5a00 #509dc2 #284f61 #424035
+		}
+		
+		if "`palette'" == "yellowblue" {
+			local cl0 #e8e8e8 
+			local clx #509dc2
+			local cly #f3b300 
+		}			
+		
+		if "`palette'" == "orangeblue0" {   // from ArcGIS
 			local color #fef1e4 #97d0e7 #18aee5 #fab186 #b0988c #407b8f #f3742d #ab5f37 #5c473d
 		}
 		
+		if "`palette'" == "orangeblue" {
+			local cl0 #e8e8e8 
+			local clx #f3742d
+			local cly #18aee5 
+		}			
+		
+		// predefined schemes
 		if "`palette'" == "brew1" {   
 			local color #f37300 #fe9aa6 #f0047f #cce88b #e6e6e6 #cd9acc #008837 #9ac9d5 #5a4da4
 		}	
@@ -312,14 +204,207 @@ qui {
 			local color #F5F402 #8EBA13 #2A8F25 #FE870D #B8A5D2 #3092FA #FF4343 #D052EB #5148BA
 		}
 
-		
 		if "`palette'" == "gscale" {   
 			local color #e5e5e5 #d4d4d4 #bbbbbb #a2a2a2 #8a8a8a #727272 #5b5b5b #444444 #262626
 		}				
 		
 		if "`palette'" == "viridis" {   
 			local color #FDE724 #D2E11B #A5DA35 #35B778 #29788E #38568B #462F7C #48196B #440154
+		}			
+			
+			
+		// if the specific is missing go for the generic	
+		if "`binx'" == "" local binx = `bins'	
+		if "`biny'" == "" local biny = `bins'
+		
+		
+		if "`cut'" == "pctile" {
+			
+			xtile `cat_`var1'' = `var1', n(`binx')
+			xtile `cat_`var2'' = `var2', n(`biny')
+			
+			_pctile `var1', n(`binx')
+			
+			local binx0 = `binx' - 1
+			
+			
+			forval i = 1/`binx0' {
+				local xlist `xlist' `r(r`i')'
+			}
+			
+			local xlist `xmin' `xlist' `xmax'
+			
+			
+			_pctile `var2', n(`biny')
+			local biny0 = `biny' - 1
+			
+			forval i = 1/`biny0' {
+				local ylist `ylist' `r(r`i')'
+			}	
+			
+			local ylist `ymin' `ylist' `ymax'
+			
+			
 		}
+		
+		if "`cut'" == "equal" {
+			
+				local xint = (`xmax' - `xmin') / `binx'
+
+				gen int `cat_`var1'' = .
+
+				forval i = 1/`binx' {
+						local xstart = `xmin' + (`i' - 1) * `xint'
+						local xend   = `xstart' + `xint'
+
+						replace `cat_`var1'' = `i' if inrange(`var1', `xstart', `xend')
+				}	
+
+
+				local yint = (`ymax' - `ymin') / `biny'
+
+				gen int `cat_`var2'' = .
+
+				forval i = 1/`biny' {
+						local ystart = `ymin' + (`i' - 1) * `yint'
+						local yend   = `ystart' + `yint'
+
+						replace `cat_`var2'' = `i' if inrange(`var2', `ystart', `yend')
+				}	
+
+
+				local xlist = `xmin'
+				forval i = 1/`binx' {
+					local newval = `xmin' + `i' * `xint'
+					local xlist `xlist' `newval'  
+				}
+
+				local ylist = `ymin'
+				forval i = 1/`biny' {
+					local newval = `ymin' + `i' * `yint'
+					local ylist `ylist' `newval'  
+				}
+			
+			
+		}	
+
+
+		*if "`cut'" == "custom" {
+			
+			
+		if "`cutx'" != "" {	
+			local xlen : word count `cutx'
+			
+			tokenize `cutx'
+
+				forval i = 1/`xlen' {
+					local x`i' = ``i''
+				}
+
+			local xlen1 = `xlen' + 1
+
+			local x0 = `xmin'
+			local x`xlen1' = `xmax'
+
+			local xlist `xmin' `cutx' `xmax'
+
+			cap drop `cat_`var1''
+			gen int `cat_`var1'' = .
+
+			forval i = 0/`xlen' {
+				local j = `i' + 1	
+				replace `cat_`var1'' = `j' if inrange(`var1', `x`i'', `x`j'')
+			}	
+			
+			local binx = `xlen' + 1
+		}
+
+		if "`cuty'" != "" {	
+			local ylen : word count `cuty'
+			
+			tokenize `cuty'
+
+				forval i = 1/`ylen' {
+					local y`i' = ``i''
+				}
+
+			local ylen1 = `ylen' + 1
+
+			local y0 = `ymin'
+			local y`ylen1' = `ymax'
+
+			local ylist `ymin' `cuty' `ymax'
+
+			cap drop `cat_`var2''
+			gen int `cat_`var2'' = .
+
+			forval i = 0/`ylen' {
+				local j = `i' + 1	
+				replace `cat_`var2'' = `j' if inrange(`var2', `y`i'', `y`j'')
+			}
+
+			// reset the bins
+			
+			local biny = `ylen' + 1
+			
+		}
+		
+
+		sort `cat_`var1'' `cat_`var2''
+		
+		tempvar grp_cut
+		gen `grp_cut' = .
+		
+	
+		// generate the groups
+		
+		levelsof `cat_`var1'', local(lvl1)
+		levelsof `cat_`var2'', local(lvl2)
+		
+		local z = 1
+
+		
+		forval i = 1/`binx' {
+			forval j = 1/`biny' {
+				
+				replace `grp_cut' = `z' if `cat_`var1''==`i' & `cat_`var2''==`j'
+				
+				local z = `z' + 1
+			
+			}
+		}
+		
+		
+	
+		***** store the cut-offs for labels	
+		
+	
+		if "`count'" != "" {			
+
+			forval i = 1/`binx' {
+				forval j = 1/`biny' {
+					count if `cat_`var1''==`i' & `cat_`var2''==`j' 
+					local grsize`i'`j' = `r(N)'					
+				}
+			}
+		}
+		
+
+		if "`percent'" != "" {	
+	
+		count if `cat_`var1''!=. & `cat_`var2''!=.
+		local grsum = `r(N)'
+	
+			forval i = 1/`binx' {
+				forval j = 1/`biny' {
+					count if `cat_`var1''==`i' & `cat_`var2''==`j' 
+					local grsize`i'`j' = (`r(N)'	/ `grsum') * 100
+					local grsize`i'`j' : di %3.1f `grsize`i'`j''
+				}
+			}
+		}
+	
+
 		
 		
 		if "`polygon'" == "" {
@@ -340,179 +425,316 @@ qui {
 		
 		local leg = cond("`showlegend'"=="", "legend(off)", "`legend'")
 		
-		// finally the map!
 		
-		colorpalette `color', nograph 
-		local colors `r(p)'
+		if "`clr0'" != "" local cl0 `clr0'
+		if "`clrx'" != "" local clx `clrx'
+		if "`clry'" != "" local cly `clry'
+		
+		
+		if "`reverse'" != "" {
+			local tempx `clrx'
+			local tempy `clry'
+			
+			local clrx `tempy'
+			local clry `tempx'
+		}
+		
+		
+		// finally the map!
+				
+		if `check'==0 {
+			local cutst = `binx' * `biny'
+			
+			bimap_clrs, cutx(`binx') cuty(`biny') clr0(`cl0') clrx(`clx') clry(`cly')
+			mata: st_global("r(clrlist)", clrlist)
+			
+			local mycolors `r(clrlist)'
+			colorpalette "`mycolors'", saturate(`clrsaturate')  nograph 
+			local colors `r(p)'
+			
+		}
+		else {
+			colorpalette `color', nograph 
+			local colors `r(p)'
+			local cutst = 9
+		}
+		
+		
+		*colorpalette "`mycolors'", nograph 
+		*local colors `r(p)'
 
 		spmap `grp_cut' using "`using'", ///
-			id(_ID) clm(custom) clb(0 1 2 3 4 5 6 7 8 9) fcolor("`colors'") ///
+			id(_ID) clm(custom) clb(0(1)`cutst') fcolor("`colors'") ///
 				ocolor(`lc' ..) osize(`lw' ..) ///	
 				ndocolor(`ndo' ..) ndsize(`lw' ..) ndfcolor(`ndf' ..)  ///
 				`polygon' `line' `point' `label'  ///
 				`leg' `legstyle' `legenda' `legendstyle' `legjunction' `legcount' `legorder' `legtitle'  ///  // v1.4 legend passthrus
 				`arrow' `diagram' `scalebar' ///  // v1.5 passthrus
 					name(_map, replace) nodraw
-	
+		
 
-	
-		**** add the legend
+		**************************
+		**** 	  Legend 	 *****
+		**************************
 		
-		clear
-		set obs 9
+		keep `var1' `var2'
+		ren `var2' ydot
+		ren `var1' xdot
 		
-		egen y = seq(), b(3)  
-		egen x = seq(), t(3) 	
+		replace y = ydot / `ymax'
+		replace x = xdot / `xmax'
 		
 		
+		// equal interval list (add option to bypass this and stick to the original distribution)
+		
+		if "`binsproper'" == "" {
+			local xint = (`xmax' - `xmin') / `binx'
+			local yint = (`ymax' - `ymin') / `biny'
+
+			local xcats = `xmin'
+			
+			forval i = 1/`binx' {
+				local newval = `xmin' + `i' * `xint'
+				local xcats `xcats' `newval'  
+			}
+
+			local ycats = `ymin'
+			
+			forval i = 1/`biny' {
+				local newval = `ymin' + `i' * `yint'
+				local ycats `ycats' `newval'  
+			}
+		}
+		else {
+			local xcats `xlist'
+			local ycats `ylist'
+		}
+		
+			
+		/////
+		
+		di "xcategories = `xcats'"
+		di "ycategories = `ycats'"
+		
+
+		local xlen : word count `xcats'
+		local ylen : word count `ycats'	
+			
+		local xlen = `xlen' - 1	
+		local ylen = `ylen' - 1
+			
+			
+		local myobs = `xlen' * `ylen' * 5	
+		
+		if _N < `myobs' {
+			set obs `myobs'	
+		}
+
+			
+			egen box   = seq() in 1/`myobs', b(5) 		
+			egen order = seq() in 1/`myobs', t(5)		 
+			
+			egen tag = tag(box)
+			recode tag (0=.)
+			
+		// generate the boxes	
+
+		gen double x = .
+		gen double y = .
+		
+		
+		gen double x_mark = .
+		gen double x_val  = .
+		
+		gen double y_mark = .		
+		gen double y_val  = .
+		
+		local z = 1
+
+			forval i0 = 1/`xlen' {
+				forval j0 = 1/`ylen' {
+				
+					local i1 = `i0' + 1
+					local j1 = `j0' + 1
+					
+		
+					// replace values	
+					replace x = `: word `i0' of `xcats'' if box==`z' & order==1
+					replace y = `: word `j0' of `ycats'' if box==`z' & order==1
+					
+					replace x = `: word `i0' of `xcats'' if box==`z' & order==2
+					replace y = `: word `j1' of `ycats'' if box==`z' & order==2
+					
+					replace x = `: word `i1' of `xcats'' if box==`z' & order==3
+					replace y = `: word `j1' of `ycats'' if box==`z' & order==3
+					
+					replace x = `: word `i1' of `xcats'' if box==`z' & order==4
+					replace y = `: word `j0' of `ycats'' if box==`z' & order==4			
+					
+					local z = `z' + 1
+				
+				}
+			}	
+
+			
+		replace x = x / `xmax'	
+		replace y = y / `ymax'			
+			
+		bysort box: egen double x_mid = mean(x)	
+		bysort box: egen double y_mid = mean(y)
+		
+		replace x_mid = . if tag!=1
+		replace y_mid = . if tag!=1
+		
+		
+
 		if "`count'" != "" | "`percent'" != "" {
 			gen mycount = .
 		
 			local x = 1
-			forval i = 1/3 {
-				forval j = 1/3 {				
-					replace mycount = `grsize`i'`j'' in `x'		
+			forval i = 1/`binx' {
+				forval j = 1/`biny' {				
+					replace mycount = `grsize`i'`j'' if box==`x' & tag==1
 					local x = `x' + 1
 				}
 			}
-					
+		
+
+		
 		local marksym mycount	
 			
 		}
-	
-		cap drop spike*
+		
+		
+		if "`formatval'" 	=="" local formatval 	"%5.1f"
+		
+		if "`percent'" != "" {
+			gen mycount2 = string(mycount, "`formatval'") + "%" if mycount!=.
+			
+			local marksym mycount2	
+		}
+		
+		
+		// markers 
+		
+		di "xlist = `xlist'"
+		di "ylist = `ylist'"
+		
+		// for x-axis
+		local xlen : word count `xcats'
+		local ylen : word count `ycats'	
+		
+		local z = 1
+		forval i0 = 1/`xlen' {
+			replace x_mark = `: word `i0' of `xcats'' / `xmax' in `z'
+			replace x_val  = `: word `i0' of `xlist'' in `z'
+			local z = `z' + 1
+		}
+
+		// for y-axis
+		local z = 1
+		forval i0 = 1/`ylen' {
+			replace y_mark = `: word `i0' of `ycats'' / `ymax' in `z'
+			replace y_val  = `: word `i0' of `ylist'' in `z'
+			local z = `z' + 1
+		}		
+		
+		if "`formatx'" 		=="" local formatx 		"%5.1f"
+		if "`formaty'" 		=="" local formaty 		"%5.1f"		
+
+		
+		format x_val `formatx'
+		format y_val `formaty'
+		
+		gen x0 = -0.05 if y_mark!=.
+		gen y0 = -0.05 if x_mark!=.
+		
+		
+		// arrows
+		gen spike1_x1  = -0.05 		in 1
+		gen spike1_y1  = -0.05 		in 1	
+		gen spike1_x2  =  1.05 		in 1 
+		gen spike1_y2  = -0.05 		in 1	
+			
+		gen spike2_x1  = -0.05 		in 1		
+		gen spike2_y1  = -0.05 		in 1
+		gen spike2_x2  = -0.05 		in 1	
+		gen spike2_y2  =  1.05 		in 1 
 	
 		if "`textx'" == "" 	local textx = "`var1'" 
 		if "`texty'" == "" 	local texty = "`var2'"
+		if "`vallabsize'" == "" 	local vallabsize = 1.8
 		
-	
-	
-		// arrows
-		gen spike1_x1  = 0.35 		in 1
-		gen spike1_x2  = 3.6 		in 1 
-		gen spike1_y1  = 0.35 		in 1	
-		gen spike1_y2  = 0.35 		in 1	
-			
-		gen spike2_y1  = 0.35 		in 1
-		gen spike2_y2  = 3.6 		in 1 
-		gen spike2_x1  = 0.35 		in 1		
-		gen spike2_x2  = 0.35 		in 1		
-		
-		// ticks
-		gen xvalx = .
-		gen xvaly = .
-		gen xvaln = .
-	
-		replace xvaly = 0.36 	in 1/3
-		replace xvalx = 0.8 	in 1
-		replace xvalx = 1.8 	in 2
-		replace xvalx = 2.8 	in 3
-		
-		replace xvaln = `var11' in 1
-		replace xvaln = `var12' in 2
-		replace xvaln = `var13' in 3
-		
-
-		gen yvalx = .
-		gen yvaly = .
-		gen yvaln = .
-
-		replace yvalx = 0.33 	in 1/3
-		replace yvaly = 1.1 	in 1
-		replace yvaly = 2.1 	in 2
-		replace yvaly = 3.1 	in 3	
-		
-		replace yvaln = `var21' in 1
-		replace yvaln = `var22' in 2
-		replace yvaln = `var23' in 3
-		
-	
 		// axis labels
 		
 		gen labx = .
 		gen laby = .
 		gen labn = ""
 		
-		replace labx = 2 		in 1
-		replace laby = 0 		in 1
+		replace labx = 0.5 		 in 1
+		replace laby = -0.1 	 in 1
 		replace labn = "`textx'" in 1
 		
-		replace labx = 0 		in 2
-		replace laby = 3 		in 2
+		replace labx = -0.2 	 in 2
+		replace laby = 0.65	 	 in 2
 		replace labn = "`texty'" in 2
 	
 	
-		// colors
-		
-		colorpalette `color', nograph 
+		// generate the boxes
+		levelsof box, local(lvls)	
+		if `check'==0 {
+			colorpalette "`mycolors'", saturate(`clrsaturate') nograph	
+		}
+		else {
+			colorpalette `color', nograph
+		}
 
-			local color11 `r(p1)'
-			local color12 `r(p2)'
-			local color13 `r(p3)'
+		foreach x of local lvls {
 
-			local color21 `r(p4)'
-			local color22 `r(p5)'
-			local color23 `r(p6)'
-
-			local color31 `r(p7)'
-			local color32 `r(p8)'
-			local color33 `r(p9)'	
-					
-			levelsof x, local(xlvl)	
-			levelsof y, local(ylvl)
-
+				local boxes `boxes' (area y x if box==`x', nodropbase cmissing(n) fi(100) fc("`r(p`x')'") lc(white) lw(none) ) ///
 			
-
-		local boxes
-
-		foreach x of local xlvl {
-			foreach y of local ylvl {
-				
-				if (`x'==3 & `y'==3)  {    
-					local boxes `boxes' (scatter y x if x==`x' & y==`y', mlab("`marksym'") mlabpos(0) mlabc(gs13) msymbol(square) msize(`boxsize') mc("`color`x'`y''")) ///
-					
-				}					
-				
-				else {
-					local boxes `boxes' (scatter y x if x==`x' & y==`y', mlab("`marksym'") mlabpos(0) mlabc(black) msymbol(square) msize(`boxsize') mc("`color`x'`y''")) ///
-					
-				}
-
 			}
+			
+		if "`count'" != "" | "`percent'" != "" {
+ 			local mylabels (scatter y_mid x_mid, mlabel(`marksym') mlabpos(0) mcolor(none) mlabsize(`vallabsize') ) ///	// labels
+			
 		}
-	
-	
-		if "`values'" != "" {
 			
-			local xvals (scatter xvaly xvalx, mcolor(none) mlab(xvaln) mlabpos(4) mlabsize(`textlabsize'))
-			
-			local yvals (scatter yvaly yvalx, mcolor(none) mlab(yvaln) mlabpos(11) mlabsize(`textlabsize') mlabangle(90))
+		if "`values'" != "" {	
+			local xvals (scatter y0 x_mark, mcolor(none) mlabel(x_val) mlabpos(6) mcolor(gs6) msize(0.2)) ///
+						
+			local yvals (scatter y_mark x0, mcolor(none) mlabel(y_val) mlabpos(9) mcolor(gs6) msize(0.2)) ///
 		
 		}
-	
+			
+			
   
 		twoway ///
 			`boxes' ///
-			(pcarrow spike1_y1 spike1_x1 spike1_y2 spike1_x2, lcolor(gs6) mcolor(gs6) msize(0.8) ) ///
-			(pcarrow spike2_y1 spike2_x1 spike2_y2 spike2_x2, lcolor(gs6) mcolor(gs6) msize(0.8) ) ///
-			(scatter laby labx in 1, mcolor(none) mlab(labn) mlabsize(`textsize') mlabpos(6) mlabgap(`textgap')				 )  ///
-			(scatter laby labx in 2, mcolor(none) mlab(labn) mlabsize(`textsize') mlabpos(9) mlabgap(`textgap') mlabangle(90))  ///
 			`xvals' ///
 			`yvals' ///
+			`mylabels' ///
+			(pcarrow spike1_y1 spike1_x1 spike1_y2 spike1_x2, lcolor(gs6) mcolor(gs6) msize(0.8) ) ///  // arrow1
+			(pcarrow spike2_y1 spike2_x1 spike2_y2 spike2_x2, lcolor(gs6) mcolor(gs6) msize(0.8) ) ///  // arrow2
+			(scatter laby labx in 1, mcolor(none) mlab(labn) mlabsize(`textsize') mlabpos(6) mlabgap(`textgap')				 )  ///
+			(scatter laby labx in 2, mcolor(none) mlab(labn) mlabsize(`textsize') mlabpos(9) mlabgap(`textgap') mlabangle(90))  ///
 			, ///
-				xlabel(, nogrid) ylabel(, nogrid) ///
-				yscale(range(0 4) off) xscale(range(0 4) off) ///
+				xlabel(-0.2 1, nogrid) ylabel(-0.15 1, nogrid) ///
+				yscale(range(0 1.1) off) xscale(range(0 1.1) off) ///
 				aspectratio(1) ///
 				xsize(1) ysize(1) ///
+				ytitle("variable 1") xtitle("variable2") ///
 				fxsize(`xscale') fysize(`yscale') ///
 				legend(off)		///
 				name(_legend, replace)  nodraw   
+
 
 
 			
 		restore			
 	
 	 **** combine the two	
+	 
 	 
 	  graph combine _map _legend, ///
 		imargin(zero) ///
@@ -522,9 +744,87 @@ qui {
 		`name' 
 	
 	
+
+	
 }
 
 end
+
+
+// sub routines
+
+*************************
+// 	  bimap_clrs     //  
+*************************
+
+cap program drop bimap_clrs
+program bimap_clrs, rclass
+
+syntax [, cutx(numlist integer max=1 >=2) cuty(numlist integer max=1 >=2) clr0(string) clrx(string) clry(string) ]
+
+ qui colorpalette `clr0' `clrx', n(`cutx') local(c_*)
+ mata myX = bimap_parse(`cutx')
+ 
+ qui colorpalette `clr0' `clry', n(`cuty') local(c_*)
+ mata myY = bimap_parse(`cuty') 
+
+ mata clrlist = bimap_multiply(`cutx', `cuty', myX, myY)
+
+end
+
+*************************
+// 	  bimap_parse     //  
+*************************
+
+cap mata mata drop bimap_parse()
+
+mata
+	function bimap_parse(cut)   
+	{
+		myclrs = J(cut,3,.)
+		for (i=1; i<=cut; i++) {
+			col=sprintf("c_%f", i)
+			myclrs[i,.] = strtoreal(tokens(tokens(st_local(col))))
+		}	
+		return (myclrs)		
+	}
+end
+
+
+*************************
+// 	  bimap_multiply   //  
+*************************
+
+cap mata mata drop bimap_multiply()
+
+mata
+	function bimap_multiply(cutx, cuty, myx, myy)   
+	{	
+
+	colors = J(cutx * cuty, 3,.)
+	
+	k = 1	
+	for (i=1; i<=cutx; i++) {
+		for (j=1; j<=cuty; j++) {
+			colors[k, .] = floor((myx[i,.] :* myy[j,.]) / 255) 
+			k = k + 1
+		}	
+	}
+
+	str_clr = J(rows(colors),1,.)
+	str_clr = char(34) :+ strofreal( colors[.,1]) :+ " " :+ strofreal(colors[.,2]) :+ " " :+ strofreal(colors[.,3]) :+ char(34)
+
+	clrlist = str_clr[1]
+	
+	for (i=2; i<=rows(str_clr); i++) {
+		clrlist = clrlist + " " + str_clr[i]
+	}
+		
+	return (clrlist)
+	
+	}
+end	
+
 
 
 
