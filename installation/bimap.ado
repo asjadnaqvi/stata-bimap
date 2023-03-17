@@ -432,11 +432,11 @@ qui {
 		
 		
 		if "`reverse'" != "" {
-			local tempx `clrx'
-			local tempy `clry'
+			local tempx `clx'
+			local tempy `cly'
 			
-			local clrx `tempy'
-			local clry `tempx'
+			local clx `tempy'
+			local cly `tempx'
 		}
 		
 		
