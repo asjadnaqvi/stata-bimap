@@ -388,12 +388,12 @@ Please open an [issue](https://github.com/asjadnaqvi/stata-bimap/issues) to repo
 
 ## Versions
 
-**v1.6 (17 Mar 2023)** 
-- MAJOR update
-- Scalable color palettes
-- Customizable bins
-- Customizable colors
-- Dynamic scalable legends
+**v1.6 (17 Mar 2023)** (major update)
+- Scalable color palettes.
+- Customizable bins.
+- Customizable colors.
+- Dynamic scalable legends.
+- Option for proper spacing of bins on legends.
 - Several defaults and checks added.
 - Several quality of life adjustments to making bimaps easier.
 
