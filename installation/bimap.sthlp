@@ -16,7 +16,7 @@ Note that {cmd:bimap} only works if you have processed the shapefiles using Stat
 {p 8 15 2}
 
 {cmd:bimap} {it:vary varx} {ifin}, {cmd:[} {cmd:palette}({it:name}) reverse  {cmd:clr0}({it:str}) {cmd:clrx}({it:str}) {cmd:clry}({it:str}) {cmdab:clrsat:urate}({it:num})
-		{cmd:cut}({it:pctile}|{it:equal}|{it:custom}) {cmd:cutx}({it:numlist}) {cmd:cuty}({it:numlist}) {cmd:binsproper} {cmd:bins}({it:num >=2}) {cmd:binx}({it:num >=2}) {cmd:biny}({it:num >=2})
+		{cmd:cut}({it:pctile}|{it:equal}) {cmd:cutx}({it:numlist}) {cmd:cuty}({it:numlist}) {cmd:binsproper} {cmd:bins}({it:num >=2}) {cmd:binx}({it:num >=2}) {cmd:biny}({it:num >=2})
 		{cmd:values} {cmd:count} {cmd:percent} {cmdab:showleg:end} {cmd:ocolor}({it:str}) {cmd:osize}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str}) 
 		{cmd:textx}({it:str}) {cmd:texty}({it:str}) {cmdab:textg:ap}({it:num}) {cmdab:textlabs:ize}({it:num}) {cmdab:texts:ize}({it:num}) {cmd:formatx}({it:str}) {cmd:formaty}({it:str}) {cmd:xscale}({it:num}) {cmd:yscale}({it:num}) 
 		{cmd:polygon}({it:options}) {cmd:line}({it:options}) {cmd:point}({it:options}) {cmd:label}({it:options}) {cmd:arrow}({it:options}) {cmd:diagram}({it:options}) {cmd:scalebar}({it:options}) 
@@ -59,7 +59,7 @@ Otherwise, {stata help colorpalette:colorpalette}, other softwares (including MS
 {p2coldent : {opt reverse}}Swap the x- and y-axis colors. This option does not work for legacy palettes.{p_end}
 
 {p2coldent : {opt bins(num)}, {opt binx(num)}, {opt biny(num)}}Users can either defined {it:n}x{it:n} bins by using the option {opt bins(n)}. Otherwise custom bins can
-also be defined using {opt binx()} and/or {opt biny()}. The default is {opt bin(3)}. Bins are also constraint to a minimum dimension of 2.{p_end}
+also be defined using {opt binx()} and/or {opt biny()}. The default is {opt bin(3)}. Bins are constrained to a minimum dimension of 2.{p_end}
 
 {p2coldent : {opt osize(string)}}Line width of polygons. Same as in {cmd:spmap}. Default value is {it:0.02}. Also applied to polygons with no data.{p_end}
 
@@ -91,9 +91,9 @@ This option is still {it:beta}, so suggestions for improvement are appreciated.{
 
 {p2coldent : {opt vallabs:ize(str)}}The size of the box values. The default value is {opt vallabs(1.8)}.{p_end}
 
-{p2coldent : {opt formatval}(fmt)}Format of the box values. Default format is {opt formatval(%5.1f)}.{p_end}
+{p2coldent : {opt formatval(fmt)}}Format of the box values. Default format is {opt formatval(%5.1f)}.{p_end}
 
-{p2coldent : {opt formatx}(fmt), {opt formaty}(fmt)}Format the values on the legend axes. Default format is {opt formatx(%5.1f)}, {opt formaty(%5.1f)}.{p_end}
+{p2coldent : {opt formatx(fmt)}, {opt formaty(fmt)}}Format the values on the legend axes. Default format is {opt formatx(%5.1f)}, {opt formaty(%5.1f)}.{p_end}
 
 {p2coldent : {opt textx(str)}, {opt texty(str)}}The axes labels of the legend. The default values are the variable names.{p_end}
 
@@ -108,7 +108,7 @@ squished especially if the categories are bunched together. This will most likel
 
 {p2coldent : {opt xscale(num)}}The scale of the legend on the x-axis. Default value is {opt xscale(35)}. This option can be used to change the legend dimensions.{p_end}
 
-{p2coldent : {opt yscale(num)}}The scale of the legend on the y-axis. Default value is {opt yscale (100)}. This is an advanced option so use it with caution.{p_end}
+{p2coldent : {opt yscale(num)}}The scale of the legend on the y-axis. Default value is {opt yscale(100)}. This is an advanced option so use it with caution.{p_end}
 
 {synoptline}
 {p2colreset}{...}
@@ -199,7 +199,7 @@ If you find bugs and/or have feature requests, then please open an {browse "http
 
 {p 4 8 2}Jann, B. (2018). {browse "https://www.stata-journal.com/article.html?article=gr0075":Color palettes for Stata graphics}. The Stata Journal 18(4): 765-785.
 
-{p 4 8 2}Jann, B. (2022). {browse "https://ideas.repec.org/p/bss/wpaper/43.html":Color palettes for Stata graphics: an update}. University of Bern Social Sciences Working Papers No. 43. 
+{p 4 8 2}Jann, B. (2022). {browse "https://ideas.repec.org/p/bss/wpaper/43.html":Color palettes for Stata graphics: An update}. University of Bern Social Sciences Working Papers No. 43. 
 
 {title:Other visualization packages}
 
