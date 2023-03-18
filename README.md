@@ -1,6 +1,13 @@
 
 ![StataMin](https://img.shields.io/badge/stata-2015-blue) ![issues](https://img.shields.io/github/issues/asjadnaqvi/stata-bimap) ![license](https://img.shields.io/github/license/asjadnaqvi/stata-bimap) ![Stars](https://img.shields.io/github/stars/asjadnaqvi/stata-bimap) ![version](https://img.shields.io/github/v/release/asjadnaqvi/stata-bimap) ![release](https://img.shields.io/github/release-date/asjadnaqvi/stata-bimap)
 
+
+---
+
+[Installation](#Installation) | [Syntax](#Syntax) | [Examples](#Examples) | [Feedback](#Feedback) | [Change log](#Change-log)
+
+---
+
 # bimap v1.6
 
 This package provides the ability to draw bi-variate maps in Stata. It is based on the [Bi-variate maps Guide](https://medium.com/the-stata-guide/stata-graphs-bi-variate-maps-b1e96dd4c2be).
@@ -8,7 +15,7 @@ This package provides the ability to draw bi-variate maps in Stata. It is based 
 
 ## Installation
 
-The package can be installed via SSC or GitHub. The GitHub version, *might* be more recent due to bug fixes, feature updates etc, and *may* contain syntax improvements and changes in *default* values. See version numbers below. Eventually the GitHub version is published on SSC.
+The package can be installed via SSC or GitHub. The GitHub version, *might* be more recent due to bug fixes, feature updates etc, and *may* contain syntax improvements and changes in *default* values. See version numbers below. Eventually the GitHub version is published on SSC. All examples are updated to the latest version and might not be compatible with the old ones. Please check the documentation and change logs.
 
 The package can be installed from SSC (**v1.51**):
 ```
@@ -386,7 +393,7 @@ bimap share_hisp share_afam using county_shp2, cut(pctile) palette(orangeblue) b
 Please open an [issue](https://github.com/asjadnaqvi/stata-bimap/issues) to report errors, feature enhancements, and/or other requests. 
 
 
-## Versions
+## Change log
 
 **v1.6 (17 Mar 2023)** (major update)
 - Scalable color palettes.
@@ -395,7 +402,7 @@ Please open an [issue](https://github.com/asjadnaqvi/stata-bimap/issues) to repo
 - Dynamic scalable legends.
 - Option for proper spacing of bins on legends.
 - Several defaults and checks added.
-- Several quality of life adjustments to making bimaps easier.
+- Several quality of life adjustments to make `bimap` easier to use.
 
 **v1.51 (14 Nov 2022)** 
 - Minor fixes to legend text options.
