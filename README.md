@@ -63,7 +63,7 @@ The syntax for **v1.6** is as follows:
 
 ```
 bimap vary varx [if] [in], [ palette(name) reverse  clr0(str) clrx(str) clry(str) clrsaturate(num)
-                cut(pctile|equal|custom) cutx(numlist) cuty(numlist) binsproper bins(num >=2) binx(num >=2) biny(num >=2)
+                cut(pctile|equal) cutx(numlist) cuty(numlist) binsproper bins(num >=2) binx(num >=2) biny(num >=2)
                 values count percent showlegend ocolor(str) osize(str) ndocolor(str) ndfcolor(str) 
                 textx(str) texty(str) textgap(num) textlabsize(num) textsize(num) formatx(str) formaty(str) xscale(num) yscale(num) 
                 polygon(options) line(options) point(options) label(options) arrow(options) diagram(options) scalebar(options) 
