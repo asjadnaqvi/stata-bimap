@@ -39,7 +39,7 @@ ssc install colrspace, replace
 
 Even if you have these packages installed, please check for updates: `ado update, update`.
 
-If you want to make a clean figure, then it is advisable to load a clean scheme. These are several available and I personally use the following:
+If you want to make a clean figure, then it is advisable to load a clean scheme. I personally use the following:
 
 ```
 ssc install schemepack, replace
