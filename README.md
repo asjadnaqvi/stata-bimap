@@ -8,7 +8,7 @@
 
 ---
 
-# bimap v1.6
+# bimap v1.61
 
 This package provides the ability to draw bi-variate maps in Stata. It is based on the [Bi-variate maps Guide](https://medium.com/the-stata-guide/stata-graphs-bi-variate-maps-b1e96dd4c2be).
 
@@ -22,7 +22,7 @@ The package can be installed from SSC (**v1.6**):
 ssc install bimap, replace
 ```
 
-Or it can be installed from GitHub (**v1.6**):
+Or it can be installed from GitHub (**v1.61**):
 
 ```
 net install bimap, from("https://raw.githubusercontent.com/asjadnaqvi/stata-bimap/main/installation/") replace
@@ -59,7 +59,7 @@ This command is a wrapper for `spmap` and assumes that you have shapefiles in St
 
 ## Syntax
 
-The syntax for **v1.6** is as follows:
+The syntax for **v1.61** is as follows:
 
 ```
 bimap vary varx [if] [in], [ palette(name) reverse  clr0(str) clrx(str) clry(str) clrsaturate(num)
@@ -379,7 +379,7 @@ bimap share_hisp share_afam using county_shp2, cut(pctile) palette(orangeblue) c
 <img src="/figures/bimap20.png" height="500">
 
 ```
-bimap share_hisp share_afam using county_shp2, cut(pctile) palette(orangeblue) bins(4) binsproper  ///
+bimap share_hisp share_afam using county_shp2, cut(pctile) palette(orangeblue) bins(4) percent  ///
 		note("Data from the US Census Bureau.") ///	
 		texty("Share of Hispanics") textx("Share of African Americans") texts(3.5) textlabs(3) values   ///
 		 ocolor() osize(none) ///
@@ -394,6 +394,9 @@ Please open an [issue](https://github.com/asjadnaqvi/stata-bimap/issues) to repo
 
 
 ## Change log
+
+**v1.61 (12 Apr 2023)**
+- Fixed a major bug in the legend. The boxes were not rescaling properly (reported by Faylosphie and Paul).
 
 **v1.6 (17 Mar 2023)** (major update)
 - Scalable color palettes.

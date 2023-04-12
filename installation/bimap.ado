@@ -1,6 +1,7 @@
-*! bimap v1.6 (17 Mar 2023)
+*! bimap v1.61 (12 Apr 2023)
 *! Asjad Naqvi (asjadnaqvi@gmail.com)
 
+* v1.61 (12 Apr 2023): Fix to legend box and label rescaling.
 * v1.6  (17 Mar 2023): Colors are now dynamically generated for any number of bins. several new options to control colors, bins, saturation, labels
 * v1.51 (14 Nov 2022): Minor legend fixes
 * v1.5  (05 Nov 2022): 3 new colors: rgb, gscale, viridis. arrow, scalebar, diagram passthrus added.
@@ -638,6 +639,19 @@ qui {
 			replace y_val  = `: word `i0' of `ylist'' in `z'
 			local z = `z' + 1
 		}		
+		
+		
+		// rescale x and y (0-1)
+		summ x, meanonly
+		replace x      = (x      - r(min)) / (r(max) - r(min))
+		replace x_mid  = (x_mid  - r(min)) / (r(max) - r(min))
+		replace x_mark = (x_mark - r(min)) / (r(max) - r(min))
+		
+		summ y, meanonly
+		replace y      = (y      - r(min)) / (r(max) - r(min))			
+		replace y_mid  = (y_mid  - r(min)) / (r(max) - r(min))	
+		replace y_mark = (y_mark - r(min)) / (r(max) - r(min))
+		
 		
 		if "`formatx'" 		=="" local formatx 		"%5.1f"
 		if "`formaty'" 		=="" local formaty 		"%5.1f"		
