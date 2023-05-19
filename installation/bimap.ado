@@ -1,6 +1,7 @@
-*! bimap v1.61 (12 Apr 2023)
+*! bimap v1.62 (19 May 2023)
 *! Asjad Naqvi (asjadnaqvi@gmail.com)
 
+* v1.62 (19 May 2023): Fix to legend labels and sizes. Minor improvements.
 * v1.61 (12 Apr 2023): Fix to legend box and label rescaling.
 * v1.6  (17 Mar 2023): Colors are now dynamically generated for any number of bins. several new options to control colors, bins, saturation, labels
 * v1.51 (14 Nov 2022): Minor legend fixes
@@ -513,10 +514,7 @@ qui {
 		
 			
 		/////
-		
-		di "xcategories = `xcats'"
-		di "ycategories = `ycats'"
-		
+				
 
 		local xlen : word count `xcats'
 		local ylen : word count `ycats'	
@@ -607,20 +605,16 @@ qui {
 		}
 		
 		
-		if "`formatval'" 	=="" local formatval 	"%5.1f"
+		if "`formatval'" =="" local formatval "%5.1f"
 		
 		if "`percent'" != "" {
 			gen mycount2 = string(mycount, "`formatval'") + "%" if mycount!=.
 			
 			local marksym mycount2	
 		}
-		
-		
+				
 		// markers 
-		
-		di "xlist = `xlist'"
-		di "ylist = `ylist'"
-		
+
 		// for x-axis
 		local xlen : word count `xcats'
 		local ylen : word count `ycats'	
@@ -690,7 +684,7 @@ qui {
 		replace labn = "`textx'" in 1
 		
 		replace labx = -0.2 	 in 2
-		replace laby = 0.65	 	 in 2
+		replace laby = 0.8	 	 in 2
 		replace labn = "`texty'" in 2
 	
 	
@@ -715,9 +709,9 @@ qui {
 		}
 			
 		if "`values'" != "" {	
-			local xvals (scatter y0 x_mark, mcolor(none) mlabel(x_val) mlabpos(6) mcolor(gs6) msize(0.2)) ///
+			local xvals (scatter y0 x_mark, mcolor(none) mlabel(x_val) mlabpos(6) mcolor(gs6) msize(0.2) mlabsize(`textlabsize')) ///
 						
-			local yvals (scatter y_mark x0, mcolor(none) mlabel(y_val) mlabpos(9) mcolor(gs6) msize(0.2)) ///
+			local yvals (scatter y_mark x0, mcolor(none) mlabel(y_val) mlabpos(9) mcolor(gs6) msize(0.2) mlabsize(`textlabsize')) ///
 		
 		}
 			
@@ -742,13 +736,11 @@ qui {
 				legend(off)		///
 				name(_legend, replace)  nodraw   
 
-
-
-			
 		restore			
 	
-	 **** combine the two	
-	 
+	 ********************
+	 ****   FINAL	 ****
+	 ********************
 	 
 	  graph combine _map _legend, ///
 		imargin(zero) ///
@@ -757,9 +749,7 @@ qui {
 		`note' ///
 		`name' 
 	
-	
 
-	
 }
 
 end
@@ -768,7 +758,7 @@ end
 // sub routines
 
 *************************
-// 	  bimap_clrs     //  
+// 	  bimap_clrs      //  
 *************************
 
 cap program drop bimap_clrs

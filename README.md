@@ -8,7 +8,7 @@
 
 ---
 
-# bimap v1.61
+# bimap v1.62
 
 This package provides the ability to draw bi-variate maps in Stata. It is based on the [Bi-variate maps Guide](https://medium.com/the-stata-guide/stata-graphs-bi-variate-maps-b1e96dd4c2be).
 
@@ -22,7 +22,7 @@ The package can be installed from SSC (**v1.61**):
 ssc install bimap, replace
 ```
 
-Or it can be installed from GitHub (**v1.61**):
+Or it can be installed from GitHub (**v1.62**):
 
 ```
 net install bimap, from("https://raw.githubusercontent.com/asjadnaqvi/stata-bimap/main/installation/") replace
@@ -395,8 +395,12 @@ Please open an [issue](https://github.com/asjadnaqvi/stata-bimap/issues) to repo
 
 ## Change log
 
+**v1.62 (19 May 2023)**
+- Fixed bugs in legend labels (reported by Kit Baum). Minor improvements.
+
+
 **v1.61 (12 Apr 2023)**
-- Fixed a major bug in the legend. The boxes were not rescaling properly (reported by Faylosphie and Paul).
+- Fixed a major bug in the legend. The boxes were not rescaling properly.
 
 **v1.6 (17 Mar 2023)** (major update)
 - Scalable color palettes.

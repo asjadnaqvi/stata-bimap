@@ -1,8 +1,9 @@
-v 1.61
+v 1.62
 d BIMAP: A package for creating bivariate maps.
 d
-d Asjad Naqvi
+d Distribution-Date: 20230519
 d
+d Asjad Naqvi
 d asjadnaqvi@gmail.com
 d https://medium.com/the-stata-guide
 d https://github.com/asjadnaqvi/Stata-schemes

@@ -1,7 +1,7 @@
 {smcl}
-{* 12Apr2023}{...}
+{* 19May2023}{...}
 {hi:help bimap}{...}
-{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v1.61 (GitHub)}}
+{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v1.62 (GitHub)}}
 
 {hline}
 
@@ -163,8 +163,8 @@ Please see additional examples on {browse "https://github.com/asjadnaqvi/stata-b
 
 {title:Package details}
 
-Version      : {bf:bimap} v1.61
-This release : 12 Apr 2023
+Version      : {bf:bimap} v1.62
+This release : 19 May 2023
 First release: 08 Apr 2022
 Repository   : {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub}
 Keywords     : Stata, map, bimap, bi-variate
@@ -179,7 +179,7 @@ Twitter      : {browse "https://twitter.com/AsjadNaqvi":@AsjadNaqvi}
 {title:Acknowledgements}
 
 {p 4 4 2}
-Faylosophie and Paul reported bug in the bimap v1.6 legends (v1.61).
+Kit Baum, Fayssal Ayad, and Paul reported bug in the bimap v1.6 legends (v1.62, v1.61).
 Tyson King-Meadows and Vishakha Agarwal requested a greyscale palette (v1.5).
 Souradet Shaw requested scalebar and arrow passthrus (v1.5). 
 Paul Frissard Martínez requested spmap legend options (v1.4). 
@@ -205,6 +205,7 @@ If you find bugs and/or have feature requests, then please open an {browse "http
 {title:Other visualization packages}
 
 {psee}
-    {helpb arcplot}, {helpb alluvial}, {helpb bimap}, {helpb circlebar}, {helpb circlepack}, {helpb clipgeo}, {helpb delaunay}, {helpb joyplot}, 
+    {helpb arcplot}, {helpb alluvial}, {helpb bimap}, {helpb bumparea}, {helpb bumpline}, {helpb circlebar}, {helpb circlepack}, {helpb clipgeo}, {helpb delaunay}, {helpb joyplot}, 
 	{helpb marimekko}, {helpb sankey}, {helpb schemepack}, {helpb spider}, {helpb streamplot}, {helpb sunburst}, {helpb treecluster}, {helpb treemap}
-	   
+
+
