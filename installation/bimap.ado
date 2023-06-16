@@ -1,4 +1,4 @@
-*! bimap v1.62 (15 Jun 2023)
+*! bimap v1.7 (15 Jun 2023)
 *! Asjad Naqvi (asjadnaqvi@gmail.com)
 
 * v1.7  (15 Jun 2023): added support for binary variables: xdiscrete, ydiscrete

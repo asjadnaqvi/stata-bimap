@@ -1,7 +1,6 @@
 v 1.7
 d {bf:BIMAP}: Bi-variate maps
-d
-d
+
 d Requires: Stata version 15 or higher.
 d
 d KW: Stata
