@@ -1,7 +1,7 @@
 {smcl}
-{* 19May2023}{...}
+{* 15Jun2023}{...}
 {hi:help bimap}{...}
-{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v1.62 (GitHub)}}
+{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v1.7 (GitHub)}}
 
 {hline}
 
@@ -17,7 +17,7 @@ Note that {cmd:bimap} only works if you have processed the shapefiles using Stat
 
 {cmd:bimap} {it:vary varx} {ifin}, {cmd:[} {cmd:palette}({it:name}) reverse  {cmd:clr0}({it:str}) {cmd:clrx}({it:str}) {cmd:clry}({it:str}) {cmdab:clrsat:urate}({it:num})
 		{cmd:cut}({it:pctile}|{it:equal}) {cmd:cutx}({it:numlist}) {cmd:cuty}({it:numlist}) {cmd:binsproper} {cmd:bins}({it:num >=2}) {cmd:binx}({it:num >=2}) {cmd:biny}({it:num >=2})
-		{cmd:values} {cmd:count} {cmd:percent} {cmdab:showleg:end} {cmd:ocolor}({it:str}) {cmd:osize}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str}) 
+		{cmd:values} {cmd:count} {cmd:percent} {cmdab:showleg:end} {cmd:ocolor}({it:str}) {cmd:osize}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str}) {cmdab:xdisc:rete} {cmdab:ydisc:rete}
 		{cmd:textx}({it:str}) {cmd:texty}({it:str}) {cmdab:textg:ap}({it:num}) {cmdab:textlabs:ize}({it:num}) {cmdab:texts:ize}({it:num}) {cmd:formatx}({it:str}) {cmd:formaty}({it:str}) {cmd:xscale}({it:num}) {cmd:yscale}({it:num}) 
 		{cmd:polygon}({it:options}) {cmd:line}({it:options}) {cmd:point}({it:options}) {cmd:label}({it:options}) {cmd:arrow}({it:options}) {cmd:diagram}({it:options}) {cmd:scalebar}({it:options}) 
 		{cmd:title}({it:str}) {cmd:subtitle}({it:str}) {cmd:note}({it:str}) {cmd:name}({it:str}) {cmd:scheme}({it:str}) {cmd:]}
@@ -41,12 +41,17 @@ The options are described as follows:
 {p2coldent : {opt cutx(numlist)}, {opt cuty(numlist)}}For these options, define the {it:middle} cut-off points for the x and y variables. Either one of the two, or both can be specified, and
 they will overwrite the {opt cut()} options. The minimum and maximum cut-offs will be estimated directly by the program, therefore do not specify the end points.{p_end}
 
+{p2coldent : {opt xdisc:rete}, {opt ydisc:rete}} can be used if the variables are assumed categorical, for example, binary variables, or ordinally ranked variables.
+These options overwrite other binning options and legend axes markers will use value labels and will be centered to bin width/height. More than 10 categories will throw an error.
+Hence the maximum combination of discrete variables allowed is 10x10 or 100 bins. This is also to prevent accidentally declaring a regular variable as discrete.{p_end}
+
 {p2coldent : {opt palette(option)}}In version v1.6 and above, palettes are dynamically generated for any number of {opt bins()}. Named palettes are: 
-{it:pinkgreen}, {it:bluered}, {it:greenblue}, {it:purpleyellow}, {it:yellowblue}, {it:orangeblue}. The old legacy palettes are still available and will default to the
-3x3 scheme. Legacy palettes are: {it:pinkgreen}, {it:bluered0}, {it:greenblue0}, {it:purpleyellow0}, {it:yellowblue0}, {it:orangeblue0}, {it:brew1}, {it:brew2}, {it:brew3}, {it:census}, {it:rgb}, {it:viridis}, {it:gscale}.
-If legacy palettes are defined, then number of bins are fixed at 3x3 and other custom binning options will be ignored.
+{it:pinkgreen}, {it:bluered}, {it:greenblue}, {it:purpleyellow}, {it:yellowblue}, {it:orangeblue}. The original (legacy) palettes are still available with the following names:
+ {it:pinkgreen0}, {it:bluered0}, {it:greenblue0}, {it:purpleyellow0}, {it:yellowblue0}, {it:orangeblue0}, {it:brew1}, {it:brew2}, {it:brew3}, 
+{it:census}, {it:rgb}, {it:viridis}, {it:gscale}.
+If legacy palettes are defined, the number of bins will default to 3x3 and any other custom binning options will be ignored.
 See {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub} for examples of legacy palettes. Default option is {opt palette(pinkgreen)}.
-Users can also over-write the palettes using the {opt clr} options described below.{p_end}
+Users can also over-write the palettes using the {opt clr.()} options described below.{p_end}
 
 {p2coldent : {opt clr0()}, {opt clrx()}, {opt clry()}}Users can overwrite the colors end-points using one or more of these options. Option {opt clr0()} is the
 starting bottom-left color. Similarly, {opt clrx()}, {opt clry()} are x-axis bottom-right and y-axis top-left colors. One can either define a "named" Stata color (e.g.
@@ -163,8 +168,8 @@ Please see additional examples on {browse "https://github.com/asjadnaqvi/stata-b
 
 {title:Package details}
 
-Version      : {bf:bimap} v1.62
-This release : 19 May 2023
+Version      : {bf:bimap} v1.7
+This release : 15 Jun 2023
 First release: 08 Apr 2022
 Repository   : {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub}
 Keywords     : Stata, map, bimap, bi-variate
@@ -179,6 +184,7 @@ Twitter      : {browse "https://twitter.com/AsjadNaqvi":@AsjadNaqvi}
 {title:Acknowledgements}
 
 {p 4 4 2}
+Several requests for allowing categorical variables (v1.7)
 Kit Baum, Fayssal Ayad, and Paul reported bug in the bimap v1.6 legends (v1.62, v1.61).
 Tyson King-Meadows and Vishakha Agarwal requested a greyscale palette (v1.5).
 Souradet Shaw requested scalebar and arrow passthrus (v1.5). 

@@ -8,7 +8,7 @@
 
 ---
 
-# bimap v1.62
+# bimap v1.7
 
 This package provides the ability to draw bi-variate maps in Stata. It is based on the [Bi-variate maps Guide](https://medium.com/the-stata-guide/stata-graphs-bi-variate-maps-b1e96dd4c2be).
 
@@ -22,7 +22,7 @@ The package can be installed from SSC (**v1.61**):
 ssc install bimap, replace
 ```
 
-Or it can be installed from GitHub (**v1.62**):
+Or it can be installed from GitHub (**v1.7**):
 
 ```
 net install bimap, from("https://raw.githubusercontent.com/asjadnaqvi/stata-bimap/main/installation/") replace
@@ -64,10 +64,11 @@ The syntax for **v1.61** is as follows:
 ```
 bimap vary varx [if] [in], [ palette(name) reverse  clr0(str) clrx(str) clry(str) clrsaturate(num)
                 cut(pctile|equal) cutx(numlist) cuty(numlist) binsproper bins(num >=2) binx(num >=2) biny(num >=2)
-                values count percent showlegend ocolor(str) osize(str) ndocolor(str) ndfcolor(str) 
+                values count percent showlegend ocolor(str) osize(str) ndocolor(str) ndfcolor(str) xdiscrete ydiscrete
                 textx(str) texty(str) textgap(num) textlabsize(num) textsize(num) formatx(str) formaty(str) xscale(num) yscale(num) 
                 polygon(options) line(options) point(options) label(options) arrow(options) diagram(options) scalebar(options) 
                 title(str) subtitle(str) note(str) name(str) scheme(str) ]
+
 ```
 
 See the help file `help bimap` for details.
@@ -121,8 +122,6 @@ spmap share_hisp using county_shp2, id(_ID) clm(custom) clb(0(10)100) fcolor(Hea
 ```
 
 <img src="/figures/bimap1_2.png" height="500">
-
-
 
 
 Let's test the `bimap` command:
@@ -388,6 +387,60 @@ bimap share_hisp share_afam using county_shp2, cut(pctile) palette(orangeblue) b
 
 <img src="/figures/bimap21.png" height="500">
 
+
+### showing proper bins (v1.6)
+
+```
+bimap share_hisp share_afam using county_shp2, cut(pctile) palette(orangeblue)  bins(3) binsproper   ///
+		note("Data from the US Census Bureau.") ///	
+		texty("Share of Hispanics") textx("Share of African Americans") texts(3.5) textlabs(3) values count  ///
+		 ocolor() osize(none) ///
+		 polygon(data("state_shp2") ocolor(black) osize(0.2)) 
+```
+
+<img src="/figures/bimap22.png" height="500">
+
+
+### discrete variables (v1.7)
+
+Let's make some variables discrete:
+
+```
+xtile discx = share_afam, n(4)
+gen discy = share_hisp < 10
+
+
+lab de dx 1 "Catx 1" 2 "Catx 2" 3 "Catx 3" 4 "Catx 4"
+lab val discx dx
+
+lab de dy 0 "Caty 0" 1 "Caty 1" 
+lab val discy dy
+
+
+tab discy discx, m
+```
+
+We can also now declare these variables as discrete while using `bimap` in any combination:
+
+```
+bimap discy share_afam using county_shp2, palette(yellowblue) values count ydisc
+```
+
+<img src="/figures/bimap23_1.png" height="500">
+ 
+
+```
+bimap share_hisp discx using county_shp2, palette(yellowblue) values count xdisc
+```
+
+<img src="/figures/bimap23_2.png" height="500">
+
+```
+bimap discy discx using county_shp2, palette(yellowblue) values count xdisc ydisc
+```
+
+<img src="/figures/bimap23_3.png" height="500">
+
 ## Feedback
 
 Please open an [issue](https://github.com/asjadnaqvi/stata-bimap/issues) to report errors, feature enhancements, and/or other requests. 
@@ -395,9 +448,11 @@ Please open an [issue](https://github.com/asjadnaqvi/stata-bimap/issues) to repo
 
 ## Change log
 
+**v1.7 (15 Jun 2023)**
+- Added two new options `xdiscrete` and `ydiscrete` to support discrete variables.
+
 **v1.62 (19 May 2023)**
 - Fixed bugs in legend labels (reported by Kit Baum). Minor improvements.
-
 
 **v1.61 (12 Apr 2023)**
 - Fixed a major bug in the legend. The boxes were not rescaling properly.

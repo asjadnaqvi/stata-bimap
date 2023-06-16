@@ -1,6 +1,7 @@
-*! bimap v1.62 (19 May 2023)
+*! bimap v1.62 (15 Jun 2023)
 *! Asjad Naqvi (asjadnaqvi@gmail.com)
 
+* v1.7  (15 Jun 2023): added support for binary variables: xdiscrete, ydiscrete
 * v1.62 (19 May 2023): Fix to legend labels and sizes. Minor improvements.
 * v1.61 (12 Apr 2023): Fix to legend box and label rescaling.
 * v1.6  (17 Mar 2023): Colors are now dynamically generated for any number of bins. several new options to control colors, bins, saturation, labels
@@ -24,6 +25,10 @@
 * https://medium.com/the-stata-guide/stata-graphs-bi-variate-maps-b1e96dd4c2be
 
 
+// add checks for number of bins in xdisc, ydisc 
+// pass on values labels correctly
+
+
 cap program drop bimap
 
 
@@ -41,7 +46,8 @@ version 15
 		[ cutx(numlist min=1)  cuty(numlist min=1) SHOWLEGend  ] ///  // 1.4 updates
 		[ LEGend(passthru) legenda(passthru) LEGStyle(passthru) LEGJunction(passthru) LEGCount(passthru) LEGOrder(passthru) LEGTitle(passthru)  ] ///  // 1.4 legend controls as passthru
 		[ arrow(passthru) diagram(passthru) scalebar(passthru) ] ///  // 1.5
-		[ bins(numlist min=1 >=2) binx(numlist min=1 >=2) biny(numlist min=1 >=2) reverse clr0(string) clrx(string) clry(string) CLRSATurate(real 6) binsproper FORMATVal(string) VALLABSize(string) ]  // 1.6
+		[ bins(numlist min=1 >=2) binx(numlist min=1 >=2) biny(numlist min=1 >=2) reverse clr0(string) clrx(string) clry(string) CLRSATurate(real 6) binsproper FORMATVal(string) VALLABSize(string) ] /// // 1.6
+		[ XDISCrete YDISCrete ]  // v1.7 options
 		
 		
 		if (substr(reverse("`using'"),1,4) != "atd.") local using "`using'.dta"  // from spmap to check for extension
@@ -89,13 +95,13 @@ version 15
 		
 		
 	
-		if "`bins'"=="" local bins 3
+		if "`bins'"=="" local bins 3 // default
 	
 		***** Get the cuts
 
 	
 qui {
-	preserve	
+ 	preserve	
 		keep if `touse'
 		tempvar cat_`var1' cat_`var2'
 		
@@ -220,37 +226,78 @@ qui {
 		if "`biny'" == "" local biny = `bins'
 		
 		
-		if "`cut'" == "pctile" {
+		if "`xdiscrete'" != "" {
 			
-			xtile `cat_`var1'' = `var1', n(`binx')
-			xtile `cat_`var2'' = `var2', n(`biny')
+			levelsof `var1'
+			local xdiscli `r(levels)'
 			
-			_pctile `var1', n(`binx')
+			egen `cat_`var1'' = group(`var1')
+				
+			levelsof `cat_`var1''
 			
-			local binx0 = `binx' - 1
-			
-			
-			forval i = 1/`binx0' {
-				local xlist `xlist' `r(r`i')'
+			if r(r) > 10 {
+				di as err "Maximum categories allowed are 10. `var1' has `r(r)' categories."
+				exit 198
 			}
 			
-			local xlist `xmin' `xlist' `xmax'
+			local binx = r(r)
+			local xlist 0 `r(levels)'
 			
+			local xlab: value label `var1'
+		}
+		
+		if "`ydiscrete'" != "" {
+			levelsof `var2'
+			local ydiscli `r(levels)'
 			
-			_pctile `var2', n(`biny')
-			local biny0 = `biny' - 1
+			egen `cat_`var2'' = group(`var2')
+				
+			levelsof `cat_`var2''
+
+			if r(r) > 10 {
+				di as err "Maximum categories allowed are 10. `var2' has `r(r)' categories."
+				exit 198
+			}			
 			
-			forval i = 1/`biny0' {
-				local ylist `ylist' `r(r`i')'
-			}	
+			local biny = r(r)
+			local ylist 0 `r(levels)'
 			
-			local ylist `ymin' `ylist' `ymax'
+			local ylab: value label `var2'
+		}		
+		
+
+		
+		if "`cut'" == "pctile" {
+			if "`xdiscrete'" == "" {
+				xtile `cat_`var1'' = `var1', n(`binx')	
+				_pctile `var1', n(`binx')
+				
+				local binx0 = `binx' - 1
+				
+				
+				forval i = 1/`binx0' {
+					local xlist `xlist' `r(r`i')'
+				}
+				
+				local xlist `xmin' `xlist' `xmax'
+			}
 			
+			if "`ydiscrete'" == "" {
+				xtile `cat_`var2'' = `var2', n(`biny')			
+				_pctile `var2', n(`biny')
+				local biny0 = `biny' - 1
+				
+				forval i = 1/`biny0' {
+					local ylist `ylist' `r(r`i')'
+				}	
+				
+				local ylist `ymin' `ylist' `ymax'
+			}
 			
 		}
 		
 		if "`cut'" == "equal" {
-			
+			if "`xdiscrete'" == "" {
 				local xint = (`xmax' - `xmin') / `binx'
 
 				gen int `cat_`var1'' = .
@@ -262,7 +309,16 @@ qui {
 						replace `cat_`var1'' = `i' if inrange(`var1', `xstart', `xend')
 				}	
 
-
+				local xlist = `xmin'
+				forval i = 1/`binx' {
+					local newval = `xmin' + `i' * `xint'
+					local xlist `xlist' `newval'  
+				}
+			}
+			
+			
+			
+			if "`ydiscrete'" == "" {
 				local yint = (`ymax' - `ymin') / `biny'
 
 				gen int `cat_`var2'' = .
@@ -275,26 +331,18 @@ qui {
 				}	
 
 
-				local xlist = `xmin'
-				forval i = 1/`binx' {
-					local newval = `xmin' + `i' * `xint'
-					local xlist `xlist' `newval'  
-				}
-
 				local ylist = `ymin'
 				forval i = 1/`biny' {
 					local newval = `ymin' + `i' * `yint'
 					local ylist `ylist' `newval'  
 				}
-			
+			}
 			
 		}	
 
-
-		*if "`cut'" == "custom" {
+		
 			
-			
-		if "`cutx'" != "" {	
+		if "`cutx'" != "" & "`xdiscrete'"=="" {	
 			local xlen : word count `cutx'
 			
 			tokenize `cutx'
@@ -321,7 +369,7 @@ qui {
 			local binx = `xlen' + 1
 		}
 
-		if "`cuty'" != "" {	
+		if "`cuty'" != "" & "`ydiscrete'"=="" {	
 			local ylen : word count `cuty'
 			
 			tokenize `cuty'
@@ -346,13 +394,14 @@ qui {
 			}
 
 			// reset the bins
-			
 			local biny = `ylen' + 1
 			
 		}
 		
-
+		
 		sort `cat_`var1'' `cat_`var2''
+		
+		
 		
 		tempvar grp_cut
 		gen `grp_cut' = .
@@ -375,7 +424,6 @@ qui {
 			
 			}
 		}
-		
 		
 	
 		***** store the cut-offs for labels	
@@ -406,8 +454,6 @@ qui {
 			}
 		}
 	
-
-		
 		
 		if "`polygon'" == "" {
 			local polyadd 
@@ -461,9 +507,6 @@ qui {
 			local cutst = 9
 		}
 		
-		
-		*colorpalette "`mycolors'", nograph 
-		*local colors `r(p)'
 
 		spmap `grp_cut' using "`using'", ///
 			id(_ID) clm(custom) clb(0(1)`cutst') fcolor("`colors'") ///
@@ -474,37 +517,56 @@ qui {
 				`arrow' `diagram' `scalebar' ///  // v1.5 passthrus
 					name(_map, replace) nodraw
 		
-
+		
 		**************************
 		**** 	  Legend 	 *****
 		**************************
+		
+		
+		
 		
 		keep `var1' `var2'
 		ren `var2' ydot
 		ren `var1' xdot
 		
-		replace y = ydot / `ymax'
-		replace x = xdot / `xmax'
+		summ xdot, meanonly
+		replace xdot = xdot / r(max)
+		
+		summ ydot, meanonly
+		replace ydot = ydot / r(max)
+		
 		
 		
 		// equal interval list (add option to bypass this and stick to the original distribution)
 		
 		if "`binsproper'" == "" {
-			local xint = (`xmax' - `xmin') / `binx'
-			local yint = (`ymax' - `ymin') / `biny'
-
-			local xcats = `xmin'
 			
-			forval i = 1/`binx' {
-				local newval = `xmin' + `i' * `xint'
-				local xcats `xcats' `newval'  
+			if "`xdiscrete'"=="" {
+			
+				local xint = (`xmax' - `xmin') / `binx'
+				local xcats = `xmin'
+				
+				forval i = 1/`binx' {
+					local newval = `xmin' + `i' * `xint'
+					local xcats `xcats' `newval'  
+				}
 			}
-
-			local ycats = `ymin'
+			else {
+				local xcats `xlist'
+			}
 			
-			forval i = 1/`biny' {
-				local newval = `ymin' + `i' * `yint'
-				local ycats `ycats' `newval'  
+
+			if "`ydiscrete'"=="" {			
+				local yint = (`ymax' - `ymin') / `biny'
+				local ycats = `ymin'
+				
+				forval i = 1/`biny' {
+					local newval = `ymin' + `i' * `yint'
+					local ycats `ycats' `newval'  
+				}
+			}
+			else {
+				local ycats `ylist'
 			}
 		}
 		else {
@@ -512,10 +574,9 @@ qui {
 			local ycats `ylist'
 		}
 		
-			
+
 		/////
 				
-
 		local xlen : word count `xcats'
 		local ylen : word count `ycats'	
 			
@@ -575,7 +636,6 @@ qui {
 				}
 			}	
 
-			
 		replace x = x / `xmax'	
 		replace y = y / `ymax'			
 			
@@ -598,8 +658,6 @@ qui {
 				}
 			}
 		
-
-		
 		local marksym mycount	
 			
 		}
@@ -616,26 +674,60 @@ qui {
 		// markers 
 
 		// for x-axis
-		local xlen : word count `xcats'
-		local ylen : word count `ycats'	
-		
-		local z = 1
-		forval i0 = 1/`xlen' {
-			replace x_mark = `: word `i0' of `xcats'' / `xmax' in `z'
-			replace x_val  = `: word `i0' of `xlist'' in `z'
-			local z = `z' + 1
+
+		if "`xdiscrete'"=="" {
+			
+			local xlen : word count `xcats'
+			
+			local z = 1
+			forval i0 = 1/`xlen' {
+				replace x_mark = `: word `i0' of `xcats'' / `xmax' in `z'
+				replace x_val  = `: word `i0' of `xlist'' in `z'
+				local z = `z' + 1
+			}
+		}
+		else {
+			local xlen : word count `xdiscli'
+			
+			local z = 1
+			forval i0 = 1/`xlen' {
+				replace x_mark = `: word `i0' of `xcats'' / `xmax' in `z'
+				replace x_val  = `: word `i0' of `xdiscli'' in `z'
+				local z = `z' + 1
+			}	
+			lab val x_val `xlab'
 		}
 
+		
 		// for y-axis
-		local z = 1
-		forval i0 = 1/`ylen' {
-			replace y_mark = `: word `i0' of `ycats'' / `ymax' in `z'
-			replace y_val  = `: word `i0' of `ylist'' in `z'
-			local z = `z' + 1
-		}		
+		
+		if "`ydiscrete'"=="" {	
+			
+			local ylen : word count `ycats'	
+			
+			local z = 1
+			forval i0 = 1/`ylen' {
+				replace y_mark = `: word `i0' of `ycats'' / `ymax' in `z'
+				replace y_val  = `: word `i0' of `ylist'' in `z'
+				local z = `z' + 1
+			}		
+		}
+		else {
+			local ylen : word count `ydiscli'
+			
+			local z = 1
+			forval i0 = 1/`ylen' {
+				replace y_mark = `: word `i0' of `ycats'' / `ymax' in `z'
+				replace y_val  = `: word `i0' of `ydiscli'' in `z'
+				local z = `z' + 1
+			}	
+			lab val y_val `ylab'
+		}
+		
 		
 		
 		// rescale x and y (0-1)
+
 		summ x, meanonly
 		replace x      = (x      - r(min)) / (r(max) - r(min))
 		replace x_mid  = (x_mid  - r(min)) / (r(max) - r(min))
@@ -647,8 +739,11 @@ qui {
 		replace y_mark = (y_mark - r(min)) / (r(max) - r(min))
 		
 		
-		if "`formatx'" 		=="" local formatx 		"%5.1f"
-		if "`formaty'" 		=="" local formaty 		"%5.1f"		
+		if "`xdiscrete'"!="" replace x_mark = x_mark + ((1/`xlen')/2)
+		if "`ydiscrete'"!="" replace y_mark = y_mark + ((1/`ylen')/2)
+		
+		if "`formatx'"=="" & "`xdiscrete'"=="" local formatx "%5.1f"
+		if "`formaty'"=="" & "`ydiscrete'"=="" local formaty "%5.1f"		
 
 		
 		format x_val `formatx'
@@ -684,7 +779,7 @@ qui {
 		replace labn = "`textx'" in 1
 		
 		replace labx = -0.2 	 in 2
-		replace laby = 0.8	 	 in 2
+		replace laby = 0.55	 	 in 2
 		replace labn = "`texty'" in 2
 	
 	
@@ -715,8 +810,7 @@ qui {
 		
 		}
 			
-			
-  
+
 		twoway ///
 			`boxes' ///
 			`xvals' ///
@@ -736,7 +830,7 @@ qui {
 				legend(off)		///
 				name(_legend, replace)  nodraw   
 
-		restore			
+	restore			
 	
 	 ********************
 	 ****   FINAL	 ****
@@ -751,6 +845,8 @@ qui {
 	
 
 }
+
+*/
 
 end
 
