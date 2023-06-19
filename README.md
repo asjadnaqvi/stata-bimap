@@ -9,6 +9,7 @@
 ---
 
 # bimap v1.7
+(15 Jun 2023)
 
 This package provides the ability to draw bi-variate maps in Stata. It is based on the [Bi-variate maps Guide](https://medium.com/the-stata-guide/stata-graphs-bi-variate-maps-b1e96dd4c2be).
 
