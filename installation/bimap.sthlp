@@ -1,7 +1,7 @@
 {smcl}
-{* 15Jun2023}{...}
+{* 26Jun2023}{...}
 {hi:help bimap}{...}
-{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v1.7 (GitHub)}}
+{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v1.8 (GitHub)}}
 
 {hline}
 
@@ -16,9 +16,9 @@ Note that {cmd:bimap} only works if you have processed the shapefiles using Stat
 {p 8 15 2}
 
 {cmd:bimap} {it:vary varx} {ifin}, {cmd:[} {cmd:palette}({it:name}) reverse  {cmd:clr0}({it:str}) {cmd:clrx}({it:str}) {cmd:clry}({it:str}) {cmdab:clrsat:urate}({it:num})
-		{cmd:cut}({it:pctile}|{it:equal}) {cmd:cutx}({it:numlist}) {cmd:cuty}({it:numlist}) {cmd:binsproper} {cmd:bins}({it:num >=2}) {cmd:binx}({it:num >=2}) {cmd:biny}({it:num >=2})
-		{cmd:values} {cmd:count} {cmd:percent} {cmdab:showleg:end} {cmd:ocolor}({it:str}) {cmd:osize}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str}) {cmdab:xdisc:rete} {cmdab:ydisc:rete}
-		{cmd:textx}({it:str}) {cmd:texty}({it:str}) {cmdab:textg:ap}({it:num}) {cmdab:textlabs:ize}({it:num}) {cmdab:texts:ize}({it:num}) {cmd:formatx}({it:str}) {cmd:formaty}({it:str}) {cmd:xscale}({it:num}) {cmd:yscale}({it:num}) 
+		{cmd:cut}({it:pctile}|{it:equal}) {cmd:cutx}({it:numlist}) {cmd:cuty}({it:numlist}) {cmd:binsproper} {cmd:bins}({it:num >=2}) {cmd:binx}({it:num >=2}) {cmd:biny}({it:num >=2}) {cmd:values} {cmd:count} 
+		{cmd:percent} {cmdab:showleg:end} {cmd:ocolor}({it:str}) {cmd:osize}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str}) {cmdab:xdisc:rete} {cmdab:ydisc:rete} {cmd:labxgap}({it:num}) {cmd:labygap}({it:num})
+		{cmd:textx}({it:str}) {cmd:texty}({it:str}) {cmdab:textlabs:ize}({it:num}) {cmdab:texts:ize}({it:num}) {cmd:formatx}({it:str}) {cmd:formaty}({it:str}) {cmd:xscale}({it:num}) {cmd:yscale}({it:num}) 
 		{cmd:polygon}({it:options}) {cmd:line}({it:options}) {cmd:point}({it:options}) {cmd:label}({it:options}) {cmd:arrow}({it:options}) {cmd:diagram}({it:options}) {cmd:scalebar}({it:options}) 
 		{cmd:title}({it:str}) {cmd:subtitle}({it:str}) {cmd:note}({it:str}) {cmd:name}({it:str}) {cmd:scheme}({it:str}) {cmd:]}
 
@@ -38,8 +38,8 @@ The options are described as follows:
 {p2coldent : {opt cut(option)}}Here {opt cut} take on three options: {opt cut(pctile)} for percentiles, or {opt cut(equal)} for equally-spaced intervals. If either
 {opt cutx()}, or {opt cuty()}, or are specified, then they overwrite the defined {opt cut()} options. Default is {opt cut(pctile)}.{p_end}
 
-{p2coldent : {opt cutx(numlist)}, {opt cuty(numlist)}}For these options, define the {it:middle} cut-off points for the x and y variables. Either one of the two, or both can be specified, and
-they will overwrite the {opt cut()} options. The minimum and maximum cut-offs will be estimated directly by the program, therefore do not specify the end points.{p_end}
+{p2coldent : {opt cutx(numlist)}, {opt cuty(numlist)}}Define a custom set of cut-offs using {stata help numlist:numlist} to add more control to your legend.
+At least three numbers need to be specified to generate the map.{p_end}
 
 {p2coldent : {opt xdisc:rete}, {opt ydisc:rete}} can be used if the variables are assumed categorical, for example, binary variables, or ordinally ranked variables.
 These options overwrite other binning options and legend axes markers will use value labels and will be centered to bin width/height. More than 10 categories will throw an error.
@@ -102,7 +102,9 @@ This option is still {it:beta}, so suggestions for improvement are appreciated.{
 
 {p2coldent : {opt textx(str)}, {opt texty(str)}}The axes labels of the legend. The default values are the variable names.{p_end}
 
-{p2coldent : {opt textg:ap(num)}}The gap of the axes labels from the lines. The default value is {opt textg(2)}.{p_end}
+{p2coldent : {opt labxgap(num)}}The gap of the x-axis title from the default position. The default value is {opt labxgap(0)}. Use in very minor increments, e.g. {opt labxgap(0.02)}. {p_end}
+
+{p2coldent : {opt labygap(num)}}The gap of the y-axis title from the default position. The default value is {opt labygap(0)}. Use in very minor increments, e.g. {opt labygap(0.02)}. {p_end}
 
 {p2coldent : {opt texts:ize(str)}}The text size of the legend axis labels. The default value is {opt texts(2.5)}.{p_end}
 
@@ -131,45 +133,14 @@ Even if you have the packages installed, please check for updates: {stata ado up
 
 {title:Examples}
 
-Download the files from the {browse "https://github.com/asjadnaqvi/stata-bimap/tree/main/GIS":bimap GitHub repository} and copy them in a directory.
-
-use usa_county, clear
-	destring _all, replace
-	
-merge 1:1 STATEFP COUNTYFP using county_race
-keep if _m==3
-drop _m
-
-
-Test with the {cmd:spmap} command:
-{stata spmap share_afam using usa_county_shp_clean, id(_ID) clm(custom) clb(0(10)100) fcolor(Heat)}
-
-{ul:Basic use}
-{stata bimap share_hisp share_afam using usa_county_shp_clean, cut(pctile) palette(pinkgreen)}
-
-{stata bimap share_hisp share_afam using usa_county_shp_clean, cut(pctile) palette(pinkgreen) count values}
-
-
-{ul:Add additional information}
-bimap share_hisp share_afam using usa_county_shp_clean, cut(pctile) palette(purpleyellow) ///
-	title("My first bivariate map") subtitle("Made with Stata") note("Data from US Census Bureau.")
-
-{ul:Add additional polygon layer}
-bimap share_asian share_afam using usa_county_shp_clean, cut(pctile) palette(bluered)  ///
-	title("{fontface Arial Bold:My first bivariate map}") subtitle("Made with Stata") note("Data from the US Census Bureau.") ///	
-		 textx("Share of African Americans") texty("Share of Asians") texts(3.5) textlabs(3) values count ///
-		 ocolor() osize(none) ///
-		 polygon(data("usa_state_shp_clean") ocolor(white) osize(0.3))
-
-
-Please see additional examples on {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub}.
+Please see {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub} for examples.
 
 {hline}
 
 {title:Package details}
 
-Version      : {bf:bimap} v1.7
-This release : 15 Jun 2023
+Version      : {bf:bimap} v1.8
+This release : 26 Jun 2023
 First release: 08 Apr 2022
 Repository   : {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub}
 Keywords     : Stata, map, bimap, bi-variate
@@ -184,6 +155,7 @@ Twitter      : {browse "https://twitter.com/AsjadNaqvi":@AsjadNaqvi}
 {title:Acknowledgements}
 
 {p 4 4 2}
+Paul Hufe requested changes to custom cut-offs (v1.8).
 Several requests for allowing categorical variables (v1.7)
 Kit Baum, Fayssal Ayad, and Paul reported bug in the bimap v1.6 legends (v1.62, v1.61).
 Tyson King-Meadows and Vishakha Agarwal requested a greyscale palette (v1.5).

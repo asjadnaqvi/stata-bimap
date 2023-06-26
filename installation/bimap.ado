@@ -1,6 +1,7 @@
-*! bimap v1.7 (15 Jun 2023)
+*! bimap v1.8 (26 Jun 2023)
 *! Asjad Naqvi (asjadnaqvi@gmail.com)
 
+* v1.8  (26 Jun 2023): custom cuts now take on values given in list, textgap() removed, labxgap(), labygap() added. Legend label positions optimized.
 * v1.7  (15 Jun 2023): added support for binary variables: xdiscrete, ydiscrete
 * v1.62 (19 May 2023): Fix to legend labels and sizes. Minor improvements.
 * v1.61 (12 Apr 2023): Fix to legend box and label rescaling.
@@ -38,7 +39,7 @@ version 15
  
 	syntax varlist(min=2 max=2 numeric) [if] [in] using/  ///
 		[ , cut(string) palette(string) ]  ///
-		[ count percent BOXsize(real 8) textx(string) texty(string) formatx(string) formaty(string) TEXTGap(real 2) xscale(real 35) yscale(real 100) TEXTLABSize(real 2) TEXTSize(real 2.5) values ] ///
+		[ count percent BOXsize(real 8) textx(string) texty(string) formatx(string) formaty(string) xscale(real 35) yscale(real 100) TEXTLABSize(real 2) TEXTSize(real 2.5) values ] ///
 		[ polygon(passthru) line(passthru) point(passthru) label(passthru) ] ///
 		[ ocolor(string) osize(string) ]   ///
 		[ ndocolor(string) ndsize(string) ndfcolor(string) ]   ///
@@ -47,7 +48,8 @@ version 15
 		[ LEGend(passthru) legenda(passthru) LEGStyle(passthru) LEGJunction(passthru) LEGCount(passthru) LEGOrder(passthru) LEGTitle(passthru)  ] ///  // 1.4 legend controls as passthru
 		[ arrow(passthru) diagram(passthru) scalebar(passthru) ] ///  // 1.5
 		[ bins(numlist min=1 >=2) binx(numlist min=1 >=2) biny(numlist min=1 >=2) reverse clr0(string) clrx(string) clry(string) CLRSATurate(real 6) binsproper FORMATVal(string) VALLABSize(string) ] /// // 1.6
-		[ XDISCrete YDISCrete ]  // v1.7 options
+		[ XDISCrete YDISCrete ] ///  // v1.7 options
+		[ labxgap(real 0) labygap(real 0) ]  // v1.8 options
 		
 		
 		if (substr(reverse("`using'"),1,4) != "atd.") local using "`using'.dta"  // from spmap to check for extension
@@ -103,6 +105,8 @@ version 15
 qui {
  	preserve	
 		keep if `touse'
+		keep `varlist' _ID
+		
 		tempvar cat_`var1' cat_`var2'
 		
 		summ `var1', meanonly
@@ -345,63 +349,67 @@ qui {
 		if "`cutx'" != "" & "`xdiscrete'"=="" {	
 			local xlen : word count `cutx'
 			
+			if `xlen' < 3 {
+				di as error "Please specify at least three elements in {opt cutx()}."
+				exit 198
+			}
+			
 			tokenize `cutx'
 
 				forval i = 1/`xlen' {
 					local x`i' = ``i''
 				}
 
-			local xlen1 = `xlen' + 1
+			local xlen1 = `xlen' - 1
 
-			local x0 = `xmin'
-			local x`xlen1' = `xmax'
-
-			local xlist `xmin' `cutx' `xmax'
+			local xlist `cutx' 
 
 			cap drop `cat_`var1''
 			gen int `cat_`var1'' = .
 
-			forval i = 0/`xlen' {
+			forval i = 1/`xlen1' {
 				local j = `i' + 1	
-				replace `cat_`var1'' = `j' if inrange(`var1', `x`i'', `x`j'')
+						
+				replace `cat_`var1'' = `i' if inrange(`var1', `x`i'', `x`j'')
 			}	
 			
-			local binx = `xlen' + 1
+			local binx = `xlen' - 1
 		}
 
 		if "`cuty'" != "" & "`ydiscrete'"=="" {	
 			local ylen : word count `cuty'
-			
+		
+			if `ylen' < 3 {
+				di as error "Please specify at least three elements in {opt cuty()}."
+				exit 198
+			}
+					
+		
 			tokenize `cuty'
 
 				forval i = 1/`ylen' {
 					local y`i' = ``i''
 				}
 
-			local ylen1 = `ylen' + 1
+			local ylen1 = `ylen' - 1
 
-			local y0 = `ymin'
-			local y`ylen1' = `ymax'
-
-			local ylist `ymin' `cuty' `ymax'
+			local ylist `cuty'
 
 			cap drop `cat_`var2''
 			gen int `cat_`var2'' = .
 
-			forval i = 0/`ylen' {
+			forval i = 1/`ylen1' {
 				local j = `i' + 1	
-				replace `cat_`var2'' = `j' if inrange(`var2', `y`i'', `y`j'')
+				replace `cat_`var2'' = `i' if inrange(`var2', `y`i'', `y`j'')
 			}
 
 			// reset the bins
-			local biny = `ylen' + 1
+			local biny = `ylen' - 1
 			
 		}
 		
 		
 		sort `cat_`var1'' `cat_`var2''
-		
-		
 		
 		tempvar grp_cut
 		gen `grp_cut' = .
@@ -425,7 +433,7 @@ qui {
 			}
 		}
 		
-	
+		
 		***** store the cut-offs for labels	
 		
 	
@@ -517,13 +525,14 @@ qui {
 				`arrow' `diagram' `scalebar' ///  // v1.5 passthrus
 					name(_map, replace) nodraw
 		
+	
 		
 		**************************
 		**** 	  Legend 	 *****
 		**************************
 		
 		
-		
+
 		
 		keep `var1' `var2'
 		ren `var2' ydot
@@ -574,7 +583,12 @@ qui {
 			local ycats `ylist'
 		}
 		
-
+	
+		di "`xcats'"
+		di "`ycats'"
+	
+		
+	
 		/////
 				
 		local xlen : word count `xcats'
@@ -583,7 +597,10 @@ qui {
 		local xlen = `xlen' - 1	
 		local ylen = `ylen' - 1
 			
-			
+		
+		
+		
+
 		local myobs = `xlen' * `ylen' * 5	
 		
 		if _N < `myobs' {
@@ -608,6 +625,8 @@ qui {
 		
 		gen double y_mark = .		
 		gen double y_val  = .
+		
+		di "Check here"
 		
 		local z = 1
 
@@ -636,6 +655,8 @@ qui {
 				}
 			}	
 
+			
+		
 		replace x = x / `xmax'	
 		replace y = y / `ymax'			
 			
@@ -645,7 +666,7 @@ qui {
 		replace x_mid = . if tag!=1
 		replace y_mid = . if tag!=1
 		
-		
+		di "Check here 2"
 
 		if "`count'" != "" | "`percent'" != "" {
 			gen mycount = .
@@ -662,6 +683,7 @@ qui {
 			
 		}
 		
+			
 		
 		if "`formatval'" =="" local formatval "%5.1f"
 		
@@ -673,8 +695,17 @@ qui {
 				
 		// markers 
 
+		di "Check here 3"
+		
+		di "`xcats'"
+		di "`xlist'"
+		
+		
 		// for x-axis
 
+		
+		
+		
 		if "`xdiscrete'"=="" {
 			
 			local xlen : word count `xcats'
@@ -697,7 +728,7 @@ qui {
 			}	
 			lab val x_val `xlab'
 		}
-
+	
 		
 		// for y-axis
 		
@@ -764,9 +795,9 @@ qui {
 		gen spike2_x2  = -0.05 		in 1	
 		gen spike2_y2  =  1.05 		in 1 
 	
-		if "`textx'" == "" 	local textx = "`var1'" 
-		if "`texty'" == "" 	local texty = "`var2'"
-		if "`vallabsize'" == "" 	local vallabsize = 1.8
+		if "`textx'" 	  == "" local textx = "`var1'" 
+		if "`texty'" 	  == ""	local texty = "`var2'"
+		if "`vallabsize'" == ""	local vallabsize = 1.8
 		
 		// axis labels
 		
@@ -775,11 +806,11 @@ qui {
 		gen labn = ""
 		
 		replace labx = 0.5 		 in 1
-		replace laby = -0.1 	 in 1
+		replace laby = -0.25 - `labxgap' 	 in 1
 		replace labn = "`textx'" in 1
 		
-		replace labx = -0.2 	 in 2
-		replace laby = 0.55	 	 in 2
+		replace labx = -0.3 - `labygap' 	 in 2
+		replace laby = 0.5   	 in 2
 		replace labn = "`texty'" in 2
 	
 	
@@ -818,8 +849,8 @@ qui {
 			`mylabels' ///
 			(pcarrow spike1_y1 spike1_x1 spike1_y2 spike1_x2, lcolor(gs6) mcolor(gs6) msize(0.8) ) ///  // arrow1
 			(pcarrow spike2_y1 spike2_x1 spike2_y2 spike2_x2, lcolor(gs6) mcolor(gs6) msize(0.8) ) ///  // arrow2
-			(scatter laby labx in 1, mcolor(none) mlab(labn) mlabsize(`textsize') mlabpos(6) mlabgap(`textgap')				 )  ///
-			(scatter laby labx in 2, mcolor(none) mlab(labn) mlabsize(`textsize') mlabpos(9) mlabgap(`textgap') mlabangle(90))  ///
+			(scatter laby labx in 1, mcolor(none) mlab(labn) mlabsize(`textsize') mlabpos(0)				 )  ///
+			(scatter laby labx in 2, mcolor(none) mlab(labn) mlabsize(`textsize') mlabpos(0) mlabangle(90))  ///
 			, ///
 				xlabel(-0.2 1, nogrid) ylabel(-0.15 1, nogrid) ///
 				yscale(range(0 1.1) off) xscale(range(0 1.1) off) ///
