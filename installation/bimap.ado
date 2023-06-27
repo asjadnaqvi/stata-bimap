@@ -530,22 +530,13 @@ qui {
 		**************************
 		**** 	  Legend 	 *****
 		**************************
-		
-		
 
 		
 		keep `var1' `var2'
 		ren `var2' ydot
 		ren `var1' xdot
 		
-		summ xdot, meanonly
-		replace xdot = xdot / r(max)
-		
-		summ ydot, meanonly
-		replace ydot = ydot / r(max)
-		
-		
-		
+	
 		// equal interval list (add option to bypass this and stick to the original distribution)
 		
 		if "`binsproper'" == "" {
@@ -583,12 +574,6 @@ qui {
 			local ycats `ylist'
 		}
 		
-	
-		di "`xcats'"
-		di "`ycats'"
-	
-		
-	
 		/////
 				
 		local xlen : word count `xcats'
@@ -598,9 +583,6 @@ qui {
 		local ylen = `ylen' - 1
 			
 		
-		
-		
-
 		local myobs = `xlen' * `ylen' * 5	
 		
 		if _N < `myobs' {
@@ -626,7 +608,6 @@ qui {
 		gen double y_mark = .		
 		gen double y_val  = .
 		
-		di "Check here"
 		
 		local z = 1
 
@@ -655,18 +636,13 @@ qui {
 				}
 			}	
 
-			
-		
-		replace x = x / `xmax'	
-		replace y = y / `ymax'			
-			
+					
 		bysort box: egen double x_mid = mean(x)	
 		bysort box: egen double y_mid = mean(y)
 		
 		replace x_mid = . if tag!=1
 		replace y_mid = . if tag!=1
 		
-		di "Check here 2"
 
 		if "`count'" != "" | "`percent'" != "" {
 			gen mycount = .
@@ -695,24 +671,16 @@ qui {
 				
 		// markers 
 
-		di "Check here 3"
-		
-		di "`xcats'"
-		di "`xlist'"
-		
-		
+
 		// for x-axis
 
-		
-		
-		
 		if "`xdiscrete'"=="" {
 			
 			local xlen : word count `xcats'
 			
 			local z = 1
 			forval i0 = 1/`xlen' {
-				replace x_mark = `: word `i0' of `xcats'' / `xmax' in `z'
+				replace x_mark = `: word `i0' of `xcats''  in `z'
 				replace x_val  = `: word `i0' of `xlist'' in `z'
 				local z = `z' + 1
 			}
@@ -722,7 +690,7 @@ qui {
 			
 			local z = 1
 			forval i0 = 1/`xlen' {
-				replace x_mark = `: word `i0' of `xcats'' / `xmax' in `z'
+				replace x_mark = `: word `i0' of `xcats''  in `z'
 				replace x_val  = `: word `i0' of `xdiscli'' in `z'
 				local z = `z' + 1
 			}	
@@ -738,7 +706,7 @@ qui {
 			
 			local z = 1
 			forval i0 = 1/`ylen' {
-				replace y_mark = `: word `i0' of `ycats'' / `ymax' in `z'
+				replace y_mark = `: word `i0' of `ycats''  in `z'
 				replace y_val  = `: word `i0' of `ylist'' in `z'
 				local z = `z' + 1
 			}		
@@ -748,12 +716,14 @@ qui {
 			
 			local z = 1
 			forval i0 = 1/`ylen' {
-				replace y_mark = `: word `i0' of `ycats'' / `ymax' in `z'
+				replace y_mark = `: word `i0' of `ycats'' in `z'
 				replace y_val  = `: word `i0' of `ydiscli'' in `z'
 				local z = `z' + 1
 			}	
 			lab val y_val `ylab'
 		}
+		
+		
 		
 		
 		
@@ -768,6 +738,7 @@ qui {
 		replace y      = (y      - r(min)) / (r(max) - r(min))			
 		replace y_mid  = (y_mid  - r(min)) / (r(max) - r(min))	
 		replace y_mark = (y_mark - r(min)) / (r(max) - r(min))
+		
 		
 		
 		if "`xdiscrete'"!="" replace x_mark = x_mark + ((1/`xlen')/2)
@@ -852,11 +823,10 @@ qui {
 			(scatter laby labx in 1, mcolor(none) mlab(labn) mlabsize(`textsize') mlabpos(0)				 )  ///
 			(scatter laby labx in 2, mcolor(none) mlab(labn) mlabsize(`textsize') mlabpos(0) mlabangle(90))  ///
 			, ///
-				xlabel(-0.2 1, nogrid) ylabel(-0.15 1, nogrid) ///
+				xlabel(-0.2 1, nogrid) ylabel(-0.2 1, nogrid) ///
 				yscale(range(0 1.1) off) xscale(range(0 1.1) off) ///
 				aspectratio(1) ///
 				xsize(1) ysize(1) ///
-				ytitle("variable 1") xtitle("variable2") ///
 				fxsize(`xscale') fysize(`yscale') ///
 				legend(off)		///
 				name(_legend, replace)  nodraw   
