@@ -484,14 +484,8 @@ merge 1:1 STATEFP COUNTYFP using county_race
 keep if _m==3
 drop _m	
 
-
 replace share_hisp = . if stname=="Texas"
 
-
-keep share_hisp share_afam _ID stname
-sort _ID
-
-***  format check 2 (fix decimals)
 bimap share_hisp share_afam using county_shp2, palette(orangeblue)    ///
 		 ndfcolor(pink) ndocolor(lime) ndsize(0.3)  ///
 		 values count  ///
