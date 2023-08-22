@@ -10,8 +10,8 @@
 
 ---
 
-# bimap v1.8
-(26 Jun 2023)
+# bimap v1.81
+(22 Aug 2023)
 
 This package provides the ability to draw bi-variate maps in Stata. It is based on the [Bi-variate maps Guide](https://medium.com/the-stata-guide/stata-graphs-bi-variate-maps-b1e96dd4c2be).
 
@@ -20,12 +20,12 @@ This package provides the ability to draw bi-variate maps in Stata. It is based 
 
 The package can be installed via SSC or GitHub. The GitHub version, *might* be more recent due to bug fixes, feature updates etc, and *may* contain syntax improvements and changes in *default* values. See version numbers below. Eventually the GitHub version is published on SSC. All examples are updated to the latest version and might not be compatible with the old ones. Please check the documentation and change logs.
 
-The package can be installed from SSC (**v1.7**):
+The package can be installed from SSC (**v1.8**):
 ```
 ssc install bimap, replace
 ```
 
-Or it can be installed from GitHub (**v1.8**):
+Or it can be installed from GitHub (**v1.81**):
 
 ```
 net install bimap, from("https://raw.githubusercontent.com/asjadnaqvi/stata-bimap/main/installation/") replace
@@ -62,12 +62,12 @@ This command is a wrapper for `spmap` and assumes that you have shapefiles in St
 
 ## Syntax
 
-The syntax for **v1.8** is as follows:
+The syntax for the latest version is as follows:
 
 ```stata
 bimap vary varx [if] [in], [ palette(name) reverse  clr0(str) clrx(str) clry(str) clrsaturate(num)
                 cut(pctile|equal) cutx(numlist) cuty(numlist) binsproper bins(num >=2) binx(num >=2) biny(num >=2) values count 
-                percent showlegend ocolor(str) osize(str) ndocolor(str) ndfcolor(str) xdiscrete ydiscrete labxgap(num) labygap(num)
+                percent showlegend ocolor(str) osize(str) ndocolor(str) ndfcolor(str) ndsize(str) xdiscrete ydiscrete labxgap(num) labygap(num)
                 textx(str) texty(str) textlabsize(num) textsize(num) formatx(str) formaty(str) xscale(num) yscale(num) 
                 polygon(options) line(options) point(options) label(options) arrow(options) diagram(options) scalebar(options) 
                 title(str) subtitle(str) note(str) name(str) scheme(str) ]
@@ -304,8 +304,6 @@ bimap share_hisp share_afam using county_shp2, cut(pctile) palette(census)  ///
 <img src="/figures/bimap12.png" height="500">
 
 
-### if statements
-
 ```
 bimap share_hisp share_afam using county_shp2, cut(pctile) palette(census)  ///
 		 note("Data from the US Census Bureau.", size(small)) ///	
@@ -476,12 +474,43 @@ bimap discy discx using county_shp2, palette(yellowblue) values count xdisc ydis
 
 <img src="/figures/bimap23_3.png" height="500">
 
+
+### missing data fixed (v1.81)
+
+```
+use county, clear
+destring _all, replace
+merge 1:1 STATEFP COUNTYFP using county_race
+keep if _m==3
+drop _m	
+
+
+replace share_hisp = . if stname=="Texas"
+
+
+keep share_hisp share_afam _ID stname
+sort _ID
+
+***  format check 2 (fix decimals)
+bimap share_hisp share_afam using county_shp2, palette(orangeblue)    ///
+		 ndfcolor(pink) ndocolor(lime) ndsize(0.3)  ///
+		 values count  ///
+		 polygon(data("state_shp2") ocolor(black) osize(0.2)) 
+```
+
+<img src="/figures/bimap24.png" height="500">
+
 ## Feedback
 
 Please open an [issue](https://github.com/asjadnaqvi/stata-bimap/issues) to report errors, feature enhancements, and/or other requests. 
 
 
 ## Change log
+
+**v1.81 (22 Aug 2023)**
+- Fixed a bug where missing data points where getting dropped (reported by Steve Johnson).
+- Fixed passthru of the `ndisze()` option.
+
 
 **v1.8 (26 Jun 2023)**
 - Changed the ways `cutx()` and `cuty()` are calculated (requested by Paul Hufe). These now take on lists which are used as provided.

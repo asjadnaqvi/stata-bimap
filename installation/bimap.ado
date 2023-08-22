@@ -1,6 +1,7 @@
-*! bimap v1.8 (26 Jun 2023)
+*! bimap v1.81 (22 Aug 2023)
 *! Asjad Naqvi (asjadnaqvi@gmail.com)
 
+* v1.81 (22 Aug 2023): Fixed a bug where missing data was getting dropped. ndsize() passthru fixed.
 * v1.8  (26 Jun 2023): custom cuts now take on values given in list, textgap() removed, labxgap(), labygap() added. Legend label positions optimized.
 * v1.7  (15 Jun 2023): added support for binary variables: xdiscrete, ydiscrete
 * v1.62 (19 May 2023): Fix to legend labels and sizes. Minor improvements.
@@ -74,7 +75,7 @@ version 15
 			exit
 		}	
 	
-		marksample touse, strok
+		marksample touse, strok novarlist
 		gettoken var2 var1 : varlist   // var1 = x, var2 = y
 	
 	
@@ -108,6 +109,8 @@ qui {
 		keep `varlist' _ID
 		
 		tempvar cat_`var1' cat_`var2'
+		
+		
 		
 		summ `var1', meanonly
 			local xmin = r(min)
@@ -478,6 +481,8 @@ qui {
 		local ndo = cond("`ndocolor'" == "", "gs12", "`ndocolor'")
 		
 		local ndf = cond("`ndfcolor'" == "", "gs8", "`ndfcolor'")
+
+		local nds = cond("`ndsize'" == "", "`lw'", "`ndsize'")		
 		
 		local leg = cond("`showlegend'"=="", "legend(off)", "`legend'")
 		
@@ -519,13 +524,14 @@ qui {
 		spmap `grp_cut' using "`using'", ///
 			id(_ID) clm(custom) clb(0(1)`cutst') fcolor("`colors'") ///
 				ocolor(`lc' ..) osize(`lw' ..) ///	
-				ndocolor(`ndo' ..) ndsize(`lw' ..) ndfcolor(`ndf' ..)  ///
+				ndocolor(`ndo' ..) ndsize(`nds' ..) ndfcolor(`ndf' ..)  ///
 				`polygon' `line' `point' `label'  ///
 				`leg' `legstyle' `legenda' `legendstyle' `legjunction' `legcount' `legorder' `legtitle'  ///  // v1.4 legend passthrus
 				`arrow' `diagram' `scalebar' ///  // v1.5 passthrus
 					name(_map, replace) nodraw
 		
 	
+		*/
 		
 		**************************
 		**** 	  Legend 	 *****

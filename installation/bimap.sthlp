@@ -1,7 +1,7 @@
 {smcl}
-{* 26Jun2023}{...}
+{* 22Aug2023}{...}
 {hi:help bimap}{...}
-{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v1.8 (GitHub)}}
+{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v1.81 (GitHub)}}
 
 {hline}
 
@@ -17,7 +17,7 @@ Note that {cmd:bimap} only works if you have processed the shapefiles using Stat
 
 {cmd:bimap} {it:vary varx} {ifin}, {cmd:[} {cmd:palette}({it:name}) reverse  {cmd:clr0}({it:str}) {cmd:clrx}({it:str}) {cmd:clry}({it:str}) {cmdab:clrsat:urate}({it:num})
 		{cmd:cut}({it:pctile}|{it:equal}) {cmd:cutx}({it:numlist}) {cmd:cuty}({it:numlist}) {cmd:binsproper} {cmd:bins}({it:num >=2}) {cmd:binx}({it:num >=2}) {cmd:biny}({it:num >=2}) {cmd:values} {cmd:count} 
-		{cmd:percent} {cmdab:showleg:end} {cmd:ocolor}({it:str}) {cmd:osize}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str}) {cmdab:xdisc:rete} {cmdab:ydisc:rete} {cmd:labxgap}({it:num}) {cmd:labygap}({it:num})
+		{cmd:percent} {cmdab:showleg:end} {cmd:ocolor}({it:str}) {cmd:osize}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str})  {cmd:ndfsize}({it:str}) {cmdab:xdisc:rete} {cmdab:ydisc:rete} {cmd:labxgap}({it:num}) {cmd:labygap}({it:num})
 		{cmd:textx}({it:str}) {cmd:texty}({it:str}) {cmdab:textlabs:ize}({it:num}) {cmdab:texts:ize}({it:num}) {cmd:formatx}({it:str}) {cmd:formaty}({it:str}) {cmd:xscale}({it:num}) {cmd:yscale}({it:num}) 
 		{cmd:polygon}({it:options}) {cmd:line}({it:options}) {cmd:point}({it:options}) {cmd:label}({it:options}) {cmd:arrow}({it:options}) {cmd:diagram}({it:options}) {cmd:scalebar}({it:options}) 
 		{cmd:title}({it:str}) {cmd:subtitle}({it:str}) {cmd:note}({it:str}) {cmd:name}({it:str}) {cmd:scheme}({it:str}) {cmd:]}
@@ -73,6 +73,8 @@ also be defined using {opt binx()} and/or {opt biny()}. The default is {opt bin(
 {p2coldent : {opt ndocolor(str)}}Outline color of polygons with no data. Same as in {cmd:spmap}. Default value is {it:gs12}.{p_end}
 
 {p2coldent : {opt ndfcolor(str)}}Fill color of polygons with no data. Same as in {cmd:spmap}. Default value is {it:gs8}.{p_end}
+
+{p2coldent : {opt ndsize(str)}}Line width of missing observations. If no value is specified, it defaults to the {opt osize()} value.{p_end}
 
 {p2coldent : {opt polygon}(), {opt line}(), {opt point}(), {opt label}()}These are {cmd:spmap} passthru options for additional layers. See {stata help spmap} for details.{p_end}
 
@@ -139,8 +141,8 @@ Please see {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub} for examp
 
 {title:Package details}
 
-Version      : {bf:bimap} v1.8
-This release : 26 Jun 2023
+Version      : {bf:bimap} v1.81
+This release : 22 Aug 2023
 First release: 08 Apr 2022
 Repository   : {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub}
 Keywords     : Stata, map, bimap, bi-variate
@@ -155,6 +157,7 @@ Twitter      : {browse "https://twitter.com/AsjadNaqvi":@AsjadNaqvi}
 {title:Acknowledgements}
 
 {p 4 4 2}
+Steve Johnson found a bug with missing data getting dropped (v1.81). ndsize() passthru fixed.
 Paul Hufe requested changes to custom cut-offs (v1.8).
 Several requests for allowing categorical variables (v1.7)
 Kit Baum, Fayssal Ayad, and Paul reported bug in the bimap v1.6 legends (v1.62, v1.61).
