@@ -116,14 +116,14 @@ Test whether the `spmap` is working properly:
 spmap share_afam using county_shp2, id(_ID) clm(custom) clb(0(10)100) fcolor(Heat)
 ```
 
-<img src="/figures/bimap1_1.png" height="500">
+<img src="/figures/bimap1_1.png" width="100%">
 
 
 ```
 spmap share_hisp using county_shp2, id(_ID) clm(custom) clb(0(10)100) fcolor(Heat)
 ```
 
-<img src="/figures/bimap1_2.png" height="500">
+<img src="/figures/bimap1_2.png" width="100%">
 
 
 Let's test the `bimap` command:
@@ -132,26 +132,26 @@ Let's test the `bimap` command:
 bimap share_hisp share_afam using county_shp2, cut(pctile) palette(pinkgreen) 
 ```
 
-<img src="/figures/bimap2.png" height="500">
+<img src="/figures/bimap2.png" width="100%">
 
 
 ```
 bimap share_hisp share_afam using county_shp2, cut(pctile) palette(pinkgreen) count values
 ```
 
-<img src="/figures/bimap2_1.png" height="500">
+<img src="/figures/bimap2_1.png" width="100%">
 
 ```
 bimap share_hisp share_afam using county_shp2, cut(pctile) palette(pinkgreen) percent values
 ```
 
-<img src="/figures/bimap2_1_1.png" height="500">
+<img src="/figures/bimap2_1_1.png" width="100%">
 
 ```
 bimap share_hisp share_afam using county_shp2, cut(equal) palette(pinkgreen) count values
 ```
 
-<img src="/figures/bimap2_2.png" height="500">
+<img src="/figures/bimap2_2.png" width="100%">
 
 
 ### Legacy palettes
@@ -188,7 +188,7 @@ bimap share_asian share_afam using county_shp2, cut(pctile) palette(bluered)  //
 		 polygon(data("state_shp2") ocolor(white) osize(0.3))
 ```
 
-<img src="/figures/bimap4.png" height="500">
+<img src="/figures/bimap4.png" width="100%">
 
 
 ```
@@ -199,7 +199,7 @@ bimap share_asian share_afam using county_shp2, cut(pctile) palette(yellowblue) 
 		 polygon(data("state_shp2") ocolor(black) osize(0.2)) 
 ```
 
-<img src="/figures/bimap6.png" height="500">
+<img src="/figures/bimap6.png" width="100%">
 
 
 ```
@@ -210,7 +210,7 @@ bimap share_asian share_hisp  using county_shp2, cut(pctile) palette(orangeblue)
 		 polygon(data("state_shp2") ocolor(black) osize(0.2)) 
 ```
 
-<img src="/figures/bimap7.png" height="500">
+<img src="/figures/bimap7.png" width="100%">
 
 
 
@@ -226,7 +226,7 @@ bimap share_hisp share_afam using county_shp2, cut(pctile) palette(pinkgreen) pe
 		 point(data("county") x(_CX) y(_CY) select(keep if tot_pop>100000) proportional(tot_pop) psize(absolute) fcolor(lime%85) ocolor(black) osize(0.12) size(0.9) )  
 ```
 
-<img src="/figures/bimap8.png" height="500">
+<img src="/figures/bimap8.png" width="100%">
 
 
 
@@ -242,7 +242,7 @@ bimap share_hisp share_afam using county_shp2, cut(pctile) palette(orangeblue)  
 		 polygon(data("state_shp2") ocolor(black) osize(0.2)) 
 ```
 
-<img src="/figures/bimap9_0.png" height="500">
+<img src="/figures/bimap9_0.png" width="100%">
 
 
 ### Custom cut-offs (v1.8)
@@ -257,7 +257,7 @@ bimap share_hisp share_afam using county_shp2, cuty(0(20)100) cutx(0(20)100)  pa
 		 polygon(data("state_shp2") ocolor(black) osize(0.2)) 
 ```
 
-<img src="/figures/bimap9.png" height="500">
+<img src="/figures/bimap9.png" width="100%">
 
 
 Cut-offs can be formatted as follows:
@@ -270,7 +270,7 @@ bimap share_hisp share_afam using county_shp2, cuty(0(25)100) cutx(0(25)100)  fo
 		 polygon(data("state_shp2") ocolor(black) osize(0.2)) 
 ```
 
-<img src="/figures/bimap11.png" height="500">
+<img src="/figures/bimap11.png" width="100%">
 
 
 If we define only one custom cut-off, the other will automatically take on the pctile values:
@@ -283,7 +283,7 @@ bimap share_hisp share_afam using county_shp2, cutx(0 2 6 100) formatx(%5.0f)   
 		 polygon(data("state_shp2") ocolor(black) osize(0.2)) 
 ```
 
-<img src="/figures/bimap10.png" height="500">
+<img src="/figures/bimap10.png" width="100%">
 
 
 ### legend checks + offset (v1.8)
@@ -301,7 +301,7 @@ bimap share_hisp share_afam using county_shp2, cut(pctile) palette(census)  ///
 		 showleg legenda(off) legend(pos(7) size(5)) legstyle(2) 
 ```
 
-<img src="/figures/bimap12.png" height="500">
+<img src="/figures/bimap12.png" width="100%">
 
 
 ```
@@ -314,7 +314,7 @@ bimap share_hisp share_afam using county_shp2, cut(pctile) palette(census)  ///
 		 showleg legenda(off) legend(pos(7) size(5)) legstyle(2) 
 ```
 
-<img src="/figures/bimap12_1.png" height="500">
+<img src="/figures/bimap12_1.png" width="100%">
 
 
 ### v1.5 updates
@@ -331,7 +331,7 @@ bimap share_hisp share_afam using county_shp2 if STATEFP==36, cut(pctile) palett
 		 showleg legenda(off) legend(pos(7) size(5)) legstyle(2)
 ```
 
-<img src="/figures/bimap13.png" height="500">
+<img src="/figures/bimap13.png" width="100%">
 
 ```
 bimap share_hisp share_afam using county_shp2 if STATEFP==36, cut(pctile) palette(census)  ///
@@ -343,7 +343,7 @@ bimap share_hisp share_afam using county_shp2 if STATEFP==36, cut(pctile) palett
 		 showleg legenda(off) legend(pos(7) size(5)) legstyle(2) 
 ```
 
-<img src="/figures/bimap14.png" height="500">
+<img src="/figures/bimap14.png" width="100%">
 
 
 ### v1.6 updates
@@ -356,7 +356,7 @@ bimap share_hisp share_afam using county_shp2, cut(pctile) palette(orangeblue) b
 		polygon(data("state_shp2") ocolor(black) osize(0.2)) 
 ```
 
-<img src="/figures/bimap15.png" height="500">
+<img src="/figures/bimap15.png" width="100%">
 
 ```
 bimap share_hisp share_afam using county_shp2, cut(pctile) palette(orangeblue) binx(4) biny(5)  ///
@@ -366,7 +366,7 @@ bimap share_hisp share_afam using county_shp2, cut(pctile) palette(orangeblue) b
 		polygon(data("state_shp2") ocolor(black) osize(0.2)) 
 ```
 
-<img src="/figures/bimap16.png" height="500">
+<img src="/figures/bimap16.png" width="100%">
 
 ```
 bimap share_hisp share_afam using county_shp2, cut(pctile) palette(orangeblue) binx(3) biny(8)  ///
@@ -376,7 +376,7 @@ bimap share_hisp share_afam using county_shp2, cut(pctile) palette(orangeblue) b
 		 polygon(data("state_shp2") ocolor(black) osize(0.2)) 
 ```
 
-<img src="/figures/bimap17.png" height="500">
+<img src="/figures/bimap17.png" width="100%">
 
 ```
 bimap share_hisp share_afam using county_shp2, cut(pctile) palette(orangeblue) bins(8)   ///
@@ -386,7 +386,7 @@ bimap share_hisp share_afam using county_shp2, cut(pctile) palette(orangeblue) b
 		 polygon(data("state_shp2") ocolor(black) osize(0.1)) 
 ```
 
-<img src="/figures/bimap18.png" height="500">
+<img src="/figures/bimap18.png" width="100%">
 
 ```
 bimap share_hisp share_afam using county_shp2, cut(pctile) palette(orangeblue) reverse bins(8)   ///
@@ -396,7 +396,7 @@ bimap share_hisp share_afam using county_shp2, cut(pctile) palette(orangeblue) r
 		 polygon(data("state_shp2") ocolor(black) osize(0.2)) 
 ```
 
-<img src="/figures/bimap19.png" height="500">
+<img src="/figures/bimap19.png" width="100%">
 
 ```
 bimap share_hisp share_afam using county_shp2, cut(pctile) palette(orangeblue) clr0(white) clrx(red) bins(6) clrsat(10)   ///
@@ -406,7 +406,7 @@ bimap share_hisp share_afam using county_shp2, cut(pctile) palette(orangeblue) c
 		 polygon(data("state_shp2") ocolor(black) osize(0.2)) 
 ```
 
-<img src="/figures/bimap20.png" height="500">
+<img src="/figures/bimap20.png" width="100%">
 
 ```
 bimap share_hisp share_afam using county_shp2, cut(pctile) palette(orangeblue) bins(4)  percent  ///
@@ -416,7 +416,7 @@ bimap share_hisp share_afam using county_shp2, cut(pctile) palette(orangeblue) b
 		 polygon(data("state_shp2") ocolor(black) osize(0.2)) 
 ```
 
-<img src="/figures/bimap21.png" height="500">
+<img src="/figures/bimap21.png" width="100%">
 
 
 ### showing proper bins (v1.6)
@@ -431,7 +431,7 @@ bimap share_hisp share_afam using county_shp2, cuty(0 20 60 100) cutx(0 30 50 75
 		 polygon(data("state_shp2") ocolor(black) osize(0.2)) 
 ```
 
-<img src="/figures/bimap22.png" height="500">
+<img src="/figures/bimap22.png" width="100%">
 
 
 ### discrete variables (v1.7)
@@ -459,20 +459,20 @@ We can also now declare these variables as discrete while using `bimap` in any c
 bimap discy share_afam using county_shp2, palette(yellowblue) values count ydisc
 ```
 
-<img src="/figures/bimap23_1.png" height="500">
+<img src="/figures/bimap23_1.png" width="100%">
  
 
 ```
 bimap share_hisp discx using county_shp2, palette(yellowblue) values count xdisc
 ```
 
-<img src="/figures/bimap23_2.png" height="500">
+<img src="/figures/bimap23_2.png" width="100%">
 
 ```
 bimap discy discx using county_shp2, palette(yellowblue) values count xdisc ydisc
 ```
 
-<img src="/figures/bimap23_3.png" height="500">
+<img src="/figures/bimap23_3.png" width="100%">
 
 
 ### missing data fixed (v1.81)
@@ -492,7 +492,7 @@ bimap share_hisp share_afam using county_shp2, palette(orangeblue)    ///
 		 polygon(data("state_shp2") ocolor(black) osize(0.2)) 
 ```
 
-<img src="/figures/bimap24.png" height="500">
+<img src="/figures/bimap24.png" width="100%">
 
 ## Feedback
 
@@ -504,7 +504,6 @@ Please open an [issue](https://github.com/asjadnaqvi/stata-bimap/issues) to repo
 **v1.81 (22 Aug 2023)**
 - Fixed a bug where missing data points where getting dropped (reported by Steve Johnson).
 - Fixed passthru of the `ndisze()` option.
-
 
 **v1.8 (26 Jun 2023)**
 - Changed the ways `cutx()` and `cuty()` are calculated (requested by Paul Hufe). These now take on lists which are used as provided.
