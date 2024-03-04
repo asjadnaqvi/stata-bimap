@@ -223,7 +223,7 @@ bimap share_hisp share_afam using county_shp2, cut(pctile) palette(pinkgreen) pe
 		 textx("Share of African Americans") texty("Share of Hispanics") texts(3.5) textlabs(3) values  ///
 		 ocolor() osize(none) ///
 		 polygon(data("state_shp2") ocolor(white) osize(0.3)) ///
-		 point(data("county") x(_CX) y(_CY) select(keep if tot_pop>100000) proportional(tot_pop) psize(absolute) fcolor(lime%85) ocolor(black) osize(0.12) size(0.9) )  
+		 point(data("usa_county2") x(_CX) y(_CY) select(keep if tot_pop>100000) proportional(tot_pop) psize(absolute) fcolor(lime%85) ocolor(black) osize(0.12) size(0.9) )  
 ```
 
 <img src="/figures/bimap8.png" width="100%">
