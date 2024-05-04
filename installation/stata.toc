@@ -1,7 +1,7 @@
-v 1.81
+v 1.82
 d BIMAP: A package for creating bi-variate maps.
 d
-d Distribution-Date: 20230822
+d Distribution-Date: 20240504
 d
 d Asjad Naqvi
 d asjadnaqvi@gmail.com

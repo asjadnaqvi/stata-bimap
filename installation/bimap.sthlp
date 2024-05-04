@@ -1,7 +1,7 @@
 {smcl}
-{* 22Aug2023}{...}
+{* 04May2024}{...}
 {hi:help bimap}{...}
-{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v1.81 (GitHub)}}
+{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v1.82 (GitHub)}}
 
 {hline}
 
@@ -18,7 +18,7 @@ Note that {cmd:bimap} only works if you have processed the shapefiles using Stat
 {cmd:bimap} {it:vary varx} {ifin}, {cmd:[} {cmd:palette}({it:name}) reverse  {cmd:clr0}({it:str}) {cmd:clrx}({it:str}) {cmd:clry}({it:str}) {cmdab:clrsat:urate}({it:num})
 		{cmd:cut}({it:pctile}|{it:equal}) {cmd:cutx}({it:numlist}) {cmd:cuty}({it:numlist}) {cmd:binsproper} {cmd:bins}({it:num >=2}) {cmd:binx}({it:num >=2}) {cmd:biny}({it:num >=2}) {cmd:values} {cmd:count} 
 		{cmd:percent} {cmdab:showleg:end} {cmd:ocolor}({it:str}) {cmd:osize}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str})  {cmd:ndfsize}({it:str}) {cmdab:xdisc:rete} {cmdab:ydisc:rete} {cmd:labxgap}({it:num}) {cmd:labygap}({it:num})
-		{cmd:textx}({it:str}) {cmd:texty}({it:str}) {cmdab:textlabs:ize}({it:num}) {cmdab:texts:ize}({it:num}) {cmd:formatx}({it:str}) {cmd:formaty}({it:str}) {cmd:xscale}({it:num}) {cmd:yscale}({it:num}) 
+		{cmd:textx}({it:str}) {cmd:texty}({it:str}) {cmdab:textlabs:ize}({it:str}) {cmdab:texts:ize}({it:str}) {cmdab:textc:olor}({it:str}) {cmd:formatx}({it:str}) {cmd:formaty}({it:str}) {cmd:xscale}({it:num}) {cmd:yscale}({it:num}) 
 		{cmd:polygon}({it:options}) {cmd:line}({it:options}) {cmd:point}({it:options}) {cmd:label}({it:options}) {cmd:arrow}({it:options}) {cmd:diagram}({it:options}) {cmd:scalebar}({it:options}) 
 		{cmd:title}({it:str}) {cmd:subtitle}({it:str}) {cmd:note}({it:str}) {cmd:name}({it:str}) {cmd:scheme}({it:str}) {cmd:]}
 
@@ -110,6 +110,8 @@ This option is still {it:beta}, so suggestions for improvement are appreciated.{
 
 {p2coldent : {opt texts:ize(str)}}The text size of the legend axis labels. The default value is {opt texts(2.5)}.{p_end}
 
+{p2coldent : {opt textc:olor(str)}}The text color of the legend axis labels. The default value is {opt textc(black)}.{p_end}
+
 {p2coldent : {opt textlabs:ize(str)}}The text size of the cut-off values. The default value is {opt textlabs(2)}.{p_end}
 
 {p2coldent : {opt binsproper}}Show actual cut-off on the axes in the legend. Otherwise equally spaced boxes are shown. The option {opt binsproper} will look
@@ -141,8 +143,8 @@ Please see {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub} for examp
 
 {title:Package details}
 
-Version      : {bf:bimap} v1.81
-This release : 22 Aug 2023
+Version      : {bf:bimap} v1.82
+This release : 04 May 2024
 First release: 08 Apr 2022
 Repository   : {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub}
 Keywords     : Stata, map, bimap, bi-variate
@@ -187,6 +189,6 @@ If you find bugs and/or have feature requests, then please open an {browse "http
 
 {psee}
     {helpb arcplot}, {helpb alluvial}, {helpb bimap}, {helpb bumparea}, {helpb bumpline}, {helpb circlebar}, {helpb circlepack}, {helpb clipgeo}, {helpb delaunay}, {helpb joyplot}, 
-	{helpb marimekko}, {helpb sankey}, {helpb schemepack}, {helpb spider}, {helpb streamplot}, {helpb sunburst}, {helpb treecluster}, {helpb treemap}
+	{helpb marimekko}, {helpb sankey}, {helpb schemepack}, {helpb spider}, {helpb streamplot}, {helpb sunburst}, {helpb treecluster}, {helpb treemap} {helpb waffle}
 
 

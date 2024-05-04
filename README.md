@@ -10,8 +10,8 @@
 
 ---
 
-# bimap v1.81
-(22 Aug 2023)
+# bimap v1.82
+(04 May 2024)
 
 This package provides the ability to draw bi-variate maps in Stata. It is based on the [Bi-variate maps Guide](https://medium.com/the-stata-guide/stata-graphs-bi-variate-maps-b1e96dd4c2be).
 
@@ -25,7 +25,7 @@ The package can be installed from SSC (**v1.81**):
 ssc install bimap, replace
 ```
 
-Or it can be installed from GitHub (**v1.81**):
+Or it can be installed from GitHub (**v1.82**):
 
 ```
 net install bimap, from("https://raw.githubusercontent.com/asjadnaqvi/stata-bimap/main/installation/") replace
@@ -68,7 +68,7 @@ The syntax for the latest version is as follows:
 bimap vary varx [if] [in], [ palette(name) reverse  clr0(str) clrx(str) clry(str) clrsaturate(num)
                 cut(pctile|equal) cutx(numlist) cuty(numlist) binsproper bins(num >=2) binx(num >=2) biny(num >=2) values count 
                 percent showlegend ocolor(str) osize(str) ndocolor(str) ndfcolor(str) ndsize(str) xdiscrete ydiscrete labxgap(num) labygap(num)
-                textx(str) texty(str) textlabsize(num) textsize(num) formatx(str) formaty(str) xscale(num) yscale(num) 
+                textx(str) texty(str) textlabsize(str) textsize(str) textcolor(str) formatx(str) formaty(str) xscale(num) yscale(num) 
                 polygon(options) line(options) point(options) label(options) arrow(options) diagram(options) scalebar(options) 
                 title(str) subtitle(str) note(str) name(str) scheme(str) ]
 ```
@@ -500,6 +500,10 @@ Please open an [issue](https://github.com/asjadnaqvi/stata-bimap/issues) to repo
 
 
 ## Change log
+
+**v1.82 (04 May 2024)**
+- Added `textcolor()` to control random colors appearing in legend labels under some schemes.
+- Backend improvements to some defaults.
 
 **v1.81 (22 Aug 2023)**
 - Fixed a bug where missing data points where getting dropped (reported by Steve Johnson).

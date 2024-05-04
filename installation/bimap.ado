@@ -1,6 +1,7 @@
-*! bimap v1.81 (22 Aug 2023)
+*! bimap v1.82 (04 May 2024)
 *! Asjad Naqvi (asjadnaqvi@gmail.com)
 
+* v1.82 (04 May 2024): textcolor() added for legend labels. updates to various defaults
 * v1.81 (22 Aug 2023): Fixed a bug where missing data was getting dropped. ndsize() passthru fixed.
 * v1.8  (26 Jun 2023): custom cuts now take on values given in list, textgap() removed, labxgap(), labygap() added. Legend label positions optimized.
 * v1.7  (15 Jun 2023): added support for binary variables: xdiscrete, ydiscrete
@@ -40,17 +41,18 @@ version 15
  
 	syntax varlist(min=2 max=2 numeric) [if] [in] using/  ///
 		[ , cut(string) palette(string) ]  ///
-		[ count percent BOXsize(real 8) textx(string) texty(string) formatx(string) formaty(string) xscale(real 35) yscale(real 100) TEXTLABSize(real 2) TEXTSize(real 2.5) values ] ///
+		[ count percent BOXsize(real 8) textx(string) texty(string) formatx(string) formaty(string) xscale(real 35) yscale(real 100) TEXTLABSize(string) TEXTSize(string) values ] ///
 		[ polygon(passthru) line(passthru) point(passthru) label(passthru) ] ///
 		[ ocolor(string) osize(string) ]   ///
 		[ ndocolor(string) ndsize(string) ndfcolor(string) ]   ///
-		[ title(passthru) subtitle(passthru) note(passthru) name(passthru)  ] ///
+		[ title(passthru) subtitle(passthru) note(passthru) name(passthru) saving(passthru)  ] ///
 		[ cutx(numlist min=1)  cuty(numlist min=1) SHOWLEGend  ] ///  // 1.4 updates
 		[ LEGend(passthru) legenda(passthru) LEGStyle(passthru) LEGJunction(passthru) LEGCount(passthru) LEGOrder(passthru) LEGTitle(passthru)  ] ///  // 1.4 legend controls as passthru
 		[ arrow(passthru) diagram(passthru) scalebar(passthru) ] ///  // 1.5
 		[ bins(numlist min=1 >=2) binx(numlist min=1 >=2) biny(numlist min=1 >=2) reverse clr0(string) clrx(string) clry(string) CLRSATurate(real 6) binsproper FORMATVal(string) VALLABSize(string) ] /// // 1.6
 		[ XDISCrete YDISCrete ] ///  // v1.7 options
-		[ labxgap(real 0) labygap(real 0) ]  // v1.8 options
+		[ labxgap(real 0) labygap(real 0) ] ///  // v1.8 options
+		[ TEXTColor(string) ]			// v1.82
 		
 		
 		if (substr(reverse("`using'"),1,4) != "atd.") local using "`using'.dta"  // from spmap to check for extension
@@ -71,7 +73,7 @@ version 15
 
 		capture findfile colorpalette.ado
 		if _rc != 0 {
-			di as error "palettes package is missing. Click here to install {stata ssc install palettes, replace:palettes} and {stata ssc install colrspace, replace:colrspace}."
+			di as error "The {bf:palettes} package is missing. Click here to install {stata ssc install palettes, replace:palettes} and {stata ssc install colrspace, replace:colrspace}."
 			exit
 		}	
 	
@@ -774,7 +776,11 @@ qui {
 	
 		if "`textx'" 	  == "" local textx = "`var1'" 
 		if "`texty'" 	  == ""	local texty = "`var2'"
-		if "`vallabsize'" == ""	local vallabsize = 1.8
+		if "`vallabsize'" == ""	local vallabsize 1.8
+		
+		if "`textcolor'"  == "" local textcolor 		black
+		if "`textsize'"   == "" local textsize  		2.5
+		if "`textlabsize'"   == "" local textlabsize  	2
 		
 		// axis labels
 		
@@ -826,8 +832,8 @@ qui {
 			`mylabels' ///
 			(pcarrow spike1_y1 spike1_x1 spike1_y2 spike1_x2, lcolor(gs6) mcolor(gs6) msize(0.8) ) ///  // arrow1
 			(pcarrow spike2_y1 spike2_x1 spike2_y2 spike2_x2, lcolor(gs6) mcolor(gs6) msize(0.8) ) ///  // arrow2
-			(scatter laby labx in 1, mcolor(none) mlab(labn) mlabsize(`textsize') mlabpos(0)				 )  ///
-			(scatter laby labx in 2, mcolor(none) mlab(labn) mlabsize(`textsize') mlabpos(0) mlabangle(90))  ///
+			(scatter laby labx in 1, mcolor(none) mlab(labn) mlabsize("`textsize'") mlabcolor("`textcolor'") mlabpos(0)				 )  ///
+			(scatter laby labx in 2, mcolor(none) mlab(labn) mlabsize("`textsize'") mlabcolor("`textcolor'") mlabpos(0) mlabangle(90))  ///
 			, ///
 				xlabel(-0.2 1, nogrid) ylabel(-0.2 1, nogrid) ///
 				yscale(range(0 1.1) off) xscale(range(0 1.1) off) ///
@@ -848,7 +854,7 @@ qui {
 		`title' 	///
 		`subtitle' ///
 		`note' ///
-		`name' 
+		`name' `saving'
 	
 
 }
