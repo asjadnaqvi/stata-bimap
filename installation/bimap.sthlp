@@ -1,7 +1,7 @@
 {smcl}
-{* 04May2024}{...}
+{* 19Jun2024}{...}
 {hi:help bimap}{...}
-{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v1.82 (GitHub)}}
+{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v1.9 (GitHub)}}
 
 {hline}
 
@@ -9,7 +9,7 @@
 
 {p 4 4 2}
 The package is based on the {browse "https://medium.com/the-stata-guide/stata-graphs-bi-variate-maps-b1e96dd4c2be":Bi-variate maps} guide on Medium. The {cmd:bimap} command is a wrapper for {stata help spmap:spmap}.
-Therefore it assumes that geographic boundaries are available, and you are familar with making maps in Stata. 
+Therefore it assumes that data on geographic boundaries is available, and you are familar with making maps in Stata. 
 Note that {cmd:bimap} only works if you have processed the shapefiles using Stata's {stata help spshape2dta:spshape2dta} command.
 
 {marker syntax}{title:Syntax}
@@ -17,10 +17,11 @@ Note that {cmd:bimap} only works if you have processed the shapefiles using Stat
 
 {cmd:bimap} {it:vary varx} {ifin}, {cmd:[} {cmd:palette}({it:name}) reverse  {cmd:clr0}({it:str}) {cmd:clrx}({it:str}) {cmd:clry}({it:str}) {cmdab:clrsat:urate}({it:num})
 		{cmd:cut}({it:pctile}|{it:equal}) {cmd:cutx}({it:numlist}) {cmd:cuty}({it:numlist}) {cmd:binsproper} {cmd:bins}({it:num >=2}) {cmd:binx}({it:num >=2}) {cmd:biny}({it:num >=2}) {cmd:values} {cmd:count} 
-		{cmd:percent} {cmdab:showleg:end} {cmd:ocolor}({it:str}) {cmd:osize}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str})  {cmd:ndfsize}({it:str}) {cmdab:xdisc:rete} {cmdab:ydisc:rete} {cmd:labxgap}({it:num}) {cmd:labygap}({it:num})
-		{cmd:textx}({it:str}) {cmd:texty}({it:str}) {cmdab:textlabs:ize}({it:str}) {cmdab:texts:ize}({it:str}) {cmdab:textc:olor}({it:str}) {cmd:formatx}({it:str}) {cmd:formaty}({it:str}) {cmd:xscale}({it:num}) {cmd:yscale}({it:num}) 
-		{cmd:polygon}({it:options}) {cmd:line}({it:options}) {cmd:point}({it:options}) {cmd:label}({it:options}) {cmd:arrow}({it:options}) {cmd:diagram}({it:options}) {cmd:scalebar}({it:options}) 
-		{cmd:title}({it:str}) {cmd:subtitle}({it:str}) {cmd:note}({it:str}) {cmd:name}({it:str}) {cmd:scheme}({it:str}) {cmd:]}
+		{cmd:percent} {cmdab:showleg:end} {cmd:ocolor}({it:str}) {cmd:osize}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str})  {cmd:ndfsize}({it:str}) {cmdab:xdisc:rete} {cmdab:ydisc:rete} 
+		{cmd:labxgap}({it:num}) {cmd:labygap}({it:num}) {cmd:textx}({it:str}) {cmd:texty}({it:str}) {cmd:formatx}({it:str}) {cmd:formaty}({it:str}) 
+		{cmdab:texts:ize}({it:str}) {cmdab:textlabs:ize}({it:str}) {cmdab:vallabs:ize}({it:str}) {cmdab:textc:olor}({it:str}) {cmdab:textlabc:olor}({it:str}) {cmdab:vallabc:olor}({it:str}) 
+		{cmd:xscale}({it:num}) {cmd:yscale}({it:num}) {cmd:polygon}({it:options}) {cmd:line}({it:options}) {cmd:point}({it:options}) {cmd:label}({it:options}) {cmd:arrow}({it:options}) 
+		{cmd:diagram}({it:options}) {cmd:scalebar}({it:options}) * {cmd:]}
 
 
 {p 4 4 2}
@@ -74,19 +75,21 @@ also be defined using {opt binx()} and/or {opt biny()}. The default is {opt bin(
 
 {p2coldent : {opt ndfcolor(str)}}Fill color of polygons with no data. Same as in {cmd:spmap}. Default value is {it:gs8}.{p_end}
 
-{p2coldent : {opt ndsize(str)}}Line width of missing observations. If no value is specified, it defaults to the {opt osize()} value.{p_end}
+{p2coldent : {opt ndsize(str)}}Line width of missing observations. If no value is specified, it defaults to the {opt osize(0.02)} value.{p_end}
 
 {p2coldent : {opt polygon}(), {opt line}(), {opt point}(), {opt label}()}These are {cmd:spmap} passthru options for additional layers. See {stata help spmap} for details.{p_end}
 
 {p2coldent : {opt arrow}(), {opt diagram}(), {opt scalebar}()}These are {cmd:spmap} passthru options for additional layers. See {stata help spmap} for details.{p_end}
 
-{p2coldent : {opt showleg:end}}If this option is specified, then the following {stata help spmap:spmap} options are enabled: {cmd:legend}(), {cmd:legenda}(), {cmdab:legs:tyle}(), {cmdab:legj:unction}(), {cmdab:legc:ount}(), {cmdab:lego:rder()},
-{cmdab:legt:title}(), plus additional options that can be specified for supplementary layers: {cmd:polygon}(), {cmd:line}(), {cmd:point}(), {cmd:label}().
-{cmdab:showleg:end} can be used for describing additional layers, like boundaries, points, lines etc.
+{p2coldent : {opt noleg:end}}Hide the legend. Useful if you are generating several maps with a controlled legend where one map with a legend is sufficient if combining graphs.{p_end}
+
+{p2coldent : {opt showleg:end}}If this option is specified, then the following {stata help spmap:spmap} options are enabled: {cmd:legend}(), {cmd:legenda}(), {cmdab:legs:tyle}(), 
+{cmdab:legj:unction}(), {cmdab:legc:ount}(), {cmdab:lego:rder()}, {cmdab:legt:title}(), plus additional options that can be specified for supplementary layers: {cmd:polygon}(),
+{cmd:line}(), {cmd:point}(), {cmd:label}(). {cmdab:showleg:end} can be used for describing additional layers, like boundaries, points, lines etc.
 It is also highly recommended to turn off the base layer legend by using {cmd:legenda}(off) since this shows up in the bimap legend on the right.
 This option is still {it:beta}, so suggestions for improvement are appreciated.{p_end}
 
-{p2coldent : {opt title}(), {opt subtitle}(), {opt note}(), {opt name}()}These are standard twoway graph options.{p_end}
+{p2coldent : {opt *}}All other standard twoway options.{p_end}
 
 
 {p 4 4 2}
@@ -96,7 +99,17 @@ This option is still {it:beta}, so suggestions for improvement are appreciated.{
 
 {p2coldent : {opt values}}Display the cut-off values on the legend axes.{p_end}
 
-{p2coldent : {opt vallabs:ize(str)}}The size of the box values. The default value is {opt vallabs(1.8)}.{p_end}
+{p2coldent : {opt texts:ize(str)}}The text size of the legend axes labels. The default value is {opt texts(3)}.{p_end}
+
+{p2coldent : {opt textlabs:ize(str)}}The text size of the axes cut-off values. The default value is {opt textlabs(2.2)}.{p_end}
+
+{p2coldent : {opt vallabs:ize(str)}}The size of the box values. The default value is {opt vallabs(2.2)}.{p_end}
+
+{p2coldent : {opt textc:olor(str)}}The text color of the legend axis labels. The default value is {opt textc(black)}.{p_end}
+
+{p2coldent : {opt textlabc:olor(str)}}The text color of the axes cut-off values. The default value is {opt textlabc(black)}.{p_end}
+
+{p2coldent : {opt vallabc:olor(str)}}The text color of the box values. The default value is {opt vallabc(black)}.{p_end}
 
 {p2coldent : {opt formatval(fmt)}}Format of the box values. Default format is {opt formatval(%5.1f)}.{p_end}
 
@@ -104,15 +117,9 @@ This option is still {it:beta}, so suggestions for improvement are appreciated.{
 
 {p2coldent : {opt textx(str)}, {opt texty(str)}}The axes labels of the legend. The default values are the variable names.{p_end}
 
-{p2coldent : {opt labxgap(num)}}The gap of the x-axis title from the default position. The default value is {opt labxgap(0)}. Use in very minor increments, e.g. {opt labxgap(0.02)}. {p_end}
+{p2coldent : {opt labxgap(num)}}The gap of the x-axis title from the default position. The default value is {opt labxgap(0)}. Use in very minor increments, e.g. {opt labxgap(0.02)}.{p_end}
 
-{p2coldent : {opt labygap(num)}}The gap of the y-axis title from the default position. The default value is {opt labygap(0)}. Use in very minor increments, e.g. {opt labygap(0.02)}. {p_end}
-
-{p2coldent : {opt texts:ize(str)}}The text size of the legend axis labels. The default value is {opt texts(2.5)}.{p_end}
-
-{p2coldent : {opt textc:olor(str)}}The text color of the legend axis labels. The default value is {opt textc(black)}.{p_end}
-
-{p2coldent : {opt textlabs:ize(str)}}The text size of the cut-off values. The default value is {opt textlabs(2)}.{p_end}
+{p2coldent : {opt labygap(num)}}The gap of the y-axis title from the default position. The default value is {opt labygap(0)}. Use in very minor increments, e.g. {opt labygap(0.02)}.{p_end}
 
 {p2coldent : {opt binsproper}}Show actual cut-off on the axes in the legend. Otherwise equally spaced boxes are shown. The option {opt binsproper} will look
 squished especially if the categories are bunched together. This will most likely cause labels to overlap.{p_end}
@@ -143,8 +150,8 @@ Please see {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub} for examp
 
 {title:Package details}
 
-Version      : {bf:bimap} v1.82
-This release : 04 May 2024
+Version      : {bf:bimap} v1.9
+This release : 19 Jun 2024
 First release: 08 Apr 2022
 Repository   : {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub}
 Keywords     : Stata, map, bimap, bi-variate
@@ -156,26 +163,25 @@ Twitter      : {browse "https://twitter.com/AsjadNaqvi":@AsjadNaqvi}
 
 
 
-{title:Acknowledgements}
-
-{p 4 4 2}
-Steve Johnson found a bug with missing data getting dropped (v1.81). ndsize() passthru fixed.
-Paul Hufe requested changes to custom cut-offs (v1.8).
-Several requests for allowing categorical variables (v1.7)
-Kit Baum, Fayssal Ayad, and Paul reported bug in the bimap v1.6 legends (v1.62, v1.61).
-Tyson King-Meadows and Vishakha Agarwal requested a greyscale palette (v1.5).
-Souradet Shaw requested scalebar and arrow passthrus (v1.5). 
-Paul Frissard Martínez requested spmap legend options (v1.4). 
-Ruth Watkinson found an error in the grouping code (v1.3). 
-Pierre-Henri Bono suggested core passthrus for additional {stata help spmap:spmap} layers (v1.3). 
-Kit Baum requested the {it:percent} option and fixes to label colors (v1.3). 
-Mattias Öhman found an error in cut-offs and color assignments with missing groups (v1.3).
-Cristian Jordan Diaz found and error in variable name comparisons (v1.2).
-
 {title:Feedback}
 
 {p 4 4 2}
 If you find bugs and/or have feature requests, then please open an {browse "https://github.com/asjadnaqvi/stata-bimap/issues":issue} on GitHub.
+
+
+{title:Citation guidelines}
+
+Suggested citation guidlines for this package:
+
+Naqvi, A. (2024). Stata package "bimap" version 1.9. Release date 19 June 2024. https://github.com/asjadnaqvi/stata-bimap.
+
+@software{bimap,
+   author = {Naqvi, Asjad},
+   title = {Stata package ``bimap''},
+   url = {https://github.com/asjadnaqvi/stata-bimap},
+   version = {1.9},
+   date = {2024-06-19}
+}
 
 {title:References}
 
@@ -185,10 +191,13 @@ If you find bugs and/or have feature requests, then please open an {browse "http
 
 {p 4 8 2}Jann, B. (2022). {browse "https://ideas.repec.org/p/bss/wpaper/43.html":Color palettes for Stata graphics: An update}. University of Bern Social Sciences Working Papers No. 43. 
 
+
 {title:Other visualization packages}
 
 {psee}
     {helpb arcplot}, {helpb alluvial}, {helpb bimap}, {helpb bumparea}, {helpb bumpline}, {helpb circlebar}, {helpb circlepack}, {helpb clipgeo}, {helpb delaunay}, {helpb joyplot}, 
-	{helpb marimekko}, {helpb sankey}, {helpb schemepack}, {helpb spider}, {helpb streamplot}, {helpb sunburst}, {helpb treecluster}, {helpb treemap} {helpb waffle}
+	{helpb marimekko}, {helpb polarspike}, {helpb sankey}, {helpb schemepack}, {helpb spider}, {helpb streamplot}, {helpb sunburst}, {helpb treecluster}, {helpb treemap}, {helpb waffle}
+	
+or visit {browse "https://github.com/asjadnaqvi":GitHub} for detailed documentation and examples.	
 
 

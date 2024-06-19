@@ -1,6 +1,7 @@
-*! bimap v1.82 (04 May 2024)
+*! bimap v1.9 (19 Jun 2024)
 *! Asjad Naqvi (asjadnaqvi@gmail.com)
 
+* v1.9  (19 Jun 2024): Fixed some minor bugs. Nolegend option added. wrap() added for label wrapping.
 * v1.82 (04 May 2024): textcolor() added for legend labels. updates to various defaults
 * v1.81 (22 Aug 2023): Fixed a bug where missing data was getting dropped. ndsize() passthru fixed.
 * v1.8  (26 Jun 2023): custom cuts now take on values given in list, textgap() removed, labxgap(), labygap() added. Legend label positions optimized.
@@ -45,14 +46,13 @@ version 15
 		[ polygon(passthru) line(passthru) point(passthru) label(passthru) ] ///
 		[ ocolor(string) osize(string) ]   ///
 		[ ndocolor(string) ndsize(string) ndfcolor(string) ]   ///
-		[ title(passthru) subtitle(passthru) note(passthru) name(passthru) saving(passthru)  ] ///
 		[ cutx(numlist min=1)  cuty(numlist min=1) SHOWLEGend  ] ///  // 1.4 updates
 		[ LEGend(passthru) legenda(passthru) LEGStyle(passthru) LEGJunction(passthru) LEGCount(passthru) LEGOrder(passthru) LEGTitle(passthru)  ] ///  // 1.4 legend controls as passthru
 		[ arrow(passthru) diagram(passthru) scalebar(passthru) ] ///  // 1.5
 		[ bins(numlist min=1 >=2) binx(numlist min=1 >=2) biny(numlist min=1 >=2) reverse clr0(string) clrx(string) clry(string) CLRSATurate(real 6) binsproper FORMATVal(string) VALLABSize(string) ] /// // 1.6
 		[ XDISCrete YDISCrete ] ///  // v1.7 options
 		[ labxgap(real 0) labygap(real 0) ] ///  // v1.8 options
-		[ TEXTColor(string) ]			// v1.82
+		[ TEXTColor(string) TEXTLABColor(string) VALLABColor(string) NOLEGend wrap(numlist >=0 max=1)  * ]			// v1.82, v1.9
 		
 		
 		if (substr(reverse("`using'"),1,4) != "atd.") local using "`using'.dta"  // from spmap to check for extension
@@ -522,6 +522,18 @@ qui {
 			local cutst = 9
 		}
 		
+		if "`nolegend'" != "" {
+		spmap `grp_cut' using "`using'", ///
+			id(_ID) clm(custom) clb(0(1)`cutst') fcolor("`colors'") ///
+				ocolor(`lc' ..) osize(`lw' ..) ///	
+				ndocolor(`ndo' ..) ndsize(`nds' ..) ndfcolor(`ndf' ..)  ///
+				`polygon' `line' `point' `label'  ///
+				`leg' `legstyle' `legenda' `legendstyle' `legjunction' `legcount' `legorder' `legtitle'  ///  // v1.4 legend passthrus
+				`arrow' `diagram' `scalebar' `options'
+			
+		exit	
+		}
+		else {
 
 		spmap `grp_cut' using "`using'", ///
 			id(_ID) clm(custom) clb(0(1)`cutst') fcolor("`colors'") ///
@@ -531,7 +543,7 @@ qui {
 				`leg' `legstyle' `legenda' `legendstyle' `legjunction' `legcount' `legorder' `legtitle'  ///  // v1.4 legend passthrus
 				`arrow' `diagram' `scalebar' ///  // v1.5 passthrus
 					name(_map, replace) nodraw
-		
+		}
 	
 		*/
 		
@@ -776,11 +788,16 @@ qui {
 	
 		if "`textx'" 	  == "" local textx = "`var1'" 
 		if "`texty'" 	  == ""	local texty = "`var2'"
-		if "`vallabsize'" == ""	local vallabsize 1.8
 		
-		if "`textcolor'"  == "" local textcolor 		black
-		if "`textsize'"   == "" local textsize  		2.5
-		if "`textlabsize'"   == "" local textlabsize  	2
+		
+		if "`textcolor'"  	== "" 	local textcolor 	black
+		if "`textlabcolor'" == "" 	local textlabcolor 	black
+		if "`vallabcolor'"  == "" 	local vallabcolor 	black
+		
+		
+		if "`textsize'"   	== "" 	local textsize  	3
+		if "`textlabsize'"  == "" 	local textlabsize	2.2
+		if "`vallabsize'" 	== ""	local vallabsize 	2.2
 		
 		// axis labels
 		
@@ -796,6 +813,20 @@ qui {
 		replace laby = 0.5   	 in 2
 		replace labn = "`texty'" in 2
 	
+		
+		if "`wrap'" != "" {
+			gen _length = length(labn) if labn!= ""
+			summ _length, meanonly		
+			local _wraprounds = floor(`r(max)' / `wrap')
+			
+			forval i = 1 / `_wraprounds' {
+				local wraptag = `wrap' * `i'
+				replace labn = substr(labn, 1, `wraptag') + "`=char(10)'" + substr(labn, `=`wraptag' + 1', .) if _length > `wraptag' & labn!= "" 
+			}
+			
+			drop _length
+		}		
+		
 	
 		// generate the boxes
 		levelsof box, local(lvls)	
@@ -813,14 +844,14 @@ qui {
 			}
 			
 		if "`count'" != "" | "`percent'" != "" {
- 			local mylabels (scatter y_mid x_mid, mlabel(`marksym') mlabpos(0) mcolor(none) mlabsize(`vallabsize') ) ///	// labels
+ 			local mylabels (scatter y_mid x_mid, mlabel(`marksym') mlabpos(0) mcolor(none) mlabsize(`vallabsize') mlabcolor(`vallabcolor')  ) ///	// labels
 			
 		}
 			
 		if "`values'" != "" {	
-			local xvals (scatter y0 x_mark, mcolor(none) mlabel(x_val) mlabpos(6) mcolor(gs6) msize(0.2) mlabsize(`textlabsize')) ///
+			local xvals (scatter y0 x_mark, mcolor(none) mlabel(x_val) mlabpos(6) mcolor(gs6) msize(0.2) mlabsize(`textlabsize') mlabcolor(`textlabcolor') ) ///
 						
-			local yvals (scatter y_mark x0, mcolor(none) mlabel(y_val) mlabpos(9) mcolor(gs6) msize(0.2) mlabsize(`textlabsize')) ///
+			local yvals (scatter y_mark x0, mcolor(none) mlabel(y_val) mlabpos(9) mcolor(gs6) msize(0.2) mlabsize(`textlabsize') mlabcolor(`textlabcolor') ) ///
 		
 		}
 			
@@ -832,8 +863,8 @@ qui {
 			`mylabels' ///
 			(pcarrow spike1_y1 spike1_x1 spike1_y2 spike1_x2, lcolor(gs6) mcolor(gs6) msize(0.8) ) ///  // arrow1
 			(pcarrow spike2_y1 spike2_x1 spike2_y2 spike2_x2, lcolor(gs6) mcolor(gs6) msize(0.8) ) ///  // arrow2
-			(scatter laby labx in 1, mcolor(none) mlab(labn) mlabsize("`textsize'") mlabcolor("`textcolor'") mlabpos(0)				 )  ///
-			(scatter laby labx in 2, mcolor(none) mlab(labn) mlabsize("`textsize'") mlabcolor("`textcolor'") mlabpos(0) mlabangle(90))  ///
+			(scatter laby labx in 1, mcolor(none) mlab(labn) mlabsize(`textsize') mlabcolor(`textcolor') mlabpos(0)				 )  ///
+			(scatter laby labx in 2, mcolor(none) mlab(labn) mlabsize(`textsize') mlabcolor(`textcolor') mlabpos(0) mlabangle(90))  ///
 			, ///
 				xlabel(-0.2 1, nogrid) ylabel(-0.2 1, nogrid) ///
 				yscale(range(0 1.1) off) xscale(range(0 1.1) off) ///
@@ -850,11 +881,7 @@ qui {
 	 ********************
 	 
 	  graph combine _map _legend, ///
-		imargin(zero) ///
-		`title' 	///
-		`subtitle' ///
-		`note' ///
-		`name' `saving'
+		imargin(zero) `options'
 	
 
 }

@@ -9,8 +9,8 @@
 
 
 
-# bimap v1.82
-(04 May 2024)
+# bimap v1.9
+(19 Jun 2024)
 
 This package provides the ability to draw bi-variate maps in Stata. It is based on the [Bi-variate maps Guide](https://medium.com/the-stata-guide/stata-graphs-bi-variate-maps-b1e96dd4c2be).
 
@@ -24,7 +24,7 @@ The package can be installed from SSC (**v1.82**):
 ssc install bimap, replace
 ```
 
-Or it can be installed from GitHub (**v1.82**):
+Or it can be installed from GitHub (**v1.9**):
 
 ```
 net install bimap, from("https://raw.githubusercontent.com/asjadnaqvi/stata-bimap/main/installation/") replace
@@ -66,10 +66,11 @@ The syntax for the latest version is as follows:
 ```stata
 bimap vary varx [if] [in], [ palette(name) reverse  clr0(str) clrx(str) clry(str) clrsaturate(num)
                 cut(pctile|equal) cutx(numlist) cuty(numlist) binsproper bins(num >=2) binx(num >=2) biny(num >=2) values count 
-                percent showlegend ocolor(str) osize(str) ndocolor(str) ndfcolor(str) ndsize(str) xdiscrete ydiscrete labxgap(num) labygap(num)
-                textx(str) texty(str) textlabsize(str) textsize(str) textcolor(str) formatx(str) formaty(str) xscale(num) yscale(num) 
-                polygon(options) line(options) point(options) label(options) arrow(options) diagram(options) scalebar(options) 
-                title(str) subtitle(str) note(str) name(str) scheme(str) ]
+                percent showlegend ocolor(str) osize(str) ndocolor(str) ndfcolor(str)  ndfsize(str) xdiscrete ydiscrete 
+                labxgap(num) labygap(num) textx(str) texty(str) formatx(str) formaty(str) 
+                textsize(str) textlabsize(str) vallabsize(str) textcolor(str) textlabcolor(str) vallabcolor(str) 
+                xscale(num) yscale(num) polygon(options) line(options) point(options) label(options) arrow(options) 
+                diagram(options) scalebar(options) * ]
 ```
 
 See the help file `help bimap` for details.
@@ -81,6 +82,32 @@ bimap vary varx using *shapefile*
 ```
 
 See helpfile for further details
+
+
+## Citation guidelines
+Software packages take countless hours of programming, testing, and bug fixing. If you use this package, then a citation would be highly appreciated. Suggested citations:
+
+*in BibTeX*
+
+```
+@software{bimap,
+   author = {Naqvi, Asjad},
+   title = {Stata package ``bimap''},
+   url = {https://github.com/asjadnaqvi/stata-bimap},
+   version = {1.9},
+   date = {2024-06-19}
+}
+```
+
+*or simple text*
+
+```
+Naqvi, A. (2024). Stata package "bimap" version 1.9. Release date 19 June 2024. https://github.com/asjadnaqvi/stata-bimap.
+```
+
+
+*or see [SSC citation](https://ideas.repec.org/c/boc/bocode/s459196.html) (updated once a new version is submitted)*
+
 
 
 
@@ -316,6 +343,46 @@ bimap share_hisp share_afam using county_shp2, cut(pctile) palette(census)  ///
 <img src="/figures/bimap12_1.png" width="100%">
 
 
+### new legend checks (v1.9)
+
+Check for legend color options:
+
+```
+bimap share_asian share_afam using county_shp2, cut(pctile)   ///
+	title("{fontface Arial Bold:A Stata bivariate map}") note("Data from the US Census Bureau.") ///	
+		 textx("Share of African Americans") texty("Share of Asians") values count textcolor(lime) textlabcolor(blue) vallabc(red) ///
+		 ocolor() osize(none) ///
+		 polygon(data("state_shp2") ocolor(white) osize(0.3))
+```
+
+<img src="/figures/bimap12_2.png" width="100%">
+
+
+Check for label wrapping in the legend:
+
+```
+bimap share_asian share_afam using county_shp2, cut(pctile)   ///
+	title("{fontface Arial Bold:A Stata bivariate map}") note("Data from the US Census Bureau.") ///	
+		 textx("Share of African Americans") texty("Share of Asians") wrap(16) values count  ///
+		 ocolor() osize(none) ///
+		 polygon(data("state_shp2") ocolor(white) osize(0.3))
+```
+
+<img src="/figures/bimap12_3.png" width="100%">
+
+Check for hiding the legend:
+
+
+```
+bimap share_asian share_afam using county_shp2, cut(pctile)   ///
+	title("{fontface Arial Bold:A Stata bivariate map}") note("Data from the US Census Bureau.") ///	
+		 ocolor() osize(none) ///
+		 polygon(data("state_shp2") ocolor(white) osize(0.3)) nolegend
+```
+
+<img src="/figures/bimap12_4.png" width="100%">
+
+
 ### v1.5 updates
 
 If condition checks with legends
@@ -331,18 +398,6 @@ bimap share_hisp share_afam using county_shp2 if STATEFP==36, cut(pctile) palett
 ```
 
 <img src="/figures/bimap13.png" width="100%">
-
-```
-bimap share_hisp share_afam using county_shp2 if STATEFP==36, cut(pctile) palette(census)  ///
-		 title("New York") ///
-		 note("Data from the US Census Bureau.", size(small)) ///	
-		 texty("Share of Hispanics") textx("Share of`=char(10)'African Americans") texts(3.2) textlabs(3) values percent ///
-		 ocolor(black) osize(0.03)  ///
-		 polygon(data("state_shp2") select(keep if _ID==19) ocolor(black) osize(0.2) legenda(on) leglabel(State boundaries))  ///
-		 showleg legenda(off) legend(pos(7) size(5)) legstyle(2) 
-```
-
-<img src="/figures/bimap14.png" width="100%">
 
 
 ### v1.6 updates
@@ -499,6 +554,13 @@ Please open an [issue](https://github.com/asjadnaqvi/stata-bimap/issues) to repo
 
 
 ## Change log
+
+**v1.9 (19 June 2024)**
+- Fixed and added several options to control legends: `textcolor()`, `textlabcolor()`, `vallabcolor()`. 
+- Better options for `textsize()`, `textlabsize()`, `vallabsize()`.
+- Added `wrap()` to wrap labels in legends.
+- Added `nolegend` option to generate maps without a bi-variate legend. This is useful is several maps are being generated with a controlled legend and need to be combined in one figure.
+- Several improvements to graph passthru options.
 
 **v1.82 (04 May 2024)**
 - Added `textcolor()` to control random colors appearing in legend labels under some schemes.
