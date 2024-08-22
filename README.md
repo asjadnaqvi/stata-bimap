@@ -325,7 +325,7 @@ bimap share_asian share_afam, shp(county_shp2) old cut(pctile) palette(bluered) 
 		 polygon(data("state_shp2") ocolor(white) osize(0.3))
 ```
 
-<img src="/figures/bimap4_geoplot.png" width="100%">
+<img src="/figures/bimap4_geo.png" width="100%">
 
 <img src="/figures/bimap4.png" width="100%">
 
@@ -347,7 +347,7 @@ bimap share_asian share_afam, shp(county_shp2) old cut(pctile) palette(yellowblu
 		 polygon(data("state_shp2") ocolor(black) osize(0.2)) 
 ```
 
-<img src="/figures/bimap6_geoplot.png" width="100%">
+<img src="/figures/bimap6_geop.png" width="100%">
 
 <img src="/figures/bimap6.png" width="100%">
 
@@ -368,7 +368,7 @@ bimap share_asian share_hisp, shp(county_shp2) old cut(pctile) palette(orangeblu
 		 polygon(data("state_shp2") ocolor(black) osize(0.2)) 
 ```
 
-<img src="/figures/bimap7_geoplot.png" width="100%">
+<img src="/figures/bimap7_geo.png" width="100%">
 
 <img src="/figures/bimap7.png" width="100%">
 
@@ -551,7 +551,6 @@ bimap share_hisp share_afam, shp(county_shp2) old cut(pctile) palette(census)  /
 		 showleg legenda(off) legend(pos(7) size(5)) legstyle(2) 
 ```
 
-<img src="/figures/bimap12_1_geoplot.png" width="100%">
 
 <img src="/figures/bimap12_1.png" width="100%">
 
