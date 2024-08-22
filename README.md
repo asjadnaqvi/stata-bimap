@@ -9,31 +9,45 @@
 
 
 
-# bimap v1.9
-(19 Jun 2024)
+# bimap v2.0
+(22 Aug 2024)
 
 This package provides the ability to draw bi-variate maps in Stata. It is based on the [Bi-variate maps Guide](https://medium.com/the-stata-guide/stata-graphs-bi-variate-maps-b1e96dd4c2be).
 
+
+As of version 2.0 (released on 22nd August 2024), **bimap** uses **geoplot** for Stata versions 17 or newer, and **spmap** for Stata versions 16 or earlier. Users with newer versions can still opt to use the original **spmap** implementation by defining the original code (with minor changes, see below) and using the option `old`. Information on which version is detected and which map package is used can be displayed by using the `detail` option.
+
+As more and more users switch to newer Stata versions, the **spmap** implementation will eventually be phased out. As of v2.0 it will no longer be developed further. 
 
 ## Installation
 
 The package can be installed via SSC or GitHub. The GitHub version, *might* be more recent due to bug fixes, feature updates etc, and *may* contain syntax improvements and changes in *default* values. See version numbers below. Eventually the GitHub version is published on SSC. All examples are updated to the latest version and might not be compatible with the old ones. Please check the documentation and change logs.
 
-The package can be installed from SSC (**v1.82**):
+The package can be installed from SSC (**v1.9**):
 ```
 ssc install bimap, replace
 ```
 
-Or it can be installed from GitHub (**v1.9**):
+Or it can be installed from GitHub (**v2.0**):
 
 ```
 net install bimap, from("https://raw.githubusercontent.com/asjadnaqvi/stata-bimap/main/installation/") replace
 ```
 
+For using the command with `geoplot` the following packages are required:
 
-The `spmap` and `palettes` package is required to run this command:
+```stata
+ssc install geoplot, replace
+ssc install moremata, replace
+ssc install palettes, replace
+ssc install colrspace, replace
 
-```
+``` 
+
+
+For using the command with `spmap` the following packages are required:
+
+```stata
 ssc install spmap, replace
 ssc install palettes, replace
 ssc install colrspace, replace
@@ -41,14 +55,21 @@ ssc install colrspace, replace
 
 Even if you have these packages installed, please check for updates: `ado update, update`.
 
-If you want to make a clean figure, then it is advisable to load a clean scheme. I personally use the following:
+*Optional*: Users can also install the `geo2xy` package for projection transformations, even though `geoplot` supports projects internally as well:
+
+```stata
+ssc install geo2xy, replace
+```
+
+
+*Optional*: If you want to make a clean figure, then it is advisable to load a clean scheme. I personally use the following:
 
 ```
 ssc install schemepack, replace
 set scheme white_tableau  
 ```
 
-You can also push the scheme directly into the graph using the `scheme(schemename)` option. See the help file for details or the example below.
+You can also push the scheme directly into the graph using the `scheme(schemename)` option.
 
 I also prefer narrow fonts in figures with long labels. You can change this as follows:
 
@@ -56,32 +77,53 @@ I also prefer narrow fonts in figures with long labels. You can change this as f
 graph set window fontface "Arial Narrow"
 ```
 
-This command is a wrapper for `spmap` and assumes that you have shapefiles in Stata and are comfortable with making maps.
 
-
-## Syntax
+## Syntax for Stata versions 17 or newer
 
 The syntax for the latest version is as follows:
 
 ```stata
-bimap vary varx [if] [in], [ palette(name) reverse  clr0(str) clrx(str) clry(str) clrsaturate(num)
-                cut(pctile|equal) cutx(numlist) cuty(numlist) binsproper bins(num >=2) binx(num >=2) biny(num >=2) values count 
-                percent showlegend ocolor(str) osize(str) ndocolor(str) ndfcolor(str)  ndfsize(str) xdiscrete ydiscrete 
-                labxgap(num) labygap(num) textx(str) texty(str) formatx(str) formaty(str) 
-                textsize(str) textlabsize(str) vallabsize(str) textcolor(str) textlabcolor(str) vallabcolor(str) 
-                xscale(num) yscale(num) polygon(options) line(options) point(options) label(options) arrow(options) 
-                diagram(options) scalebar(options) * ]
+bimap vary varx [if] [in], frame(name) 
+        [ geo(options) geopost(options)  
+          palette(name) reverse clr0(str) clrx(str) clry(str) clrsaturate(num)
+          cut(pctile|equal) cutx(numlist) cuty(numlist) binsproper bins(num >=2) binx(num >=2) biny(num >=2) values count
+          percent showlegend ocolor(str) osize(str) ndocolor(str) ndfcolor(str) ndfsize(str) xdiscrete ydiscrete 
+          labxgap(num) labygap(num) textx(str) texty(str) formatx(str) formaty(str) 
+          textsize(str) textlabsize(str) vallabsize(str) textcolor(str) textlabcolor(str) vallabcolor(str) 
+          xscale(num) yscale(num) * ]
 ```
 
-See the help file `help bimap` for details.
-
-The most basic use is as follows:
+with the following minimal syntax requirement:
 
 ```
-bimap vary varx using *shapefile*
+bimap vary varx, frame(framename)
 ```
 
-See helpfile for further details
+
+
+## Syntax for Stata versions 16 or older
+
+```stata
+bimap vary varx [if] [in], shp(shapefile) 
+        [ old polygon(str) line(str) point(str) label(str) arrow(str) diagram(str) scalebar(str) 
+          palette(name) reverse clr0(str) clrx(str) clry(str) clrsaturate(num)
+          cut(pctile|equal) cutx(numlist) cuty(numlist) binsproper bins(num >=2) binx(num >=2) biny(num >=2) values count 
+          percent showlegend ocolor(str) osize(str) ndocolor(str) ndfcolor(str)  ndfsize(str) xdiscrete ydiscrete 
+          labxgap(num) labygap(num) textx(str) texty(str) formatx(str) formaty(str) 
+          textsize(str) textlabsize(str) vallabsize(str) textcolor(str) textlabcolor(str) vallabcolor(str) 
+          xscale(num) yscale(num) * ]
+```
+
+with the following minimal syntax requirement:
+
+```
+bimap vary varx, shp(shapefile)
+```
+
+Note that v2.0 changes the use of the shapefile syntax. This might be a minor inconvinience for older users of bimap.
+
+See `help bimap` for details.
+
 
 
 ## Citation guidelines
@@ -94,15 +136,15 @@ Software packages take countless hours of programming, testing, and bug fixing. 
    author = {Naqvi, Asjad},
    title = {Stata package ``bimap''},
    url = {https://github.com/asjadnaqvi/stata-bimap},
-   version = {1.9},
-   date = {2024-06-19}
+   version = {2.0},
+   date = {2024-08-22}
 }
 ```
 
 *or simple text*
 
 ```
-Naqvi, A. (2024). Stata package "bimap" version 1.9. Release date 19 June 2024. https://github.com/asjadnaqvi/stata-bimap.
+Naqvi, A. (2024). Stata package "bimap" version 2.0. Release date 22 August 2024. https://github.com/asjadnaqvi/stata-bimap.
 ```
 
 
@@ -113,27 +155,53 @@ Naqvi, A. (2024). Stata package "bimap" version 1.9. Release date 19 June 2024. 
 
 ## Examples
 
+The examples showcase both the syntax for the use with `geoplot` (first syntax) and `spmap` (second syntax). The map outputs have been aligned to the extent possible but very minor differences in outputs might remain. Additionally, as `geoplot` is still in active development, output might break with latest updates or syntax might change. Please report these as soon as possible.
+
+Since I am using Stata 18 or newer versions, I have to specify `old` option to pass the syntax to use `spmap`. This might be uncessary if you have older Stata versions.
+
 Download the files from [GIS](./GIS/) and dump them in a folder.
 
 Set up the data:
 
+```stata
+COPY THE FILES FROM THE DIRECTORY IN YOUR FOLDER
+
+ADD CODE FOR THE FOLLOWING FILES
+county  // baseline attributes file
+county_shp2  // projected shape file
+state  // baseline state file
+state_shp2  // projected shape file
+usa_county2 // additional data 
+
 ```
-clear
-set scheme white_tableau
-graph set window fontface "Arial Narrow"
 
 
-// set the directory to the GIS folder 
-// cd <path>
+Test whether the `geoplot` is working properly. First set up the layer frames:
 
-use county, clear
+
+```stata
+
+// create the geoframes
+geoframe create county, replace shp(county_shp2)
+geoframe create state, replace shp(state_shp2)
+geoframe create cities usa_county2, replace shp(county_shp2)  // minor example of pairing with point location data. 
+
+// make the country frame active
+frames change county 
+
+
 destring _all, replace
 merge 1:1 STATEFP COUNTYFP using county_race
 keep if _m==3
 drop _m	
-
-save usa_county2.dta, replace   
 ```
+
+```
+geoplot (area county share_afam) (line state)
+```
+
+<img src="/figures/geoplot_test.png" width="100%">
+
 
 Test whether the `spmap` is working properly:
 
@@ -145,37 +213,62 @@ spmap share_afam using county_shp2, id(_ID) clm(custom) clb(0(10)100) fcolor(Hea
 <img src="/figures/bimap1_1.png" width="100%">
 
 
-```
-spmap share_hisp using county_shp2, id(_ID) clm(custom) clb(0(10)100) fcolor(Heat)
-```
-
-<img src="/figures/bimap1_2.png" width="100%">
-
+## Basic bimap
 
 Let's test the `bimap` command:
 
 ```
-bimap share_hisp share_afam using county_shp2, cut(pctile) palette(pinkgreen) 
+bimap share_hisp share_afam, frame(county) cut(pctile) palette(pinkgreen) 
 ```
+
+```
+bimap share_hisp share_afam, shp(county_shp2) old cut(pctile) palette(pinkgreen)
+```
+
+<img src="/figures/bimap2_geo.png" width="100%">
 
 <img src="/figures/bimap2.png" width="100%">
 
 
 ```
-bimap share_hisp share_afam using county_shp2, cut(pctile) palette(pinkgreen) count values
+bimap share_hisp share_afam , frame(county) cut(pctile) palette(pinkgreen) count values
 ```
+
+
+```
+bimap share_hisp share_afam, shp(county_shp2) old cut(pctile) palette(pinkgreen) count values
+```
+
+<img src="/figures/bimap2_1_geo.png" width="100%">
 
 <img src="/figures/bimap2_1.png" width="100%">
 
+
+
 ```
-bimap share_hisp share_afam using county_shp2, cut(pctile) palette(pinkgreen) percent values
+bimap share_hisp share_afam , cut(pctile) palette(pinkgreen) percent values frame(county).
 ```
+
+
+```
+bimap share_hisp share_afam, shp(county_shp2) old cut(pctile) palette(pinkgreen) percent values
+```
+
+<img src="/figures/bimap2_1_1_geo.png" width="100%">
 
 <img src="/figures/bimap2_1_1.png" width="100%">
 
+
 ```
-bimap share_hisp share_afam using county_shp2, cut(equal) palette(pinkgreen) count values
+bimap share_hisp share_afam, frame(county) cut(equal) palette(pinkgreen) count values
 ```
+
+
+```
+bimap share_hisp share_afam, shp(county_shp2) old cut(equal) palette(pinkgreen) count values
+```
+
+<img src="/figures/bimap2_2_geo.png" width="100%">
 
 <img src="/figures/bimap2_2.png" width="100%">
 
@@ -184,16 +277,26 @@ bimap share_hisp share_afam using county_shp2, cut(equal) palette(pinkgreen) cou
 
 These old palettes can still be used and will default to 3x3 bins.
 
-```
+
+```stata
 local i = 1
 
 foreach x in pinkgreen0 bluered0 greenblue0 purpleyellow0 yellowblue0 orangeblue0 brew1 brew2 brew3 census rgb viridis gscale {
 
-		bimap share_hisp share_afam using county_shp2, cut(pctile) palette(`x') percent title("Legacy scheme: `x'") 
-		graph export bimap3_`i'.png, replace wid(2000)	
+		bimap share_hisp share_afam, frame(county) cut(pctile) palette(`x') percent title("Legacy scheme: `x'") 
 
-			local i = `i' + 1
+			local ++i
+}
+```
 
+```stata
+local i = 1
+
+foreach x in pinkgreen0 bluered0 greenblue0 purpleyellow0 yellowblue0 orangeblue0 brew1 brew2 brew3 census rgb viridis gscale {
+
+		bimap share_hisp share_afam, shp(county_shp2) old cut(pctile) palette(`x') percent title("Legacy scheme: `x'") 
+
+		local ++i
 }
 ```
 
@@ -207,43 +310,88 @@ foreach x in pinkgreen0 bluered0 greenblue0 purpleyellow0 yellowblue0 orangeblue
 ### Advanced examples
 
 ```
-bimap share_asian share_afam using county_shp2, cut(pctile) palette(bluered)  ///
+bimap share_asian share_afam, cut(pctile) palette(bluered) frame(county)  ///
+	title("{fontface Arial Bold:A Stata bivariate map}") note("Data from the US Census Bureau.") ///	
+		 textx("Share of African Americans") texty("Share of Asians") texts(3.5) textlabs(3) values count ///
+		 osize(none) geo((line state)) 
+```
+
+
+```
+bimap share_asian share_afam, shp(county_shp2) old cut(pctile) palette(bluered)  ///
 	title("{fontface Arial Bold:A Stata bivariate map}") note("Data from the US Census Bureau.") ///	
 		 textx("Share of African Americans") texty("Share of Asians") texts(3.5) textlabs(3) values count ///
 		 ocolor() osize(none) ///
 		 polygon(data("state_shp2") ocolor(white) osize(0.3))
 ```
 
+<img src="/figures/bimap4_geoplot.png" width="100%">
+
 <img src="/figures/bimap4.png" width="100%">
 
 
 ```
-bimap share_asian share_afam using county_shp2, cut(pctile) palette(yellowblue)  ///
+bimap share_asian share_afam, cut(pctile) palette(orangeblue) frame(county)  ///
+	title("{fontface Arial Bold:A Stata bivariate map}") note("Data from the US Census Bureau.") ///		
+		 textx("Share of African Americans") texty("Share of Asians") texts(3.5) textlabs(3) values count ///
+		 osize(none) geo((line state, lc(white) lw(0.2)))  
+```
+
+
+
+```
+bimap share_asian share_afam, shp(county_shp2) old cut(pctile) palette(yellowblue)  ///
 	title("{fontface Arial Bold:A Stata bivariate map}") note("Data from the US Census Bureau.") ///		
 		 textx("Share of African Americans") texty("Share of Asians") texts(3.5) textlabs(3) values count ///
 		 ocolor() osize(none) ///
 		 polygon(data("state_shp2") ocolor(black) osize(0.2)) 
 ```
 
+<img src="/figures/bimap6_geoplot.png" width="100%">
+
 <img src="/figures/bimap6.png" width="100%">
 
 
 ```
-bimap share_asian share_hisp  using county_shp2, cut(pctile) palette(orangeblue)  ///
+bimap share_asian share_hisp, cut(pctile) palette(orangeblue) frame(county)  ///
+	title("{fontface Arial Bold:A Stata bivariate map}") note("Data from the US Census Bureau.") ///	
+		 textx("Share of Hispanics") texty("Share of Asians") texts(3.5) textlabs(3) values count ///
+		 osize(none)  geo((line state, lc(black) lw(0.2)))  
+```
+
+
+```
+bimap share_asian share_hisp, shp(county_shp2) old cut(pctile) palette(orangeblue)  ///
 	title("{fontface Arial Bold:A Stata bivariate map}") note("Data from the US Census Bureau.") ///	
 		 textx("Share of Hispanics") texty("Share of Asians") texts(3.5) textlabs(3) values count ///
 		 ocolor() osize(none) ///
 		 polygon(data("state_shp2") ocolor(black) osize(0.2)) 
 ```
 
+<img src="/figures/bimap7_geoplot.png" width="100%">
+
 <img src="/figures/bimap7.png" width="100%">
 
 
 
-Since `bimap` is a wrapper of `spmap`, we can pass information for other layers as well including dots. Below we use the file we saved in the first step to plot the population of counties:
+### Passing advanced options
+
+
 
 ```
-bimap share_hisp share_afam using county_shp2, cut(pctile) palette(pinkgreen) percent  ///
+
+bimap share_hisp share_afam, cut(pctile) palette(pinkgreen) percent  frame(county)  ///
+	title("{fontface Arial Bold:A Stata bivariate map}") ///
+	note("Data from the US Census Bureau. Counties with population > 100k plotted as proportional dots.", size(1.8)) ///	
+		 textx("Share of African Americans") texty("Share of Hispanics") texts(3.5) textlabs(3) values  ///
+		 osize(none) ///
+		 geo( (line state, lc(black) lw(0.2))  (point cities [w = tot_pop] if tot_pop>1e5, mc(lime%80) msize(0.8) lc(black))  )  
+```
+
+
+
+```
+bimap share_hisp share_afam, shp(county_shp2) old cut(pctile) palette(pinkgreen) percent  ///
 	title("{fontface Arial Bold:A Stata bivariate map}") ///
 	note("Data from the US Census Bureau. Counties with population > 100k plotted as proportional dots.", size(1.8)) ///	
 		 textx("Share of African Americans") texty("Share of Hispanics") texts(3.5) textlabs(3) values  ///
@@ -251,6 +399,9 @@ bimap share_hisp share_afam using county_shp2, cut(pctile) palette(pinkgreen) pe
 		 polygon(data("state_shp2") ocolor(white) osize(0.3)) ///
 		 point(data("usa_county2") x(_CX) y(_CY) select(keep if tot_pop>100000) proportional(tot_pop) psize(absolute) fcolor(lime%85) ocolor(black) osize(0.12) size(0.9) )  
 ```
+
+
+<img src="/figures/bimap8_geo.png" width="100%">
 
 <img src="/figures/bimap8.png" width="100%">
 
@@ -261,12 +412,22 @@ bimap share_hisp share_afam using county_shp2, cut(pctile) palette(pinkgreen) pe
 Let's make a `bimap` with percentiles as cut-offs and percentages shown in boxes:
 
 ```
-bimap share_hisp share_afam using county_shp2, cut(pctile) palette(orangeblue)  ///
+bimap share_hisp share_afam, cut(pctile) palette(orangeblue) frame(county)  ///
+		note("Data from the US Census Bureau.") ///	
+		texty("Share of Hispanics") textx("Share of African Americans") texts(3.5) textlabs(3) values percent  ///
+			osize(none)  geo((line state, lc(black) lw(0.2)))  
+```
+
+
+```
+bimap share_hisp share_afam, shp(county_shp2) old cut(pctile) palette(orangeblue)  ///
 		note("Data from the US Census Bureau.") ///	
 		texty("Share of Hispanics") textx("Share of African Americans") texts(3.5) textlabs(3) values percent  ///
 		 ocolor() osize(none) ///
 		 polygon(data("state_shp2") ocolor(black) osize(0.2)) 
 ```
+
+<img src="/figures/bimap9_0_geo.png" width="100%">
 
 <img src="/figures/bimap9_0.png" width="100%">
 
@@ -275,50 +436,97 @@ bimap share_hisp share_afam using county_shp2, cut(pctile) palette(orangeblue)  
 
 we can now modify the cut-offs as follows:
 
+
 ```
-bimap share_hisp share_afam using county_shp2, cuty(0(20)100) cutx(0(20)100)  palette(orangeblue)    ///
+bimap share_hisp share_afam, cut(pctile) palette(orangeblue) frame(county)  ///
+		note("Data from the US Census Bureau.") ///	
+		texty("Share of Hispanics") textx("Share of African Americans") texts(3.5) textlabs(3) values percent  ///
+			osize(none)  geo((line state, lc(black) lw(0.2)))  
+```
+
+
+```
+bimap share_hisp share_afam, shp(county_shp2) old cuty(0(20)100) cutx(0(20)100)  palette(orangeblue)    ///
 		 note("Data from the US Census Bureau.") ///	
 		 texty("Share of Hispanics") textx("Share of African Americans") texts(3.5) textlabs(3) values percent  ///
 		 ocolor() osize(none) ///
 		 polygon(data("state_shp2") ocolor(black) osize(0.2)) 
 ```
+
+<img src="/figures/bimap9_geo.png" width="100%">
 
 <img src="/figures/bimap9.png" width="100%">
 
 
 Cut-offs can be formatted as follows:
 
+
 ```
-bimap share_hisp share_afam using county_shp2, cuty(0(25)100) cutx(0(25)100)  formatx(%3.0f) formaty(%3.0f)  palette(orangeblue)    ///
+bimap share_hisp share_afam, cuty(0(25)100) cutx(0(25)100)  formatx(%3.0f) formaty(%3.0f)  palette(orangeblue) frame(county)    ///
+		 note("Data from the US Census Bureau.") ///	
+		 texty("Share of Hispanics") textx("Share of African Americans") texts(3.5) textlabs(3) values count  ///
+			osize(none) geo((line state, lc(black) lw(0.2)))
+```
+
+
+```
+bimap share_hisp share_afam, shp(county_shp2) old cuty(0(25)100) cutx(0(25)100)  formatx(%3.0f) formaty(%3.0f)  palette(orangeblue)    ///
 		 note("Data from the US Census Bureau.") ///	
 		 texty("Share of Hispanics") textx("Share of African Americans") texts(3.5) textlabs(3) values count  ///
 		 ocolor() osize(none) ///
 		 polygon(data("state_shp2") ocolor(black) osize(0.2)) 
 ```
 
+<img src="/figures/bimap11_geo.png" width="100%">
+
 <img src="/figures/bimap11.png" width="100%">
 
 
 If we define only one custom cut-off, the other will automatically take on the pctile values:
 
+
 ```
-bimap share_hisp share_afam using county_shp2, cutx(0 2 6 100) formatx(%5.0f)   palette(orangeblue)    ///
+bimap share_hisp share_afam, cutx(0 2 6 100) formatx(%5.0f)   palette(orangeblue) frame(county)    ///
+		 note("Data from the US Census Bureau.") ///	
+		 texty("Share of Hispanics") textx("Share of African Americans") texts(3.5) textlabs(3) values percent  ///
+		osize(none) geo((line state, lc(black) lw(0.2)))
+```
+
+
+```
+bimap share_hisp share_afam, shp(county_shp2) old cutx(0 2 6 100) formatx(%5.0f)   palette(orangeblue)    ///
 		 note("Data from the US Census Bureau.") ///	
 		 texty("Share of Hispanics") textx("Share of African Americans") texts(3.5) textlabs(3) values percent  ///
 		 ocolor() osize(none) ///
 		 polygon(data("state_shp2") ocolor(black) osize(0.2)) 
 ```
 
+<img src="/figures/bimap10_geo.png" width="100%">
+
 <img src="/figures/bimap10.png" width="100%">
 
 
 ### legend checks + offset (v1.8)
 
-`spmap` legend options can be passed to `bimap` to describe additional layers:
 
 
 ```
-bimap share_hisp share_afam using county_shp2, cut(pctile) palette(census)  ///
+bimap share_hisp share_afam, cut(pctile) palette(census) frame(county)  ///
+		 note("Data from the US Census Bureau.", size(small)) ///	
+		 texty("Share of Hispanics") textx("Share of African Americans") texts(3.2) textlabs(3) values percent labxgap(0.05) labygap(0.05) ///
+		 ocolor(black) osize(0.03)  ///
+		 geo((line state, lc(black) lw(0.2))) showlegend ///
+		 geopost( ///
+			compass ///
+			sbar(length(1000) units(km) position(sw)) ///
+			)	
+```
+
+
+
+
+```
+bimap share_hisp share_afam, shp(county_shp2) old cut(pctile) palette(census)  ///
 		 note("Data from the US Census Bureau.", size(small)) ///	
 		 texty("Share of Hispanics") textx("Share of African Americans") texts(3.2) textlabs(3) values percent ///
 		 ocolor(black) osize(0.03)  ///
@@ -327,11 +535,14 @@ bimap share_hisp share_afam using county_shp2, cut(pctile) palette(census)  ///
 		 showleg legenda(off) legend(pos(7) size(5)) legstyle(2) 
 ```
 
+
+<img src="/figures/bimap12_geoplot.png" width="100%">
+
 <img src="/figures/bimap12.png" width="100%">
 
 
 ```
-bimap share_hisp share_afam using county_shp2, cut(pctile) palette(census)  ///
+bimap share_hisp share_afam, shp(county_shp2) old cut(pctile) palette(census)  ///
 		 note("Data from the US Census Bureau.", size(small)) ///	
 		 texty("Share of Hispanics") textx("Share of African Americans") texts(3.2) textlabs(3) values percent labxgap(0.05)  labygap(0.05) ///
 		 ocolor(black) osize(0.03)  ///
@@ -339,6 +550,8 @@ bimap share_hisp share_afam using county_shp2, cut(pctile) palette(census)  ///
 		 scalebar(units(500) scale(1/1000) xpos(100) label(Kilometers)) ///
 		 showleg legenda(off) legend(pos(7) size(5)) legstyle(2) 
 ```
+
+<img src="/figures/bimap12_1_geoplot.png" width="100%">
 
 <img src="/figures/bimap12_1.png" width="100%">
 
@@ -348,37 +561,70 @@ bimap share_hisp share_afam using county_shp2, cut(pctile) palette(census)  ///
 Check for legend color options:
 
 ```
-bimap share_asian share_afam using county_shp2, cut(pctile)   ///
+bimap share_asian share_afam, cut(pctile) frame(county)   ///
 	title("{fontface Arial Bold:A Stata bivariate map}") note("Data from the US Census Bureau.") ///	
 		 textx("Share of African Americans") texty("Share of Asians") values count textcolor(lime) textlabcolor(blue) vallabc(red) ///
-		 ocolor() osize(none) ///
+		 osize(none) ///
+		 geo((line state, lc(white) lw(0.3)))
+```
+
+
+```
+bimap share_asian share_afam, shp(county_shp2) old cut(pctile)   ///
+	title("{fontface Arial Bold:A Stata bivariate map}") note("Data from the US Census Bureau.") ///	
+		 textx("Share of African Americans") texty("Share of Asians") values count textcolor(lime) textlabcolor(blue) vallabc(red) ///
+		 osize(none) ///
 		 polygon(data("state_shp2") ocolor(white) osize(0.3))
 ```
+
+<img src="/figures/bimap12_2_geoplot.png" width="100%">
 
 <img src="/figures/bimap12_2.png" width="100%">
 
 
 Check for label wrapping in the legend:
 
+
 ```
-bimap share_asian share_afam using county_shp2, cut(pctile)   ///
+bimap share_asian share_afam, cut(pctile) frame(county)    ///
 	title("{fontface Arial Bold:A Stata bivariate map}") note("Data from the US Census Bureau.") ///	
 		 textx("Share of African Americans") texty("Share of Asians") wrap(16) values count  ///
-		 ocolor() osize(none) ///
+		 osize(none) ///
+		 geo((line state, lc(white) lw(0.3)))
+```
+
+```
+bimap share_asian share_afam, shp(county_shp2) old cut(pctile)   ///
+	title("{fontface Arial Bold:A Stata bivariate map}") note("Data from the US Census Bureau.") ///	
+		 textx("Share of African Americans") texty("Share of Asians") wrap(16) values count  ///
+		 osize(none) ///
 		 polygon(data("state_shp2") ocolor(white) osize(0.3))
 ```
+
+
+<img src="/figures/bimap12_3_geoplot.png" width="100%">
 
 <img src="/figures/bimap12_3.png" width="100%">
 
 Check for hiding the legend:
 
+```
+bimap share_asian share_afam, cut(pctile) frame(county)  ///
+	title("{fontface Arial Bold:A Stata bivariate map}") note("Data from the US Census Bureau.") ///	
+		 osize(none) ///
+		 geo((line state, lc(white) lw(0.3))) nolegend
+```
+
 
 ```
-bimap share_asian share_afam using county_shp2, cut(pctile)   ///
+bimap share_asian share_afam, shp(county_shp2) old cut(pctile)   ///
 	title("{fontface Arial Bold:A Stata bivariate map}") note("Data from the US Census Bureau.") ///	
 		 ocolor() osize(none) ///
 		 polygon(data("state_shp2") ocolor(white) osize(0.3)) nolegend
 ```
+
+
+<img src="/figures/bimap12_4_geoplot.png" width="100%">
 
 <img src="/figures/bimap12_4.png" width="100%">
 
@@ -388,7 +634,17 @@ bimap share_asian share_afam using county_shp2, cut(pctile)   ///
 If condition checks with legends
 
 ```
-bimap share_hisp share_afam using county_shp2 if STATEFP==36, cut(pctile) palette(census)  ///
+bimap share_hisp share_afam if STATEFP==36, cut(pctile) palette(census) frame(county)   ///
+		 title("New York") ///
+		 note("Data from the US Census Bureau.", size(small)) ///	
+		 texty("Share of Hispanics") textx("Share of African Americans") texts(3.2) textlabs(3) values percent ///
+		 ocolor(black) osize(0.03)  ///
+		 		 geo((line state if _ID==19, lc(black) lw(0.2))) nolegend
+```
+
+
+```
+bimap share_hisp share_afam if STATEFP==36, shp(county_shp2) old cut(pctile) palette(census)  ///
 		 title("New York") ///
 		 note("Data from the US Census Bureau.", size(small)) ///	
 		 texty("Share of Hispanics") textx("Share of African Americans") texts(3.2) textlabs(3) values percent ///
@@ -397,78 +653,160 @@ bimap share_hisp share_afam using county_shp2 if STATEFP==36, cut(pctile) palett
 		 showleg legenda(off) legend(pos(7) size(5)) legstyle(2)
 ```
 
+<img src="/figures/bimap13_geoplot.png" width="100%">
+
 <img src="/figures/bimap13.png" width="100%">
 
 
 ### v1.6 updates
 
 ```
-bimap share_hisp share_afam using county_shp2, cut(pctile) palette(orangeblue) bins(5)  ///
+bimap share_hisp share_afam, cut(pctile) palette(orangeblue) bins(5) frame(county) ///
+		note("Data from the US Census Bureau.") ///	
+		texty("Share of Hispanics") textx("Share of African Americans") texts(3.5) textlabs(3) values count  ///
+		 osize(none) ///
+		 geo((line state, lc(black) lw(0.2)))
+```
+
+
+```
+bimap share_hisp share_afam, shp(county_shp2) old cut(pctile) palette(orangeblue) bins(5)  ///
 		note("Data from the US Census Bureau.") ///	
 		texty("Share of Hispanics") textx("Share of African Americans") texts(3.5) textlabs(3) values count  ///
 		ocolor() osize(none) ///
 		polygon(data("state_shp2") ocolor(black) osize(0.2)) 
 ```
+
+<img src="/figures/bimap15_geoplot.png" width="100%">
 
 <img src="/figures/bimap15.png" width="100%">
 
 ```
-bimap share_hisp share_afam using county_shp2, cut(pctile) palette(orangeblue) binx(4) biny(5)  ///
+bimap share_hisp share_afam, cut(pctile) palette(orangeblue) binx(4) biny(5) frame(county)  ///
+		note("Data from the US Census Bureau.") ///	
+		texty("Share of Hispanics") textx("Share of African Americans") texts(3.5) textlabs(3) values count  ///
+		 osize(none) ///
+		 geo((line state, lc(black) lw(0.2)))
+```
+
+
+```
+bimap share_hisp share_afam, shp(county_shp2) old cut(pctile) palette(orangeblue) binx(4) biny(5)  ///
 		note("Data from the US Census Bureau.") ///	
 		texty("Share of Hispanics") textx("Share of African Americans") texts(3.5) textlabs(3) values count  ///
 		ocolor() osize(none) ///
 		polygon(data("state_shp2") ocolor(black) osize(0.2)) 
 ```
 
+<img src="/figures/bimap16_geoplot.png" width="100%">
+
 <img src="/figures/bimap16.png" width="100%">
 
 ```
-bimap share_hisp share_afam using county_shp2, cut(pctile) palette(orangeblue) binx(3) biny(8)  ///
+bimap share_hisp share_afam, cut(pctile) palette(orangeblue) binx(3) biny(8) frame(county)  ///
+		note("Data from the US Census Bureau.") ///	
+		texty("Share of Hispanics") textx("Share of African Americans") texts(3.5) textlabs(3) values count  ///
+		 osize(none) ///
+		 geo((line state, lc(black) lw(0.2)))
+```
+
+
+```
+bimap share_hisp share_afam, shp(county_shp2) old cut(pctile) palette(orangeblue) binx(3) biny(8)  ///
 		note("Data from the US Census Bureau.") ///	
 		texty("Share of Hispanics") textx("Share of African Americans") texts(3.5) textlabs(3) values count  ///
 		 ocolor() osize(none) ///
 		 polygon(data("state_shp2") ocolor(black) osize(0.2)) 
 ```
 
+
+
+<img src="/figures/bimap17_geoplot.png" width="100%">
+
 <img src="/figures/bimap17.png" width="100%">
 
 ```
-bimap share_hisp share_afam using county_shp2, cut(pctile) palette(orangeblue) bins(8)   ///
+bimap share_hisp share_afam, cut(pctile) palette(orangeblue) bins(8) frame(county)  ///
+		note("Data from the US Census Bureau.") ///	
+		texty("Share of Hispanics") textx("Share of African Americans") texts(3.5) textlabs(3) values   ///
+		 osize(none) ///
+		 geo((line state, lc(black) lw(0.2)))
+```
+
+
+```
+bimap share_hisp share_afam, shp(county_shp2) old cut(pctile) palette(orangeblue) bins(8)   ///
 		note("Data from the US Census Bureau.") ///	
 		texty("Share of Hispanics") textx("Share of African Americans") texts(3.5) textlabs(3) values   ///
 		 ocolor() osize(none) ///
 		 polygon(data("state_shp2") ocolor(black) osize(0.1)) 
 ```
 
+<img src="/figures/bimap18_geoplot.png" width="100%">
+
 <img src="/figures/bimap18.png" width="100%">
 
+
 ```
-bimap share_hisp share_afam using county_shp2, cut(pctile) palette(orangeblue) reverse bins(8)   ///
+bimap share_hisp share_afam, cut(pctile) palette(orangeblue) bins(8) frame(county)  ///
+		note("Data from the US Census Bureau.") ///	
+		texty("Share of Hispanics") textx("Share of African Americans") texts(3.5) textlabs(3) values   ///
+		 osize(none) ///
+		 geo((line state, lc(black) lw(0.2)))
+```
+
+
+```
+bimap share_hisp share_afam, shp(county_shp2) old cut(pctile) palette(orangeblue) reverse bins(8)   ///
 		note("Data from the US Census Bureau.") ///	
 		texty("Share of Hispanics") textx("Share of African Americans") texts(3.5) textlabs(3) values count  ///
 		 ocolor() osize(none) ///
 		 polygon(data("state_shp2") ocolor(black) osize(0.2)) 
 ```
+
+<img src="/figures/bimap19_geoplot.png" width="100%">
 
 <img src="/figures/bimap19.png" width="100%">
 
+
 ```
-bimap share_hisp share_afam using county_shp2, cut(pctile) palette(orangeblue) clr0(white) clrx(red) bins(6) clrsat(10)   ///
+bimap share_hisp share_afam, cut(pctile) palette(orangeblue) clr0(white) clrx(red) bins(6) clrsat(10) frame(county)   ///
+		note("Data from the US Census Bureau.") ///	
+		texty("Share of Hispanics") textx("Share of African Americans") texts(3.5) textlabs(3) values count  ///
+		 osize(none) ///
+		 geo((line state, lc(black) lw(0.2)))
+```
+
+```
+bimap share_hisp share_afam, shp(county_shp2) old cut(pctile) palette(orangeblue) clr0(white) clrx(red) bins(6) clrsat(10)   ///
 		note("Data from the US Census Bureau.") ///	
 		texty("Share of Hispanics") textx("Share of African Americans") texts(3.5) textlabs(3) values count  ///
 		 ocolor() osize(none) ///
 		 polygon(data("state_shp2") ocolor(black) osize(0.2)) 
 ```
+
+<img src="/figures/bimap20_geoplot.png" width="100%">
 
 <img src="/figures/bimap20.png" width="100%">
 
 ```
-bimap share_hisp share_afam using county_shp2, cut(pctile) palette(orangeblue) bins(4)  percent  ///
+bimap share_hisp share_afam, cut(pctile) palette(orangeblue) bins(4)  percent frame(county)   ///
+		note("Data from the US Census Bureau.") ///	
+		texty("Share of Hispanics") textx("Share of African Americans") texts(3.5) textlabs(3) values   ///
+		 osize(none) ///
+		 geo((line state, lc(black) lw(0.2)))
+```
+
+
+```
+bimap share_hisp share_afam, shp(county_shp2) old cut(pctile) palette(orangeblue) bins(4)  percent  ///
 		note("Data from the US Census Bureau.") ///	
 		texty("Share of Hispanics") textx("Share of African Americans") texts(3.5) textlabs(3) values   ///
 		 ocolor() osize(none) ///
 		 polygon(data("state_shp2") ocolor(black) osize(0.2)) 
 ```
+
+<img src="/figures/bimap21_geoplot.png" width="100%">
 
 <img src="/figures/bimap21.png" width="100%">
 
@@ -477,13 +815,25 @@ bimap share_hisp share_afam using county_shp2, cut(pctile) palette(orangeblue) b
 
 Bins can be scaled to show actual division. Use this cautiously especially if the data distribution is highly skewed. 
 
+
 ```
-bimap share_hisp share_afam using county_shp2, cuty(0 20 60 100) cutx(0 30 50 75 100) palette(orangeblue) formatx(%5.0f)  formaty(%5.0f) binsproper   ///
+bimap share_hisp share_afam, cuty(0 20 60 100) cutx(0 30 50 75 100) palette(orangeblue) formatx(%5.0f)  formaty(%5.0f) binsproper frame(county)   ///
+		note("Data from the US Census Bureau.") ///	
+		texty("Share of Hispanics") textx("Share of African Americans") texts(3.5) textlabs(3) values count  ///
+		 osize(none) ///
+		 geo((line state, lc(black) lw(0.2)))
+```
+
+
+```
+bimap share_hisp share_afam, shp(county_shp2) old cuty(0 20 60 100) cutx(0 30 50 75 100) palette(orangeblue) formatx(%5.0f)  formaty(%5.0f) binsproper   ///
 		note("Data from the US Census Bureau.") ///	
 		texty("Share of Hispanics") textx("Share of African Americans") texts(3.5) textlabs(3) values count  ///
 		 ocolor() osize(none) ///
 		 polygon(data("state_shp2") ocolor(black) osize(0.2)) 
 ```
+
+<img src="/figures/bimap22_geoplot.png" width="100%">
 
 <img src="/figures/bimap22.png" width="100%">
 
@@ -510,41 +860,68 @@ tab discy discx, m
 We can also now declare these variables as discrete while using `bimap` in any combination:
 
 ```
-bimap discy share_afam using county_shp2, palette(yellowblue) values count ydisc
+bimap discy share_afam, palette(yellowblue) values count ydisc frame(county) 
+```
+
+
+```
+bimap discy share_afam, shp(county_shp2) old palette(yellowblue) values count ydisc
 ```
 
 <img src="/figures/bimap23_1.png" width="100%">
+
+<img src="/figures/bimap23_1_geoplot.png" width="100%">
+
+ 
+```
+bimap share_hisp discx, palette(yellowblue) values count xdisc frame(county) 
+``` 
  
 
 ```
-bimap share_hisp discx using county_shp2, palette(yellowblue) values count xdisc
+bimap share_hisp discx, shp(county_shp2) old palette(yellowblue) values count xdisc
 ```
+
+<img src="/figures/bimap23_2_geoplot.png" width="100%">
 
 <img src="/figures/bimap23_2.png" width="100%">
 
 ```
-bimap discy discx using county_shp2, palette(yellowblue) values count xdisc ydisc
+bimap discy discx, palette(yellowblue) values count xdisc ydisc frame(county) 
 ```
+
+
+```
+bimap discy discx, shp(county_shp2) old palette(yellowblue) values count xdisc ydisc
+```
+
+<img src="/figures/bimap23_3_geoplot.png" width="100%">
 
 <img src="/figures/bimap23_3.png" width="100%">
 
 
-### missing data fixed (v1.81)
+### missing data (v1.81)
 
 ```
-use county, clear
-destring _all, replace
-merge 1:1 STATEFP COUNTYFP using county_race
-keep if _m==3
-drop _m	
-
 replace share_hisp = . if stname=="Texas"
+```
 
-bimap share_hisp share_afam using county_shp2, palette(orangeblue)    ///
+```
+bimap share_hisp share_afam, palette(orangeblue)  frame(county)  ///
+		 ndfcolor(pink) ndocolor(lime) ndsize(0.2)  ///
+		 values count  ///
+		 geo((line state, lc(black) lw(0.2)))
+```
+
+
+```
+bimap share_hisp share_afam, shp(county_shp2) old palette(orangeblue)    ///
 		 ndfcolor(pink) ndocolor(lime) ndsize(0.3)  ///
 		 values count  ///
 		 polygon(data("state_shp2") ocolor(black) osize(0.2)) 
 ```
+
+<img src="/figures/bimap24_geoplot.png" width="100%">
 
 <img src="/figures/bimap24.png" width="100%">
 
@@ -554,6 +931,12 @@ Please open an [issue](https://github.com/asjadnaqvi/stata-bimap/issues) to repo
 
 
 ## Change log
+
+**v2.0 (22 August 2024)**
+- Major update. Support for `geoplot` for Stata versions 17 or newer. Support for `spmap` for Stata versions 16 or older. Versions are auto detected.
+- Minor change in syntax for `spmap` versions from `bimap y x using shapefile` to `bimap y x, shp(shapefile)`. This is to ensure consistency for upcoming releases.
+- Stata 17 or newer users can use the option `old` to call in the `spmap` version. This ensures that the code of seasoned `bimap` users does not break.
+- Option `detail` added to show which Stata version is detected and which map program is used. This might be useful in case you want to have more information. 
 
 **v1.9 (19 June 2024)**
 - Fixed and added several options to control legends: `textcolor()`, `textlabcolor()`, `vallabcolor()`. 

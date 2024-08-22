@@ -1,6 +1,7 @@
-*! bimap v1.9 (19 Jun 2024)
+*! bimap v2.0 (22 Aug 2024)
 *! Asjad Naqvi (asjadnaqvi@gmail.com)
 
+* v2.0	(22 Aug 2024): Port to geoplot for newer stata versions. frame() geo() geopost() added for geoplot. /using swapped with shp() for spmap.
 * v1.9  (19 Jun 2024): Fixed some minor bugs. Nolegend option added. wrap() added for label wrapping.
 * v1.82 (04 May 2024): textcolor() added for legend labels. updates to various defaults
 * v1.81 (22 Aug 2023): Fixed a bug where missing data was getting dropped. ndsize() passthru fixed.
@@ -29,42 +30,74 @@
 * https://medium.com/the-stata-guide/stata-graphs-bi-variate-maps-b1e96dd4c2be
 
 
-// add checks for number of bins in xdisc, ydisc 
-// pass on values labels correctly
-
 
 cap program drop bimap
 
 
 program bimap, sortpreserve
 
-version 15
+*version 15
  
-	syntax varlist(min=2 max=2 numeric) [if] [in] using/  ///
-		[ , cut(string) palette(string) ]  ///
+	syntax varlist(min=2 max=2 numeric) [if] [in]    ///
+		[ ,  cut(string) palette(string) ]  ///
 		[ count percent BOXsize(real 8) textx(string) texty(string) formatx(string) formaty(string) xscale(real 35) yscale(real 100) TEXTLABSize(string) TEXTSize(string) values ] ///
 		[ polygon(passthru) line(passthru) point(passthru) label(passthru) ] ///
-		[ ocolor(string) osize(string) ]   ///
-		[ ndocolor(string) ndsize(string) ndfcolor(string) ]   ///
+		[ ocolor(string) osize(string) ndocolor(string) ndsize(string) ndfcolor(string) ]   ///
 		[ cutx(numlist min=1)  cuty(numlist min=1) SHOWLEGend  ] ///  // 1.4 updates
 		[ LEGend(passthru) legenda(passthru) LEGStyle(passthru) LEGJunction(passthru) LEGCount(passthru) LEGOrder(passthru) LEGTitle(passthru)  ] ///  // 1.4 legend controls as passthru
 		[ arrow(passthru) diagram(passthru) scalebar(passthru) ] ///  // 1.5
 		[ bins(numlist min=1 >=2) binx(numlist min=1 >=2) biny(numlist min=1 >=2) reverse clr0(string) clrx(string) clry(string) CLRSATurate(real 6) binsproper FORMATVal(string) VALLABSize(string) ] /// // 1.6
 		[ XDISCrete YDISCrete ] ///  // v1.7 options
 		[ labxgap(real 0) labygap(real 0) ] ///  // v1.8 options
-		[ TEXTColor(string) TEXTLABColor(string) VALLABColor(string) NOLEGend wrap(numlist >=0 max=1)  * ]			// v1.82, v1.9
+		[ TEXTColor(string) TEXTLABColor(string) VALLABColor(string) NOLEGend wrap(numlist >=0 max=1)  * ]	///		// v1.82, v1.9
+		[ geo(string) geopost(string) frame(string) old shp(string) details ]	// v2.0 -- stata 18+ options for geoplot
 		
 		
-		if (substr(reverse("`using'"),1,4) != "atd.") local using "`using'.dta"  // from spmap to check for extension
-		
-		capture confirm file "`using'"   
-		if _rc {
-			di as err "{p}File {bf:`using'} not found{p_end}"
-			exit 601
-		}
+	local myver = `c(version)'
 	
 	
 	// check dependencies
+		
+	if `myver' >= 17 & "`old'"=="" {
+		
+		if "`details'" != "" {
+			noi display in yellow "Stata `myver' detected. Using {stata help geoplot:geoplot} package."
+		}
+		
+		if "`frame'" == "" {
+			display as error "For calling geoplot, option {it:frame()} is required. See {stata help bimap:help}."
+			exit
+		}
+		
+		capture findfile geoplot.ado
+		if _rc != 0 {
+			di as error "geoplot package is missing. Click here to install {stata ssc install geoplot, replace:geoplot}."
+			exit
+		}	
+		
+		capture findfile colorpalette.ado
+		if _rc != 0 {
+			di as error "The {bf:palettes} package is missing. Click here to install {stata ssc install palettes, replace:palettes} and {stata ssc install colrspace, replace:colrspace}."
+			exit
+		}
+		
+		/*
+		capture findfile moremata.ado
+		if _rc != 0 {
+			di as error "The {bf:moremata} package is missing. Click here to install {stata ssc install moremata, replace:moremata}."
+			exit
+		}	
+		*/
+	
+	}
+	else {
+		
+		if "`old'" != "" local oldtxt (but option old specified)
+		
+		if "`details'" != "" {
+			noi display in yellow "Stata `myver' detected `oldtxt'. Using {stata help spmap:spmap} package."
+		}
+		
 		capture findfile spmap.ado
 		if _rc != 0 {
 			di as error "spmap package is missing. Click here to install {stata ssc install spmap, replace:spmap}."
@@ -76,6 +109,24 @@ version 15
 			di as error "The {bf:palettes} package is missing. Click here to install {stata ssc install palettes, replace:palettes} and {stata ssc install colrspace, replace:colrspace}."
 			exit
 		}	
+		
+		
+		if "`shp'" == "" {
+			display as error "For calling spmap, option {it:shp()} is required. See {stata help bimap:help} file."
+			exit
+		}
+		
+		if (substr(reverse("`shp'"),1,4) != "atd.") local shp "`shp'.dta"  // from spmap to check for extension
+		
+		capture confirm file "`shp'"   
+		if _rc {
+			di as err "{p}File {bf:`shp'} not found{p_end}"
+			exit 601
+		}
+		
+	}
+		
+		
 	
 		marksample touse, strok novarlist
 		gettoken var2 var1 : varlist   // var1 = x, var2 = y
@@ -88,6 +139,7 @@ version 15
 			exit
 		}
 	
+		
 		if "`count'" != "" & "`percent'" != "" {
 			di as error "Please specify either {it:count} or {it:percent}. See {stata help bimap:help file}."
 			exit 
@@ -105,14 +157,12 @@ version 15
 		***** Get the cuts
 
 	
-qui {
+quietly {
  	preserve	
 		keep if `touse'
 		keep `varlist' _ID
 		
 		tempvar cat_`var1' cat_`var2'
-		
-		
 		
 		summ `var1', meanonly
 			local xmin = r(min)
@@ -245,7 +295,7 @@ qui {
 			levelsof `cat_`var1''
 			
 			if r(r) > 10 {
-				di as err "Maximum categories allowed are 10. `var1' has `r(r)' categories."
+				di as err "Maximum 10 categories allowed. `var1' has `r(r)' categories."
 				exit 198
 			}
 			
@@ -264,7 +314,7 @@ qui {
 			levelsof `cat_`var2''
 
 			if r(r) > 10 {
-				di as err "Maximum categories allowed are 10. `var2' has `r(r)' categories."
+				di as err "Maximum 10 categories allowed. `var2' has `r(r)' categories."
 				exit 198
 			}			
 			
@@ -441,7 +491,8 @@ qui {
 		
 		***** store the cut-offs for labels	
 		
-	
+
+		
 		if "`count'" != "" {			
 
 			forval i = 1/`binx' {
@@ -466,7 +517,8 @@ qui {
 				}
 			}
 		}
-	
+
+		
 		
 		if "`polygon'" == "" {
 			local polyadd 
@@ -486,7 +538,7 @@ qui {
 
 		local nds = cond("`ndsize'" == "", "`lw'", "`ndsize'")		
 		
-		local leg = cond("`showlegend'"=="", "legend(off)", "`legend'")
+		local leg = cond("`showlegend'"=="", "legend(off)", "")
 		
 		
 		if "`clr0'" != "" local cl0 `clr0'
@@ -502,8 +554,10 @@ qui {
 			local cly `tempx'
 		}
 		
+		gen cuts = `grp_cut'
 		
-		// finally the map!
+		
+		// finally the map
 				
 		if `check'==0 {
 			local cutst = `binx' * `biny'
@@ -522,27 +576,52 @@ qui {
 			local cutst = 9
 		}
 		
-		if "`nolegend'" != "" {
-		spmap `grp_cut' using "`using'", ///
-			id(_ID) clm(custom) clb(0(1)`cutst') fcolor("`colors'") ///
-				ocolor(`lc' ..) osize(`lw' ..) ///	
-				ndocolor(`ndo' ..) ndsize(`nds' ..) ndfcolor(`ndf' ..)  ///
-				`polygon' `line' `point' `label'  ///
-				`leg' `legstyle' `legenda' `legendstyle' `legjunction' `legcount' `legorder' `legtitle'  ///  // v1.4 legend passthrus
-				`arrow' `diagram' `scalebar' `options'
+		
+		if `myver' >= 17 & "`old'"=="" {
 			
-		exit	
+
+			if "`nolegend'" != "" {
+				geoplot ///
+					(area `frame' `grp_cut', discrete cuts(1(1)`cutst') color("`colors'") lcolor(`lc') lwidth(`lw') missing(color(`ndf') lc(`ndo') lw(`nds')) nolegend )    ///
+						`geo' ///
+						, `leg' tight `geopost' `options'
+						
+				exit		
+							
+			}
+			else {
+			
+				geoplot ///
+					(area `frame' `grp_cut', discrete cuts(1(1)`cutst') color("`colors'") lcolor(`lc') lwidth(`lw') missing(color(`ndf') lc(`ndo') lw(`nds')) nolegend )    ///
+						`geo' ///
+						, `leg' tight `geopost' name(_map, replace) nodraw
+			}
+			
 		}
 		else {
+		
+			if "`nolegend'" != "" {
+			spmap `grp_cut' using "`shp'", ///
+				id(_ID) clm(custom) clb(0(1)`cutst') fcolor("`colors'") ///
+					ocolor(`lc' ..) osize(`lw' ..) ///	
+					ndocolor(`ndo' ..) ndsize(`nds' ..) ndfcolor(`ndf' ..)  ///
+					`polygon' `line' `point' `label'  ///
+					`leg' `legstyle' `legenda' `legendstyle' `legjunction' `legcount' `legorder' `legtitle'  ///  // v1.4 legend passthrus
+					`arrow' `diagram' `scalebar' `options'
+				
+				exit	
+			}
+			else {
 
-		spmap `grp_cut' using "`using'", ///
-			id(_ID) clm(custom) clb(0(1)`cutst') fcolor("`colors'") ///
-				ocolor(`lc' ..) osize(`lw' ..) ///	
-				ndocolor(`ndo' ..) ndsize(`nds' ..) ndfcolor(`ndf' ..)  ///
-				`polygon' `line' `point' `label'  ///
-				`leg' `legstyle' `legenda' `legendstyle' `legjunction' `legcount' `legorder' `legtitle'  ///  // v1.4 legend passthrus
-				`arrow' `diagram' `scalebar' ///  // v1.5 passthrus
+				spmap `grp_cut' using "`shp'", ///
+				id(_ID) clm(custom) clb(0(1)`cutst') fcolor("`colors'") ///
+					ocolor(`lc' ..) osize(`lw' ..) ///	
+					ndocolor(`ndo' ..) ndsize(`nds' ..) ndfcolor(`ndf' ..)  ///
+					`polygon' `line' `point' `label'  ///
+					`leg' `legstyle' `legenda' `legendstyle' `legjunction' `legcount' `legorder' `legtitle'  ///  // v1.4 legend passthrus
+					`arrow' `diagram' `scalebar' ///  // v1.5 passthrus
 					name(_map, replace) nodraw
+			}
 		}
 	
 		*/
@@ -663,7 +742,6 @@ qui {
 		replace x_mid = . if tag!=1
 		replace y_mid = . if tag!=1
 		
-
 		if "`count'" != "" | "`percent'" != "" {
 			gen mycount = .
 		
@@ -675,19 +753,17 @@ qui {
 				}
 			}
 		
-		local marksym mycount	
-			
+			local marksym mycount		
 		}
 		
-			
 		
 		if "`formatval'" =="" local formatval "%5.1f"
 		
-		if "`percent'" != "" {
+		if "`percent'" != ""  {
 			gen mycount2 = string(mycount, "`formatval'") + "%" if mycount!=.
-			
 			local marksym mycount2	
 		}
+
 				
 		// markers 
 
@@ -701,7 +777,7 @@ qui {
 			local z = 1
 			forval i0 = 1/`xlen' {
 				replace x_mark = `: word `i0' of `xcats''  in `z'
-				replace x_val  = `: word `i0' of `xlist'' in `z'
+				replace x_val  = `: word `i0' of `xlist''  in `z'
 				local z = `z' + 1
 			}
 		}
@@ -710,7 +786,7 @@ qui {
 			
 			local z = 1
 			forval i0 = 1/`xlen' {
-				replace x_mark = `: word `i0' of `xcats''  in `z'
+				replace x_mark = `: word `i0' of `xcats''   in `z'
 				replace x_val  = `: word `i0' of `xdiscli'' in `z'
 				local z = `z' + 1
 			}	
@@ -742,9 +818,6 @@ qui {
 			}	
 			lab val y_val `ylab'
 		}
-		
-		
-		
 		
 		
 		// rescale x and y (0-1)
@@ -839,19 +912,19 @@ qui {
 
 		foreach x of local lvls {
 
-				local boxes `boxes' (area y x if box==`x', nodropbase cmissing(n) fi(100) fc("`r(p`x')'") lc(white) lw(none) ) ///
+				local boxes `boxes' (area y x if box==`x', nodropbase cmissing(n) fi(100) fc("`r(p`x')'") lc(white) lw(none) ) 
 			
 			}
 			
 		if "`count'" != "" | "`percent'" != "" {
- 			local mylabels (scatter y_mid x_mid, mlabel(`marksym') mlabpos(0) mcolor(none) mlabsize(`vallabsize') mlabcolor(`vallabcolor')  ) ///	// labels
+ 			local mylabels (scatter y_mid x_mid, mlabel(`marksym') mlabpos(0) mcolor(none) mlabsize(`vallabsize') mlabcolor(`vallabcolor')  ) 	// labels
 			
 		}
 			
 		if "`values'" != "" {	
-			local xvals (scatter y0 x_mark, mcolor(none) mlabel(x_val) mlabpos(6) mcolor(gs6) msize(0.2) mlabsize(`textlabsize') mlabcolor(`textlabcolor') ) ///
+			local xvals (scatter y0 x_mark, mcolor(none) mlabel(x_val) mlabpos(6) mcolor(gs6) msize(0.2) mlabsize(`textlabsize') mlabcolor(`textlabcolor') ) 
 						
-			local yvals (scatter y_mark x0, mcolor(none) mlabel(y_val) mlabpos(9) mcolor(gs6) msize(0.2) mlabsize(`textlabsize') mlabcolor(`textlabcolor') ) ///
+			local yvals (scatter y_mark x0, mcolor(none) mlabel(y_val) mlabpos(9) mcolor(gs6) msize(0.2) mlabsize(`textlabsize') mlabcolor(`textlabcolor') ) 
 		
 		}
 			
@@ -883,10 +956,10 @@ qui {
 	  graph combine _map _legend, ///
 		imargin(zero) `options'
 	
+*/
+
 
 }
-
-*/
 
 end
 

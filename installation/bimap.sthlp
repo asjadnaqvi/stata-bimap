@@ -1,27 +1,56 @@
 {smcl}
-{* 19Jun2024}{...}
+{* 22Aug2024}{...}
 {hi:help bimap}{...}
-{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v1.9 (GitHub)}}
+{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v2.0 (GitHub)}}
 
 {hline}
 
 {title:bimap}: A Stata package for bi-variate maps. 
 
 {p 4 4 2}
-The package is based on the {browse "https://medium.com/the-stata-guide/stata-graphs-bi-variate-maps-b1e96dd4c2be":Bi-variate maps} guide on Medium. The {cmd:bimap} command is a wrapper for {stata help spmap:spmap}.
-Therefore it assumes that data on geographic boundaries is available, and you are familar with making maps in Stata. 
-Note that {cmd:bimap} only works if you have processed the shapefiles using Stata's {stata help spshape2dta:spshape2dta} command.
+The package is based on the {browse "https://medium.com/the-stata-guide/stata-graphs-bi-variate-maps-b1e96dd4c2be":Bi-variate maps} guide on Medium. The {cmd:bimap} command is a wrapper
+for {stata help spmap:geoplot} (v17+) and {stata help spmap:spmap} (v16-).
+The command will auto-detect the Stata version and execute the right code. Each code block comes with its own set of input requirements. 
+The older version can still be used by specifying the {it:old} option. The older version that relies on {stata help spmap:spmap} will eventually be phased out.
 
-{marker syntax}{title:Syntax}
+{p 4 4 2}
+The command assumes that data on geographic boundaries is available and it is set up or ready for setup. Familiarity with making maps in Stata is also assumed. 
+Note that {cmd:bimap} only works if you have processed the shapefiles using Stata's {stata help spshape2dta:spshape2dta} or the {stata help geoplot:geoplot} command.
+
+{p 4 4 2}
+The two command versions have different input requirements that are defined in the first two lines in the syntax below. The remaining code block, that determines
+the cuts and how the legend is drawn, is common across the two versions. Therefore porting basic maps is fairly easy. For more advance features,
+such as drawing multiple layers in {cmd:geoplot}, can be added by using the {cmd:geo()} option. Additional features such as arrows, scalebars, zooms etc can be passed on
+using the {cmd:geopost()} options. For {cmd:spmap}, the old syntax just passes on individual options. This has been maintained to avoid the breaking the old code completely.
+
+
+{marker syntax}{title:Syntax (version 17 or newer)}
+
 {p 8 15 2}
 
-{cmd:bimap} {it:vary varx} {ifin}, {cmd:[} {cmd:palette}({it:name}) reverse  {cmd:clr0}({it:str}) {cmd:clrx}({it:str}) {cmd:clry}({it:str}) {cmdab:clrsat:urate}({it:num})
-		{cmd:cut}({it:pctile}|{it:equal}) {cmd:cutx}({it:numlist}) {cmd:cuty}({it:numlist}) {cmd:binsproper} {cmd:bins}({it:num >=2}) {cmd:binx}({it:num >=2}) {cmd:biny}({it:num >=2}) {cmd:values} {cmd:count} 
-		{cmd:percent} {cmdab:showleg:end} {cmd:ocolor}({it:str}) {cmd:osize}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str})  {cmd:ndfsize}({it:str}) {cmdab:xdisc:rete} {cmdab:ydisc:rete} 
-		{cmd:labxgap}({it:num}) {cmd:labygap}({it:num}) {cmd:textx}({it:str}) {cmd:texty}({it:str}) {cmd:formatx}({it:str}) {cmd:formaty}({it:str}) 
-		{cmdab:texts:ize}({it:str}) {cmdab:textlabs:ize}({it:str}) {cmdab:vallabs:ize}({it:str}) {cmdab:textc:olor}({it:str}) {cmdab:textlabc:olor}({it:str}) {cmdab:vallabc:olor}({it:str}) 
-		{cmd:xscale}({it:num}) {cmd:yscale}({it:num}) {cmd:polygon}({it:options}) {cmd:line}({it:options}) {cmd:point}({it:options}) {cmd:label}({it:options}) {cmd:arrow}({it:options}) 
-		{cmd:diagram}({it:options}) {cmd:scalebar}({it:options}) * {cmd:]}
+{cmd:bimap} {it:vary varx} {ifin}, {cmd:frame}({it:name}) 
+        {cmd:[} {cmd:geo}({it:options}) {cmd:geopost}({it:options})  
+          {cmd:palette}({it:name}) {cmd:reverse} {cmd:clr0}({it:str}) {cmd:clrx}({it:str}) {cmd:clry}({it:str}) {cmdab:clrsat:urate}({it:num})
+          {cmd:cut}({it:pctile}|{it:equal}) {cmd:cutx}({it:numlist}) {cmd:cuty}({it:numlist}) {cmd:binsproper} {cmd:bins}({it:num >=2}) {cmd:binx}({it:num >=2}) {cmd:biny}({it:num >=2}) {cmd:values} {cmd:count}
+          {cmd:percent} {cmdab:showleg:end} {cmd:ocolor}({it:str}) {cmd:osize}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str}) {cmd:ndfsize}({it:str}) {cmdab:xdisc:rete} {cmdab:ydisc:rete} 
+          {cmd:labxgap}({it:num}) {cmd:labygap}({it:num}) {cmd:textx}({it:str}) {cmd:texty}({it:str}) {cmd:formatx}({it:str}) {cmd:formaty}({it:str}) 
+          {cmdab:texts:ize}({it:str}) {cmdab:textlabs:ize}({it:str}) {cmdab:vallabs:ize}({it:str}) {cmdab:textc:olor}({it:str}) {cmdab:textlabc:olor}({it:str}) {cmdab:vallabc:olor}({it:str}) 
+          {cmd:xscale}({it:num}) {cmd:yscale}({it:num}) * {cmd:]}
+
+
+{marker syntax}{title:Syntax (version 16 or earlier)}
+
+{p 8 15 2}
+
+{cmd:bimap} {it:vary varx} {ifin}, {cmd:shp}({it:shapefile}) 
+        {cmd:[} {cmd:old} {cmd:polygon}({it:str}) {cmd:line}({it:str}) {cmd:point}({it:str}) {cmd:label}({it:str}) {cmd:arrow}({it:str}) {cmd:diagram}({it:str}) {cmd:scalebar}({it:str}) 
+          {cmd:palette}({it:name}) {cmd:reverse} {cmd:clr0}({it:str}) {cmd:clrx}({it:str}) {cmd:clry}({it:str}) {cmdab:clrsat:urate}({it:num})
+          {cmd:cut}({it:pctile}|{it:equal}) {cmd:cutx}({it:numlist}) {cmd:cuty}({it:numlist}) {cmd:binsproper} {cmd:bins}({it:num >=2}) {cmd:binx}({it:num >=2}) {cmd:biny}({it:num >=2}) {cmd:values} {cmd:count} 
+          {cmd:percent} {cmdab:showleg:end} {cmd:ocolor}({it:str}) {cmd:osize}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str})  {cmd:ndfsize}({it:str}) {cmdab:xdisc:rete} {cmdab:ydisc:rete} 
+          {cmd:labxgap}({it:num}) {cmd:labygap}({it:num}) {cmd:textx}({it:str}) {cmd:texty}({it:str}) {cmd:formatx}({it:str}) {cmd:formaty}({it:str}) 
+          {cmdab:texts:ize}({it:str}) {cmdab:textlabs:ize}({it:str}) {cmdab:vallabs:ize}({it:str}) {cmdab:textc:olor}({it:str}) {cmdab:textlabc:olor}({it:str}) {cmdab:vallabc:olor}({it:str}) 
+          {cmd:xscale}({it:num}) {cmd:yscale}({it:num}) * {cmd:]}
+
 
 
 {p 4 4 2}
@@ -32,9 +61,44 @@ The options are described as follows:
 {synoptline}
 
 {p 4 4 2}
-{it:{ul:Map options}}
+{it:{ul:Map syntax}}
 
-{p2coldent : {opt bimap} {it:vary varx}}The command requires numeric {it:vary} and {it:varx} variables.{p_end}
+{p2coldent : {opt bimap} {it:vary varx, options}}The command requires numeric {it:vary} and {it:varx} variables. See options below for additional info.{p_end}
+
+{p 4 4 2}
+{it:{ul:Version 17 or newer options}}
+
+{p2coldent : {opt frame(name)}}The geoplot frames need to be defined before executing the bimap command. The {opt frame()} therefore
+ask users to define the frame name with the plot data. This is to ensure that the command still executes regardless of which frame is active.{p_end}
+
+{p2coldent : {opt geo(string)}}This option can be used to define addition area, line or point layers. It is assumed that each layer has a frame 
+defined (see help geoplot) and is ready to be plotted. This can be any number of layers. Make sure that each layer is enclosed in round brackets,
+for example, {opt geo((area ..., ...) (area ..., ...) (line ..., ...))} etc.{p_end}
+
+{p2coldent : {opt geopost(string)}}Similar to {opt geo()}, {opt geopost()} can be used to pass on additional commands in {cmd:geoplot}.
+This for example, can include zooms, legend options, arrows, scalebars etc.{p_end}
+
+
+{p 4 4 2}
+{it:{ul:Version 16 or older options}}
+
+{p2coldent : {opt old}}If this option is specified, the command switches to the {cmd spmap} options below regardless of the Stata version. This is to
+ensure consistency and backward compatibility when using running dofiles that are setup for older command versions.{p_end}
+
+{p2coldent : {opt shp(shapefile)}}The spmap requires defining a shapefile using the {opt shp()} options. {bf: NOTE:} This is a slight change from the
+older {cmd:bimap} versions where the users previously specified {opt bimap vary varx using shpfile}. The new version requires {opt bimap vary varx, shp(shpfile)}.
+While this might cause some incovinience to vetran {cmd:bimap} users, it has been implemented to ensure syntax consistency. 
+The users are assumed to have the attributes file with the required data already loaded that can be merged with the {opt shp()} file 
+on the {it:_ID} variable. The shapefile file usually has {it:*_shp.dta} name and is automatically created while using the {stata help spshape2dta:spshape2dta}
+command.{p_end}
+
+{p2coldent : {opt polygon}(), {opt line}(), {opt point}(), {opt label}()}These are {cmd:spmap} passthru options to draw additional layers. See {stata help spmap} for details.{p_end}
+
+{p2coldent : {opt arrow}(), {opt diagram}(), {opt scalebar}()}These are {cmd:spmap} passthru options for additional map options. See {stata help spmap} for details.{p_end}
+
+
+{p 4 4 2}
+{it:{ul:Map cuts and colors}}
 
 {p2coldent : {opt cut(option)}}Here {opt cut} take on three options: {opt cut(pctile)} for percentiles, or {opt cut(equal)} for equally-spaced intervals. If either
 {opt cutx()}, or {opt cuty()}, or are specified, then they overwrite the defined {opt cut()} options. Default is {opt cut(pctile)}.{p_end}
@@ -42,20 +106,21 @@ The options are described as follows:
 {p2coldent : {opt cutx(numlist)}, {opt cuty(numlist)}}Define a custom set of cut-offs using {stata help numlist:numlist} to add more control to your legend.
 At least three numbers need to be specified to generate the map.{p_end}
 
-{p2coldent : {opt xdisc:rete}, {opt ydisc:rete}} can be used if the variables are assumed categorical, for example, binary variables, or ordinally ranked variables.
+{p2coldent : {opt xdisc:rete}, {opt ydisc:rete}} These can be used if the variables are categorical, for example, binary or ordinally ranked variables.
 These options overwrite other binning options and legend axes markers will use value labels and will be centered to bin width/height. More than 10 categories will throw an error.
-Hence the maximum combination of discrete variables allowed is 10x10 or 100 bins. This is also to prevent accidentally declaring a regular variable as discrete.{p_end}
+Hence the maximum combination of discrete variables allowed is 10x10 or 100 bins. This also prevents accidentally declaring a regular variable as discrete which
+can get computationally messy very fast.{p_end}
 
-{p2coldent : {opt palette(option)}}In version v1.6 and above, palettes are dynamically generated for any number of {opt bins()}. Named palettes are: 
+{p2coldent : {opt palette(option)}}Palettes are dynamically generated for any number of {opt bins()}. Named palettes are: 
 {it:pinkgreen}, {it:bluered}, {it:greenblue}, {it:purpleyellow}, {it:yellowblue}, {it:orangeblue}. The original (legacy) palettes are still available with the following names:
  {it:pinkgreen0}, {it:bluered0}, {it:greenblue0}, {it:purpleyellow0}, {it:yellowblue0}, {it:orangeblue0}, {it:brew1}, {it:brew2}, {it:brew3}, 
 {it:census}, {it:rgb}, {it:viridis}, {it:gscale}.
 If legacy palettes are defined, the number of bins will default to 3x3 and any other custom binning options will be ignored.
 See {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub} for examples of legacy palettes. Default option is {opt palette(pinkgreen)}.
-Users can also over-write the palettes using the {opt clr.()} options described below.{p_end}
+Users can also over-write the palettes using the {opt clr...()} options described below.{p_end}
 
-{p2coldent : {opt clr0()}, {opt clrx()}, {opt clry()}}Users can overwrite the colors end-points using one or more of these options. Option {opt clr0()} is the
-starting bottom-left color. Similarly, {opt clrx()}, {opt clry()} are x-axis bottom-right and y-axis top-left colors. One can either define a "named" Stata color (e.g.
+{p2coldent : {opt clr0()}, {opt clrx()}, {opt clry()}}Users can overwrite the colors end-points using one or more of these options. Option {opt clr0()} is the starting 
+bottom-left color. Similarly, {opt clrx()}, {opt clry()} are x-axis bottom-right and y-axis top-left colors respectively. One can either define a "named" Stata color (e.g.
 named colors from {stata colorpalette s2:s2 scheme}), or they need to provide Hex values. DO NOT specify RBG values! For example, true Red has an RGB value 
 of "255 0 0", while its Hex code is #ff0000. In order to convert or select Hex colors, a good option is the {browse "https://g.co/kgs/iKAHGF":Google Color Picker}.
 Otherwise, {stata help colorpalette:colorpalette}, other softwares (including MS Paint), and websites can be used as well.{p_end}
@@ -67,27 +132,20 @@ Otherwise, {stata help colorpalette:colorpalette}, other softwares (including MS
 {p2coldent : {opt bins(num)}, {opt binx(num)}, {opt biny(num)}}Users can either defined {it:n}x{it:n} bins by using the option {opt bins(n)}. Otherwise custom bins can
 also be defined using {opt binx()} and/or {opt biny()}. The default is {opt bin(3)}. Bins are constrained to a minimum dimension of 2.{p_end}
 
-{p2coldent : {opt osize(string)}}Line width of polygons. Same as in {cmd:spmap}. Default value is {it:0.02}. Also applied to polygons with no data.{p_end}
+{p2coldent : {opt osize(string)}}Line width of polygons. Default value is {opt osize(0.02)}. Also applied to polygons with no data.{p_end}
 
-{p2coldent : {opt ocolor(str)}}Outline color of polygons with data. Same as in {cmd:spmap}. Default value is {it:white}.{p_end}
+{p2coldent : {opt ocolor(str)}}Outline color of polygons with data. Default value is {opt ocolor(white)}.{p_end}
 
-{p2coldent : {opt ndocolor(str)}}Outline color of polygons with no data. Same as in {cmd:spmap}. Default value is {it:gs12}.{p_end}
+{p2coldent : {opt ndocolor(str)}}Outline color of polygons with no data. Default value is {opt ndocolor(gs12)}.{p_end}
 
-{p2coldent : {opt ndfcolor(str)}}Fill color of polygons with no data. Same as in {cmd:spmap}. Default value is {it:gs8}.{p_end}
+{p2coldent : {opt ndfcolor(str)}}Fill color of polygons with no data. Default value is {opt ndfcolor(gs8)}.{p_end}
 
 {p2coldent : {opt ndsize(str)}}Line width of missing observations. If no value is specified, it defaults to the {opt osize(0.02)} value.{p_end}
 
-{p2coldent : {opt polygon}(), {opt line}(), {opt point}(), {opt label}()}These are {cmd:spmap} passthru options for additional layers. See {stata help spmap} for details.{p_end}
-
-{p2coldent : {opt arrow}(), {opt diagram}(), {opt scalebar}()}These are {cmd:spmap} passthru options for additional layers. See {stata help spmap} for details.{p_end}
-
 {p2coldent : {opt noleg:end}}Hide the legend. Useful if you are generating several maps with a controlled legend where one map with a legend is sufficient if combining graphs.{p_end}
 
-{p2coldent : {opt showleg:end}}If this option is specified, then the following {stata help spmap:spmap} options are enabled: {cmd:legend}(), {cmd:legenda}(), {cmdab:legs:tyle}(), 
-{cmdab:legj:unction}(), {cmdab:legc:ount}(), {cmdab:lego:rder()}, {cmdab:legt:title}(), plus additional options that can be specified for supplementary layers: {cmd:polygon}(),
-{cmd:line}(), {cmd:point}(), {cmd:label}(). {cmdab:showleg:end} can be used for describing additional layers, like boundaries, points, lines etc.
-It is also highly recommended to turn off the base layer legend by using {cmd:legenda}(off) since this shows up in the bimap legend on the right.
-This option is still {it:beta}, so suggestions for improvement are appreciated.{p_end}
+{p2coldent : {opt showleg:end}}If this option is specified, then the {stata help geoplot:geoplot} and {stata help spmap:spmap} options are enabled. Both commands have
+fairly complex syntaxes for generating legends so please see individual helpfiles for details.{p_end}
 
 {p2coldent : {opt *}}All other standard twoway options.{p_end}
 
@@ -134,13 +192,20 @@ squished especially if the categories are bunched together. This will most likel
 
 {title:Dependencies}
 
-{cmd:bimap} requires {stata help spmap:spmap} (Pisati 2018) and {browse "http://repec.sowi.unibe.ch/stata/palettes/index.html":palettes} (Jann 2018, 2022):
+Stata version 17 or newer requires the following packages:
+{stata ssc install geoplot, replace}
+{stata ssc install moremata, replace}
+{stata ssc install palettes, replace}
+{stata ssc install colrspace, replace}
+
+
+Stata version 16 or earlier requires the following packages:
 
 {stata ssc install spmap, replace}
 {stata ssc install palettes, replace}
 {stata ssc install colrspace, replace}
 
-Even if you have the packages installed, please check for updates: {stata ado update, update}.
+Even if you have these packages installed, please reguarly check for their updates.
 
 {title:Examples}
 
@@ -150,8 +215,8 @@ Please see {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub} for examp
 
 {title:Package details}
 
-Version      : {bf:bimap} v1.9
-This release : 19 Jun 2024
+Version      : {bf:bimap} v2.0
+This release : 20 Aug 2024
 First release: 08 Apr 2022
 Repository   : {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub}
 Keywords     : Stata, map, bimap, bi-variate
@@ -173,19 +238,21 @@ If you find bugs and/or have feature requests, then please open an {browse "http
 
 Suggested citation guidlines for this package:
 
-Naqvi, A. (2024). Stata package "bimap" version 1.9. Release date 19 June 2024. https://github.com/asjadnaqvi/stata-bimap.
+Naqvi, A. (2024). Stata package "bimap" version 2.0. Release date 20 August 2024. https://github.com/asjadnaqvi/stata-bimap.
 
 @software{bimap,
    author = {Naqvi, Asjad},
    title = {Stata package ``bimap''},
    url = {https://github.com/asjadnaqvi/stata-bimap},
-   version = {1.9},
-   date = {2024-06-19}
+   version = {2.0},
+   date = {2024-08-20}
 }
 
 {title:References}
 
-{p 4 8 2}Pisati, B. (2018). {browse "help spmap":spmap} v1.3.2.
+ADD GEOPLOT AND MOREMATA
+
+{p 4 8 2}Pisati, B. (2018). {stata help spmap:spmap} v1.3.2.
 
 {p 4 8 2}Jann, B. (2018). {browse "https://www.stata-journal.com/article.html?article=gr0075":Color palettes for Stata graphics}. The Stata Journal 18(4): 765-785.
 

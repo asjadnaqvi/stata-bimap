@@ -1,4 +1,4 @@
-v 1.82
+v 2.0
 d {bf:BIMAP}: Bi-variate maps
 
 d Requires: Stata version 15 or higher.
@@ -7,9 +7,9 @@ d KW: Stata
 d KW: graphs
 d KW: map
 d KW: bivariate map
-d Distribution-Date: 20240504
+d Distribution-Date: 20240822
 d
-d This  version: 04 May 2024
+d This  version: 22 Aug 2024
 d First version: 08 Apr 2022
 d License: MIT
 d
