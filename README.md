@@ -347,7 +347,7 @@ bimap share_asian share_afam, shp(county_shp2) old cut(pctile) palette(yellowblu
 		 polygon(data("state_shp2") ocolor(black) osize(0.2)) 
 ```
 
-<img src="/figures/bimap6_geop.png" width="100%">
+<img src="/figures/bimap6_geo.png" width="100%">
 
 <img src="/figures/bimap6.png" width="100%">
 
