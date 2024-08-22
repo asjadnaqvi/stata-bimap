@@ -157,7 +157,7 @@ Naqvi, A. (2024). Stata package "bimap" version 2.0. Release date 22 August 2024
 
 The examples showcase both the syntax for the use with `geoplot` (first syntax) and `spmap` (second syntax). The map outputs have been aligned to the extent possible but very minor differences in outputs might remain. Additionally, as `geoplot` is still in active development, output might break with latest updates or syntax might change. Please report these as soon as possible.
 
-Since I am using Stata 18 or newer versions, I have to specify `old` option to pass the syntax to use `spmap`. This might be uncessary if you have older Stata versions.
+Since I am using Stata 18+, I have to specify `old` option to pass the syntax to use `spmap`. This might be uncessary if you have older Stata versions.
 
 Download the files from [GIS](./GIS/) and dump them in a folder.
 
