@@ -50,7 +50,7 @@ program bimap, sortpreserve
 		[ XDISCrete YDISCrete ] ///  // v1.7 options
 		[ labxgap(real 0) labygap(real 0) ] ///  // v1.8 options
 		[ TEXTColor(string) TEXTLABColor(string) VALLABColor(string) NOLEGend wrap(numlist >=0 max=1)  * ]	///		// v1.82, v1.9
-		[ geo(string) geopost(string) frame(string) old shp(string) details ]	// v2.0 -- stata 18+ options for geoplot
+		[ geo(string) geopost(string) frame(string) old shp(string) detail ]	// v2.0 -- stata 18+ options for geoplot
 		
 		
 	local myver = `c(version)'
@@ -60,7 +60,7 @@ program bimap, sortpreserve
 		
 	if `myver' >= 17 & "`old'"=="" {
 		
-		if "`details'" != "" {
+		if "`detail'" != "" {
 			noi display in yellow "Stata `myver' detected. Using {stata help geoplot:geoplot} package."
 		}
 		
@@ -94,7 +94,7 @@ program bimap, sortpreserve
 		
 		if "`old'" != "" local oldtxt (but option old specified)
 		
-		if "`details'" != "" {
+		if "`detail'" != "" {
 			noi display in yellow "Stata `myver' detected `oldtxt'. Using {stata help spmap:spmap} package."
 		}
 		

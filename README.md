@@ -88,7 +88,7 @@ bimap vary varx [if] [in], frame(name)
           palette(name) reverse clr0(str) clrx(str) clry(str) clrsaturate(num)
           cut(pctile|equal) cutx(numlist) cuty(numlist) binsproper bins(num >=2) binx(num >=2) biny(num >=2) values count
           percent showlegend ocolor(str) osize(str) ndocolor(str) ndfcolor(str) ndfsize(str) xdiscrete ydiscrete 
-          labxgap(num) labygap(num) textx(str) texty(str) formatx(str) formaty(str) 
+          labxgap(num) labygap(num) textx(str) texty(str) formatx(str) formaty(str) detail
           textsize(str) textlabsize(str) vallabsize(str) textcolor(str) textlabcolor(str) vallabcolor(str) 
           xscale(num) yscale(num) * ]
 ```
@@ -109,7 +109,7 @@ bimap vary varx [if] [in], shp(shapefile)
           palette(name) reverse clr0(str) clrx(str) clry(str) clrsaturate(num)
           cut(pctile|equal) cutx(numlist) cuty(numlist) binsproper bins(num >=2) binx(num >=2) biny(num >=2) values count 
           percent showlegend ocolor(str) osize(str) ndocolor(str) ndfcolor(str)  ndfsize(str) xdiscrete ydiscrete 
-          labxgap(num) labygap(num) textx(str) texty(str) formatx(str) formaty(str) 
+          labxgap(num) labygap(num) textx(str) texty(str) formatx(str) formaty(str) detail
           textsize(str) textlabsize(str) vallabsize(str) textcolor(str) textlabcolor(str) vallabcolor(str) 
           xscale(num) yscale(num) * ]
 ```
@@ -933,8 +933,8 @@ Please open an [issue](https://github.com/asjadnaqvi/stata-bimap/issues) to repo
 
 **v2.0 (22 August 2024)**
 - Major update. Support for `geoplot` for Stata versions 17 or newer. Support for `spmap` for Stata versions 16 or older. Versions are auto detected.
-- Minor change in syntax for `spmap` versions from `bimap y x using shapefile` to `bimap y x, shp(shapefile)`. This is to ensure consistency for upcoming releases.
 - Stata 17 or newer users can use the option `old` to call in the `spmap` version. This ensures that the code of seasoned `bimap` users does not break.
+- Minor change in syntax for `spmap` versions from `bimap y x using shapefile` to `bimap y x, shp(shapefile)`. This is to ensure consistency for upcoming releases.
 - Option `detail` added to show which Stata version is detected and which map program is used. This might be useful in case you want to have more information. 
 
 **v1.9 (19 June 2024)**

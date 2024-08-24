@@ -33,7 +33,7 @@ using the {cmd:geopost()} options. For {cmd:spmap}, the old syntax just passes o
           {cmd:palette}({it:name}) {cmd:reverse} {cmd:clr0}({it:str}) {cmd:clrx}({it:str}) {cmd:clry}({it:str}) {cmdab:clrsat:urate}({it:num})
           {cmd:cut}({it:pctile}|{it:equal}) {cmd:cutx}({it:numlist}) {cmd:cuty}({it:numlist}) {cmd:binsproper} {cmd:bins}({it:num >=2}) {cmd:binx}({it:num >=2}) {cmd:biny}({it:num >=2}) {cmd:values} {cmd:count}
           {cmd:percent} {cmdab:showleg:end} {cmd:ocolor}({it:str}) {cmd:osize}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str}) {cmd:ndfsize}({it:str}) {cmdab:xdisc:rete} {cmdab:ydisc:rete} 
-          {cmd:labxgap}({it:num}) {cmd:labygap}({it:num}) {cmd:textx}({it:str}) {cmd:texty}({it:str}) {cmd:formatx}({it:str}) {cmd:formaty}({it:str}) 
+          {cmd:labxgap}({it:num}) {cmd:labygap}({it:num}) {cmd:textx}({it:str}) {cmd:texty}({it:str}) {cmd:formatx}({it:str}) {cmd:formaty}({it:str}) {cmd:detail}
           {cmdab:texts:ize}({it:str}) {cmdab:textlabs:ize}({it:str}) {cmdab:vallabs:ize}({it:str}) {cmdab:textc:olor}({it:str}) {cmdab:textlabc:olor}({it:str}) {cmdab:vallabc:olor}({it:str}) 
           {cmd:xscale}({it:num}) {cmd:yscale}({it:num}) * {cmd:]}
 
@@ -47,7 +47,7 @@ using the {cmd:geopost()} options. For {cmd:spmap}, the old syntax just passes o
           {cmd:palette}({it:name}) {cmd:reverse} {cmd:clr0}({it:str}) {cmd:clrx}({it:str}) {cmd:clry}({it:str}) {cmdab:clrsat:urate}({it:num})
           {cmd:cut}({it:pctile}|{it:equal}) {cmd:cutx}({it:numlist}) {cmd:cuty}({it:numlist}) {cmd:binsproper} {cmd:bins}({it:num >=2}) {cmd:binx}({it:num >=2}) {cmd:biny}({it:num >=2}) {cmd:values} {cmd:count} 
           {cmd:percent} {cmdab:showleg:end} {cmd:ocolor}({it:str}) {cmd:osize}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str})  {cmd:ndfsize}({it:str}) {cmdab:xdisc:rete} {cmdab:ydisc:rete} 
-          {cmd:labxgap}({it:num}) {cmd:labygap}({it:num}) {cmd:textx}({it:str}) {cmd:texty}({it:str}) {cmd:formatx}({it:str}) {cmd:formaty}({it:str}) 
+          {cmd:labxgap}({it:num}) {cmd:labygap}({it:num}) {cmd:textx}({it:str}) {cmd:texty}({it:str}) {cmd:formatx}({it:str}) {cmd:formaty}({it:str}) {cmd:detail}
           {cmdab:texts:ize}({it:str}) {cmdab:textlabs:ize}({it:str}) {cmdab:vallabs:ize}({it:str}) {cmdab:textc:olor}({it:str}) {cmdab:textlabc:olor}({it:str}) {cmdab:vallabc:olor}({it:str}) 
           {cmd:xscale}({it:num}) {cmd:yscale}({it:num}) * {cmd:]}
 
@@ -66,7 +66,7 @@ The options are described as follows:
 {p2coldent : {opt bimap} {it:vary varx, options}}The command requires numeric {it:vary} and {it:varx} variables. See options below for additional info.{p_end}
 
 {p 4 4 2}
-{it:{ul:Version 17 or newer options}}
+{it:{ul:Version 17 or newer}}
 
 {p2coldent : {opt frame(name)}}The geoplot frames need to be defined before executing the bimap command. The {opt frame()} therefore
 ask users to define the frame name with the plot data. This is to ensure that the command still executes regardless of which frame is active.{p_end}
@@ -80,7 +80,7 @@ This for example, can include zooms, legend options, arrows, scalebars etc.{p_en
 
 
 {p 4 4 2}
-{it:{ul:Version 16 or older options}}
+{it:{ul:Version 16 or older}}
 
 {p2coldent : {opt old}}If this option is specified, the command switches to the {cmd spmap} options below regardless of the Stata version. This is to
 ensure consistency and backward compatibility when using running dofiles that are setup for older command versions.{p_end}
@@ -146,6 +146,8 @@ also be defined using {opt binx()} and/or {opt biny()}. The default is {opt bin(
 
 {p2coldent : {opt showleg:end}}If this option is specified, then the {stata help geoplot:geoplot} and {stata help spmap:spmap} options are enabled. Both commands have
 fairly complex syntaxes for generating legends so please see individual helpfiles for details.{p_end}
+
+{p2coldent : {opt detail}}Show which Stata version is detected and which program is called.{p_end}
 
 {p2coldent : {opt *}}All other standard twoway options.{p_end}
 
@@ -253,6 +255,10 @@ Naqvi, A. (2024). Stata package "bimap" version 2.0. Release date 20 August 2024
 ADD GEOPLOT AND MOREMATA
 
 {p 4 8 2}Pisati, B. (2018). {stata help spmap:spmap} v1.3.2.
+
+{p 4 8 2}Jann, B. (2024). {browse "https://github.com/benjann/geoplot":geoplot}.
+
+{p 4 8 2}Jann, B. (2024). {browse "https://github.com/benjann/moremata":moremata}.
 
 {p 4 8 2}Jann, B. (2018). {browse "https://www.stata-journal.com/article.html?article=gr0075":Color palettes for Stata graphics}. The Stata Journal 18(4): 765-785.
 
