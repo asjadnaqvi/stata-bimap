@@ -27,7 +27,6 @@ using the {cmd:geopost()} options. For {cmd:spmap}, the old syntax just passes o
 {marker syntax}{title:Syntax (version 17 or newer)}
 
 {p 8 15 2}
-
 {cmd:bimap} {it:vary varx} {ifin}, {cmd:frame}({it:name}) 
         {cmd:[} {cmd:geo}({it:options}) {cmd:geopost}({it:options})  
           {cmd:palette}({it:name}) {cmd:reverse} {cmd:clr0}({it:str}) {cmd:clrx}({it:str}) {cmd:clry}({it:str}) {cmdab:clrsat:urate}({it:num})
@@ -41,7 +40,6 @@ using the {cmd:geopost()} options. For {cmd:spmap}, the old syntax just passes o
 {marker syntax}{title:Syntax (version 16 or earlier)}
 
 {p 8 15 2}
-
 {cmd:bimap} {it:vary varx} {ifin}, {cmd:shp}({it:shapefile}) 
         {cmd:[} {cmd:old} {cmd:polygon}({it:str}) {cmd:line}({it:str}) {cmd:point}({it:str}) {cmd:label}({it:str}) {cmd:arrow}({it:str}) {cmd:diagram}({it:str}) {cmd:scalebar}({it:str}) 
           {cmd:palette}({it:name}) {cmd:reverse} {cmd:clr0}({it:str}) {cmd:clrx}({it:str}) {cmd:clry}({it:str}) {cmdab:clrsat:urate}({it:num})
@@ -200,9 +198,7 @@ Stata version 17 or newer requires the following packages:
 {stata ssc install palettes, replace}
 {stata ssc install colrspace, replace}
 
-
 Stata version 16 or earlier requires the following packages:
-
 {stata ssc install spmap, replace}
 {stata ssc install palettes, replace}
 {stata ssc install colrspace, replace}
@@ -252,24 +248,22 @@ Naqvi, A. (2024). Stata package "bimap" version 2.0. Release date 20 August 2024
 
 {title:References}
 
-ADD GEOPLOT AND MOREMATA
+{p 4 8 2}Pisati, B. (2007). spmap: Stata module to visualize spatial data. Available from {browse "https://ideas.repec.org/c/boc/bocode/s456812.html"}.
 
-{p 4 8 2}Pisati, B. (2018). {stata help spmap:spmap} v1.3.2.
-
-{p 4 8 2}Jann, B. (2024). {browse "https://github.com/benjann/geoplot":geoplot}.
-
-{p 4 8 2}Jann, B. (2024). {browse "https://github.com/benjann/moremata":moremata}.
+{p 4 8 2}Jann, B. (2005). moremata: Stata module (Mata) to provide various functions. Available from {browse "https://ideas.repec.org/c/boc/bocode/s455001.html"}.
 
 {p 4 8 2}Jann, B. (2018). {browse "https://www.stata-journal.com/article.html?article=gr0075":Color palettes for Stata graphics}. The Stata Journal 18(4): 765-785.
 
 {p 4 8 2}Jann, B. (2022). {browse "https://ideas.repec.org/p/bss/wpaper/43.html":Color palettes for Stata graphics: An update}. University of Bern Social Sciences Working Papers No. 43. 
+
+{p 4 8 2}Jann, B. (2023). geoplot: Stata module to draw maps. Available from {browse "https://ideas.repec.org/c/boc/bocode/s459211.html"}.
 
 
 {title:Other visualization packages}
 
 {psee}
     {helpb arcplot}, {helpb alluvial}, {helpb bimap}, {helpb bumparea}, {helpb bumpline}, {helpb circlebar}, {helpb circlepack}, {helpb clipgeo}, {helpb delaunay}, {helpb joyplot}, 
-	{helpb marimekko}, {helpb polarspike}, {helpb sankey}, {helpb schemepack}, {helpb spider}, {helpb streamplot}, {helpb sunburst}, {helpb treecluster}, {helpb treemap}, {helpb waffle}
+	{helpb marimekko}, {helpb polarspike}, {helpb sankey}, {helpb schemepack}, {helpb spider}, {helpb splinefit}, {helpb streamplot}, {helpb sunburst}, {helpb treecluster}, {helpb treemap}, {helpb waffle}
 	
 or visit {browse "https://github.com/asjadnaqvi":GitHub} for detailed documentation and examples.	
 
