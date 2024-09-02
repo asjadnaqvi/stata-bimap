@@ -159,21 +159,18 @@ The examples showcase both the syntax for the use with `geoplot` (first syntax) 
 
 Since I am using Stata 18+, I have to specify `old` option to pass the syntax to use `spmap`. This might be uncessary if you have older Stata versions.
 
-Download the files from [GIS](./GIS/) and dump them in a folder.
+Users can either download the files from [GIS](./GIS/) and dump them in a folder or directly get them from Stata:
 
 Set up the data:
 
 ```stata
-COPY THE FILES FROM THE DIRECTORY IN YOUR FOLDER
+cd <change path to the working directory>
 
-ADD CODE FOR THE FOLLOWING FILES
-county  // baseline attributes file
-county_shp2  // projected shape file
-state  // baseline state file
-state_shp2  // projected shape file
-usa_county2 // additional data 
-
+foreach x in county county_shp2 state state_shp2 usa_county2 {
+	copy "https://github.com/asjadnaqvi/stata-bimap/raw/main/GIS/`x'.dta" "`x'.dta", replace
+}
 ```
+
 
 
 Test whether the `geoplot` is working properly. First set up the layer frames:
