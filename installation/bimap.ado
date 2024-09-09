@@ -50,7 +50,7 @@ program bimap, sortpreserve
 		[ XDISCrete YDISCrete ] ///  // v1.7 options
 		[ labxgap(real 0) labygap(real 0) ] ///  // v1.8 options
 		[ TEXTColor(string) TEXTLABColor(string) VALLABColor(string) NOLEGend wrap(numlist >=0 max=1)  * ]	///		// v1.82, v1.9
-		[ geo(string) geopost(string) frame(string) old shp(string) detail ]	// v2.0 -- stata 18+ options for geoplot
+		[ geo(string) geopost(string) frame(string) old shp(string) detail scheme(passthru) ]	// v2.0 -- stata 18+ options for geoplot
 		
 		
 	local myver = `c(version)'
@@ -584,7 +584,7 @@ quietly {
 				geoplot ///
 					(area `frame' `grp_cut', discrete cuts(1(1)`cutst') color("`colors'") lcolor(`lc') lwidth(`lw') missing(color(`ndf') lc(`ndo') lw(`nds')) nolegend )    ///
 						`geo' ///
-						, `leg' tight `geopost' `options'
+						, `leg' tight `geopost' `options' `scheme'
 						
 				exit		
 							
@@ -594,7 +594,7 @@ quietly {
 				geoplot ///
 					(area `frame' `grp_cut', discrete cuts(1(1)`cutst') color("`colors'") lcolor(`lc') lwidth(`lw') missing(color(`ndf') lc(`ndo') lw(`nds')) nolegend )    ///
 						`geo' ///
-						, `leg' tight `geopost' name(_map, replace) nodraw
+						, `leg' tight `geopost' name(_map, replace) nodraw  `scheme'
 			}
 			
 		}
@@ -607,7 +607,7 @@ quietly {
 					ndocolor(`ndo' ..) ndsize(`nds' ..) ndfcolor(`ndf' ..)  ///
 					`polygon' `line' `point' `label'  ///
 					`leg' `legstyle' `legenda' `legendstyle' `legjunction' `legcount' `legorder' `legtitle'  ///  // v1.4 legend passthrus
-					`arrow' `diagram' `scalebar' `options'
+					`arrow' `diagram' `scalebar' `options'  `scheme'
 				
 				exit	
 			}
@@ -620,7 +620,7 @@ quietly {
 					`polygon' `line' `point' `label'  ///
 					`leg' `legstyle' `legenda' `legendstyle' `legjunction' `legcount' `legorder' `legtitle'  ///  // v1.4 legend passthrus
 					`arrow' `diagram' `scalebar' ///  // v1.5 passthrus
-					name(_map, replace) nodraw
+					name(_map, replace) nodraw  `scheme'
 			}
 		}
 	
@@ -945,7 +945,7 @@ quietly {
 				xsize(1) ysize(1) ///
 				fxsize(`xscale') fysize(`yscale') ///
 				legend(off)		///
-				name(_legend, replace)  nodraw   
+				name(_legend, replace)  nodraw   `scheme'
 
 	restore			
 	
