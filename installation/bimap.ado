@@ -1,6 +1,7 @@
-*! bimap v2.0 (22 Aug 2024)
+*! bimap v2.1 (18 Oct 2024)
 *! Asjad Naqvi (asjadnaqvi@gmail.com)
 
+* v2.1	(18 Oct 2024): Better label wrapping
 * v2.0	(22 Aug 2024): Port to geoplot for newer stata versions. frame() geo() geopost() added for geoplot. /using swapped with shp() for spmap.
 * v1.9  (19 Jun 2024): Fixed some minor bugs. Nolegend option added. wrap() added for label wrapping.
 * v1.82 (04 May 2024): textcolor() added for legend labels. updates to various defaults
@@ -58,6 +59,14 @@ program bimap, sortpreserve
 	
 	// check dependencies
 		
+	if "`wrap'" != "" {
+		cap findfile labsplit.ado
+		if _rc != 0 {
+			display as error "The {bf:graphfunctions} package is missing. Install the {stata ssc install graphfunctions, replace:graphfunctions}."
+			exit
+		}			
+	}			
+		
 	if `myver' >= 17 & "`old'"=="" {
 		
 		if "`detail'" != "" {
@@ -81,13 +90,8 @@ program bimap, sortpreserve
 			exit
 		}
 		
-		/*
-		capture findfile moremata.ado
-		if _rc != 0 {
-			di as error "The {bf:moremata} package is missing. Click here to install {stata ssc install moremata, replace:moremata}."
-			exit
-		}	
-		*/
+			
+
 	
 	}
 	else {
@@ -888,17 +892,10 @@ quietly {
 	
 		
 		if "`wrap'" != "" {
-			gen _length = length(labn) if labn!= ""
-			summ _length, meanonly		
-			local _wraprounds = floor(`r(max)' / `wrap')
-			
-			forval i = 1 / `_wraprounds' {
-				local wraptag = `wrap' * `i'
-				replace labn = substr(labn, 1, `wraptag') + "`=char(10)'" + substr(labn, `=`wraptag' + 1', .) if _length > `wraptag' & labn!= "" 
-			}
-			
-			drop _length
-		}		
+			ren labn labn_temp
+			labsplit labn_temp, wrap(`wrap') gen(labn)
+			drop labn_temp
+		}			
 		
 	
 		// generate the boxes

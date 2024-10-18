@@ -9,7 +9,7 @@
 
 
 
-# bimap v2.0
+# bimap v2.1
 (22 Aug 2024)
 
 This package provides the ability to draw bi-variate maps in Stata. It is based on the [Bi-variate maps Guide](https://medium.com/the-stata-guide/stata-graphs-bi-variate-maps-b1e96dd4c2be).
@@ -23,12 +23,12 @@ As more and more users switch to newer Stata versions, the **spmap** implementat
 
 The package can be installed via SSC or GitHub. The GitHub version, *might* be more recent due to bug fixes, feature updates etc, and *may* contain syntax improvements and changes in *default* values. See version numbers below. Eventually the GitHub version is published on SSC. All examples are updated to the latest version and might not be compatible with the old ones. Please check the documentation and change logs.
 
-The package can be installed from SSC (**v1.9**):
+The package can be installed from SSC (**v2.0**):
 ```
 ssc install bimap, replace
 ```
 
-Or it can be installed from GitHub (**v2.0**):
+Or it can be installed from GitHub (**v2.1**):
 
 ```
 net install bimap, from("https://raw.githubusercontent.com/asjadnaqvi/stata-bimap/main/installation/") replace
@@ -41,7 +41,7 @@ ssc install geoplot, replace
 ssc install moremata, replace
 ssc install palettes, replace
 ssc install colrspace, replace
-
+ssc install graphfunctions, replace
 ``` 
 
 
@@ -51,6 +51,7 @@ For using the command with `spmap` the following packages are required:
 ssc install spmap, replace
 ssc install palettes, replace
 ssc install colrspace, replace
+ssc install graphfunctions, replace
 ```
 
 Even if you have these packages installed, please check for updates: `ado update, update`.
@@ -927,6 +928,10 @@ Please open an [issue](https://github.com/asjadnaqvi/stata-bimap/issues) to repo
 
 
 ## Change log
+
+**v2.1 (18 October 2024)**
+- Supporting for better label wrapping added using `graphfunctions`. The latest version of this package is required.
+- Minor syntax cleanups.
 
 **v2.0 (22 August 2024)**
 - Major update. Support for `geoplot` for Stata versions 17 or newer. Support for `spmap` for Stata versions 16 or older. Versions are auto detected.

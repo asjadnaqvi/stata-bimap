@@ -1,7 +1,7 @@
 {smcl}
-{* 22Aug2024}{...}
+{* 18Oct2024}{...}
 {hi:help bimap}{...}
-{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v2.0 (GitHub)}}
+{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v2.1 (GitHub)}}
 
 {hline}
 
@@ -32,7 +32,7 @@ using the {cmd:geopost()} options. For {cmd:spmap}, the old syntax just passes o
           {cmd:palette}({it:name}) {cmd:reverse} {cmd:clr0}({it:str}) {cmd:clrx}({it:str}) {cmd:clry}({it:str}) {cmdab:clrsat:urate}({it:num})
           {cmd:cut}({it:pctile}|{it:equal}) {cmd:cutx}({it:numlist}) {cmd:cuty}({it:numlist}) {cmd:binsproper} {cmd:bins}({it:num >=2}) {cmd:binx}({it:num >=2}) {cmd:biny}({it:num >=2}) {cmd:values} {cmd:count}
           {cmd:percent} {cmdab:showleg:end} {cmd:ocolor}({it:str}) {cmd:osize}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str}) {cmd:ndfsize}({it:str}) {cmdab:xdisc:rete} {cmdab:ydisc:rete} 
-          {cmd:labxgap}({it:num}) {cmd:labygap}({it:num}) {cmd:textx}({it:str}) {cmd:texty}({it:str}) {cmd:formatx}({it:str}) {cmd:formaty}({it:str}) {cmd:detail}
+          {cmd:labxgap}({it:num}) {cmd:labygap}({it:num}) {cmd:textx}({it:str}) {cmd:texty}({it:str}) {cmd:formatx}({it:str}) {cmd:formaty}({it:str}) {cmd:detail} {cmd:wrap}({it:num})
           {cmdab:texts:ize}({it:str}) {cmdab:textlabs:ize}({it:str}) {cmdab:vallabs:ize}({it:str}) {cmdab:textc:olor}({it:str}) {cmdab:textlabc:olor}({it:str}) {cmdab:vallabc:olor}({it:str}) 
           {cmd:xscale}({it:num}) {cmd:yscale}({it:num}) * {cmd:]}
 
@@ -45,7 +45,7 @@ using the {cmd:geopost()} options. For {cmd:spmap}, the old syntax just passes o
           {cmd:palette}({it:name}) {cmd:reverse} {cmd:clr0}({it:str}) {cmd:clrx}({it:str}) {cmd:clry}({it:str}) {cmdab:clrsat:urate}({it:num})
           {cmd:cut}({it:pctile}|{it:equal}) {cmd:cutx}({it:numlist}) {cmd:cuty}({it:numlist}) {cmd:binsproper} {cmd:bins}({it:num >=2}) {cmd:binx}({it:num >=2}) {cmd:biny}({it:num >=2}) {cmd:values} {cmd:count} 
           {cmd:percent} {cmdab:showleg:end} {cmd:ocolor}({it:str}) {cmd:osize}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str})  {cmd:ndfsize}({it:str}) {cmdab:xdisc:rete} {cmdab:ydisc:rete} 
-          {cmd:labxgap}({it:num}) {cmd:labygap}({it:num}) {cmd:textx}({it:str}) {cmd:texty}({it:str}) {cmd:formatx}({it:str}) {cmd:formaty}({it:str}) {cmd:detail}
+          {cmd:labxgap}({it:num}) {cmd:labygap}({it:num}) {cmd:textx}({it:str}) {cmd:texty}({it:str}) {cmd:formatx}({it:str}) {cmd:formaty}({it:str}) {cmd:detail} {cmd:wrap}({it:num})
           {cmdab:texts:ize}({it:str}) {cmdab:textlabs:ize}({it:str}) {cmdab:vallabs:ize}({it:str}) {cmdab:textc:olor}({it:str}) {cmdab:textlabc:olor}({it:str}) {cmdab:vallabc:olor}({it:str}) 
           {cmd:xscale}({it:num}) {cmd:yscale}({it:num}) * {cmd:]}
 
@@ -157,6 +157,10 @@ fairly complex syntaxes for generating legends so please see individual helpfile
 
 {p2coldent : {opt values}}Display the cut-off values on the legend axes.{p_end}
 
+{p2coldent : {opt textx(str)}, {opt texty(str)}}The axes labels of the legend. The default values are the variable names.{p_end}
+
+{p2coldent : {opt wrap(num)}}Wrap the legend title after a number of characters. Word boundaries are respected.{p_end}
+
 {p2coldent : {opt texts:ize(str)}}The text size of the legend axes labels. The default value is {opt texts(3)}.{p_end}
 
 {p2coldent : {opt textlabs:ize(str)}}The text size of the axes cut-off values. The default value is {opt textlabs(2.2)}.{p_end}
@@ -172,8 +176,6 @@ fairly complex syntaxes for generating legends so please see individual helpfile
 {p2coldent : {opt formatval(fmt)}}Format of the box values. Default format is {opt formatval(%5.1f)}.{p_end}
 
 {p2coldent : {opt formatx(fmt)}, {opt formaty(fmt)}}Format the values on the legend axes. Default format is {opt formatx(%5.1f)}, {opt formaty(%5.1f)}.{p_end}
-
-{p2coldent : {opt textx(str)}, {opt texty(str)}}The axes labels of the legend. The default values are the variable names.{p_end}
 
 {p2coldent : {opt labxgap(num)}}The gap of the x-axis title from the default position. The default value is {opt labxgap(0)}. Use in very minor increments, e.g. {opt labxgap(0.02)}.{p_end}
 
@@ -197,11 +199,13 @@ Stata version 17 or newer requires the following packages:
 {stata ssc install moremata, replace}
 {stata ssc install palettes, replace}
 {stata ssc install colrspace, replace}
+{stata ssc install graphfunctions, replace}
 
 Stata version 16 or earlier requires the following packages:
 {stata ssc install spmap, replace}
 {stata ssc install palettes, replace}
 {stata ssc install colrspace, replace}
+{stata ssc install graphfunctions, replace}
 
 Even if you have these packages installed, please reguarly check for their updates.
 
@@ -213,8 +217,8 @@ Please see {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub} for examp
 
 {title:Package details}
 
-Version      : {bf:bimap} v2.0
-This release : 20 Aug 2024
+Version      : {bf:bimap} v2.1
+This release : 18 Oct 2024
 First release: 08 Apr 2022
 Repository   : {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub}
 Keywords     : Stata, map, bimap, bi-variate
@@ -236,14 +240,14 @@ If you find bugs and/or have feature requests, then please open an {browse "http
 
 Suggested citation guidlines for this package:
 
-Naqvi, A. (2024). Stata package "bimap" version 2.0. Release date 20 August 2024. https://github.com/asjadnaqvi/stata-bimap.
+Naqvi, A. (2024). Stata package "bimap" version 2.1. Release date 18 October 2024. https://github.com/asjadnaqvi/stata-bimap.
 
 @software{bimap,
    author = {Naqvi, Asjad},
    title = {Stata package ``bimap''},
    url = {https://github.com/asjadnaqvi/stata-bimap},
-   version = {2.0},
-   date = {2024-08-20}
+   version = {2.1},
+   date = {2024-10-18}
 }
 
 {title:References}
