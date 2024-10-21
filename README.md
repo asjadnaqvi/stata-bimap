@@ -23,7 +23,7 @@ As more and more users switch to newer Stata versions, the **spmap** implementat
 
 The package can be installed via SSC or GitHub. The GitHub version, *might* be more recent due to bug fixes, feature updates etc, and *may* contain syntax improvements and changes in *default* values. See version numbers below. Eventually the GitHub version is published on SSC. All examples are updated to the latest version and might not be compatible with the old ones. Please check the documentation and change logs.
 
-The package can be installed from SSC (**v2.0**):
+The package can be installed from SSC (**v2.1**):
 ```
 ssc install bimap, replace
 ```
