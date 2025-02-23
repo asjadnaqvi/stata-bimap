@@ -1,7 +1,7 @@
 {smcl}
-{* 18Oct2024}{...}
+{* 23Feb2025}{...}
 {hi:help bimap}{...}
-{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v2.1 (GitHub)}}
+{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v2.2 (GitHub)}}
 
 {hline}
 
@@ -9,7 +9,7 @@
 
 {p 4 4 2}
 The package is based on the {browse "https://medium.com/the-stata-guide/stata-graphs-bi-variate-maps-b1e96dd4c2be":Bi-variate maps} guide on Medium. The {cmd:bimap} command is a wrapper
-for {stata help spmap:geoplot} (v17+) and {stata help spmap:spmap} (v16-).
+for {stata help spmap:geoplot} (Stata versions 17 or higher) and {stata help spmap:spmap} (v16 or lower).
 The command will auto-detect the Stata version and execute the right code. Each code block comes with its own set of input requirements. 
 The older version can still be used by specifying the {it:old} option. The older version that relies on {stata help spmap:spmap} will eventually be phased out.
 
@@ -20,7 +20,7 @@ Note that {cmd:bimap} only works if you have processed the shapefiles using Stat
 {p 4 4 2}
 The two command versions have different input requirements that are defined in the first two lines in the syntax below. The remaining code block, that determines
 the cuts and how the legend is drawn, is common across the two versions. Therefore porting basic maps is fairly easy. For more advance features,
-such as drawing multiple layers in {cmd:geoplot}, can be added by using the {cmd:geo()} option. Additional features such as arrows, scalebars, zooms etc can be passed on
+such as drawing multiple layers in {cmd:geoplot}, can be added by using {cmd:geo()} and {cmd:geopre()} options. Additional features such as arrows, scalebars, zooms etc can be passed on
 using the {cmd:geopost()} options. For {cmd:spmap}, the old syntax just passes on individual options. This has been maintained to avoid the breaking the old code completely.
 
 
@@ -28,13 +28,13 @@ using the {cmd:geopost()} options. For {cmd:spmap}, the old syntax just passes o
 
 {p 8 15 2}
 {cmd:bimap} {it:vary varx} {ifin}, {cmd:frame}({it:name}) 
-        {cmd:[} {cmd:geo}({it:options}) {cmd:geopost}({it:options})  
+        {cmd:[} {cmd:geo}({it:geoplot layers}) {cmd:geo}({it:geoplot layers}) {cmd:geopost}({it:options})  
           {cmd:palette}({it:name}) {cmd:reverse} {cmd:clr0}({it:str}) {cmd:clrx}({it:str}) {cmd:clry}({it:str}) {cmdab:clrsat:urate}({it:num})
-          {cmd:cut}({it:pctile}|{it:equal}) {cmd:cutx}({it:numlist}) {cmd:cuty}({it:numlist}) {cmd:binsproper} {cmd:bins}({it:num >=2}) {cmd:binx}({it:num >=2}) {cmd:biny}({it:num >=2}) {cmd:values} {cmd:count}
-          {cmd:percent} {cmdab:showleg:end} {cmd:ocolor}({it:str}) {cmd:osize}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str}) {cmd:ndfsize}({it:str}) {cmdab:xdisc:rete} {cmdab:ydisc:rete} 
+          {cmd:cut}({it:pctile}|{it:equal}) {cmd:cutx}({it:numlist}) {cmd:cuty}({it:numlist}) {cmd:binsproper} {cmd:bins}({it:num >=2}) {cmd:binx}({it:num >=2}) {cmd:biny}({it:num >=2}) {cmdab:noval:ues} {cmd:count}
+          {cmd:percent} {cmdab:showleg:end} {cmdab:lc:olor}({it:str}) {cmdab:lw:idth}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str}) {cmd:ndfsize}({it:str}) {cmdab:xdisc:rete} {cmdab:ydisc:rete} 
           {cmd:labxgap}({it:num}) {cmd:labygap}({it:num}) {cmd:textx}({it:str}) {cmd:texty}({it:str}) {cmd:formatx}({it:str}) {cmd:formaty}({it:str}) {cmd:detail} {cmd:wrap}({it:num})
           {cmdab:texts:ize}({it:str}) {cmdab:textlabs:ize}({it:str}) {cmdab:vallabs:ize}({it:str}) {cmdab:textc:olor}({it:str}) {cmdab:textlabc:olor}({it:str}) {cmdab:vallabc:olor}({it:str}) 
-          {cmd:xscale}({it:num}) {cmd:yscale}({it:num}) * {cmd:]}
+          {cmd:fxsize}({it:num}) {cmd:fysize}({it:num}) {cmd:scale}({it:num}) * {cmd:]}
 
 
 {marker syntax}{title:Syntax (version 16 or earlier)}
@@ -44,10 +44,10 @@ using the {cmd:geopost()} options. For {cmd:spmap}, the old syntax just passes o
         {cmd:[} {cmd:old} {cmd:polygon}({it:str}) {cmd:line}({it:str}) {cmd:point}({it:str}) {cmd:label}({it:str}) {cmd:arrow}({it:str}) {cmd:diagram}({it:str}) {cmd:scalebar}({it:str}) 
           {cmd:palette}({it:name}) {cmd:reverse} {cmd:clr0}({it:str}) {cmd:clrx}({it:str}) {cmd:clry}({it:str}) {cmdab:clrsat:urate}({it:num})
           {cmd:cut}({it:pctile}|{it:equal}) {cmd:cutx}({it:numlist}) {cmd:cuty}({it:numlist}) {cmd:binsproper} {cmd:bins}({it:num >=2}) {cmd:binx}({it:num >=2}) {cmd:biny}({it:num >=2}) {cmd:values} {cmd:count} 
-          {cmd:percent} {cmdab:showleg:end} {cmd:ocolor}({it:str}) {cmd:osize}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str})  {cmd:ndfsize}({it:str}) {cmdab:xdisc:rete} {cmdab:ydisc:rete} 
+          {cmd:percent} {cmdab:showleg:end} {cmdab:lc:olor}({it:str}) {cmdab:lw:idth}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str})  {cmd:ndfsize}({it:str}) {cmdab:xdisc:rete} {cmdab:ydisc:rete} 
           {cmd:labxgap}({it:num}) {cmd:labygap}({it:num}) {cmd:textx}({it:str}) {cmd:texty}({it:str}) {cmd:formatx}({it:str}) {cmd:formaty}({it:str}) {cmd:detail} {cmd:wrap}({it:num})
           {cmdab:texts:ize}({it:str}) {cmdab:textlabs:ize}({it:str}) {cmdab:vallabs:ize}({it:str}) {cmdab:textc:olor}({it:str}) {cmdab:textlabc:olor}({it:str}) {cmdab:vallabc:olor}({it:str}) 
-          {cmd:xscale}({it:num}) {cmd:yscale}({it:num}) * {cmd:]}
+          {cmd:fxsize}({it:num}) {cmd:fysize}({it:num}) {cmd:scale}({it:num}) * {cmd:]}
 
 
 
@@ -69,12 +69,15 @@ The options are described as follows:
 {p2coldent : {opt frame(name)}}The geoplot frames need to be defined before executing the bimap command. The {opt frame()} therefore
 ask users to define the frame name with the plot data. This is to ensure that the command still executes regardless of which frame is active.{p_end}
 
-{p2coldent : {opt geo(string)}}This option can be used to define addition area, line or point layers. It is assumed that each layer has a frame 
-defined (see help geoplot) and is ready to be plotted. This can be any number of layers. Make sure that each layer is enclosed in round brackets,
-for example, {opt geo((area ..., ...) (area ..., ...) (line ..., ...))} etc.{p_end}
+{p2coldent : {opt geo(string)}}This option can be used to draw additional layers on {it:top} of the bimap layer. Here it is assumed that each layer has a geoframe 
+(see help geoframe) and is ready to be plotted. This option can take on any number of layers. Make sure that each layer is enclosed in round brackets,
+for example, {opt geo((area frame ..., ...) (area frame ..., ...) (line frame ..., ...))} etc.{p_end}
 
-{p2coldent : {opt geopost(string)}}Similar to {opt geo()}, {opt geopost()} can be used to pass on additional commands in {cmd:geoplot}.
-This for example, can include zooms, legend options, arrows, scalebars etc.{p_end}
+{p2coldent : {opt geopre(string)}}Same as above but draws layers {it:below} the bimap layer. Useful for drawing background layers.{p_end}
+
+{p2coldent : {opt geopost(string)}}This option can be used to pass additional post-comma options in {cmd:geoplot}.
+For instance, this can include zooms, additional legend options, arrows, scalebars etc. A recommend option is {opt geopost(tight)} that minimizes
+the white space around the map.{p_end}
 
 
 {p 4 4 2}
@@ -130,9 +133,9 @@ Otherwise, {stata help colorpalette:colorpalette}, other softwares (including MS
 {p2coldent : {opt bins(num)}, {opt binx(num)}, {opt biny(num)}}Users can either defined {it:n}x{it:n} bins by using the option {opt bins(n)}. Otherwise custom bins can
 also be defined using {opt binx()} and/or {opt biny()}. The default is {opt bin(3)}. Bins are constrained to a minimum dimension of 2.{p_end}
 
-{p2coldent : {opt osize(string)}}Line width of polygons. Default value is {opt osize(0.02)}. Also applied to polygons with no data.{p_end}
+{p2coldent : {opt lw:idth(string)}}Line width of polygons. Default value is {opt lw(0.02)}. Also applied to polygons with no data.{p_end}
 
-{p2coldent : {opt ocolor(str)}}Outline color of polygons with data. Default value is {opt ocolor(white)}.{p_end}
+{p2coldent : {opt lc:olor(str)}}Outline color of polygons with data. Default value is {opt lc(white)}.{p_end}
 
 {p2coldent : {opt ndocolor(str)}}Outline color of polygons with no data. Default value is {opt ndocolor(gs12)}.{p_end}
 
@@ -147,7 +150,7 @@ fairly complex syntaxes for generating legends so please see individual helpfile
 
 {p2coldent : {opt detail}}Show which Stata version is detected and which program is called.{p_end}
 
-{p2coldent : {opt *}}All other standard twoway options.{p_end}
+{p2coldent : {opt *}}All other standard twoway options not elsewhere specified.{p_end}
 
 
 {p 4 4 2}
@@ -155,7 +158,7 @@ fairly complex syntaxes for generating legends so please see individual helpfile
 
 {p2coldent : {opt count} {it:or} {opt percent}}Display the count or percent of categories in each box in the map legend.{p_end}
 
-{p2coldent : {opt values}}Display the cut-off values on the legend axes.{p_end}
+{p2coldent : {opt noval:ues}}Do not show the values on the legend axes.{p_end}
 
 {p2coldent : {opt textx(str)}, {opt texty(str)}}The axes labels of the legend. The default values are the variable names.{p_end}
 
@@ -184,9 +187,10 @@ fairly complex syntaxes for generating legends so please see individual helpfile
 {p2coldent : {opt binsproper}}Show actual cut-off on the axes in the legend. Otherwise equally spaced boxes are shown. The option {opt binsproper} will look
 squished especially if the categories are bunched together. This will most likely cause labels to overlap.{p_end}
 
-{p2coldent : {opt xscale(num)}}The scale of the legend on the x-axis. Default value is {opt xscale(35)}. This option can be used to change the legend dimensions.{p_end}
+{p2coldent : {opt fxsize(num)}, {opt fysize(num)}}Force scale the legend x-axis dimension. Default values are {opt fxsize(33)} and {opt fysize(33)} or 33% of the map size.
+Ideally change both with the same value. These are advanced options so use carefully. Might also require label scaling. See {opt scale()} below.{p_end}
 
-{p2coldent : {opt yscale(num)}}The scale of the legend on the y-axis. Default value is {opt yscale(100)}. This is an advanced option so use it with caution.{p_end}
+{p2coldent : {opt scale(num)}Scale the text of the legend. Default is {opt scale(1)}.{p_end}
 
 {synoptline}
 {p2colreset}{...}
@@ -207,18 +211,27 @@ Stata version 16 or earlier requires the following packages:
 {stata ssc install colrspace, replace}
 {stata ssc install graphfunctions, replace}
 
-Even if you have these packages installed, please reguarly check for their updates.
 
 {title:Examples}
 
 Please see {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub} for examples.
 
-{hline}
+
+{title:Feedback}
+
+If you find bugs and/or have feature requests, then please open an {browse "https://github.com/asjadnaqvi/stata-bimap/issues":issue} on GitHub.
+
+
+{title:Citation guidelines}
+
+See {browse "https://ideas.repec.org/c/boc/bocode/s459063.html"} for the official SSC citation. 
+Please note that the GitHub version might be newer than the SSC version.
+
 
 {title:Package details}
 
-Version      : {bf:bimap} v2.1
-This release : 18 Oct 2024
+Version      : {bf:bimap} v2.2
+This release : 23 Feb 2025
 First release: 08 Apr 2022
 Repository   : {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub}
 Keywords     : Stata, map, bimap, bi-variate
@@ -226,29 +239,8 @@ License      : {browse "https://opensource.org/licenses/MIT":MIT}
 
 Author       : {browse "https://github.com/asjadnaqvi":Asjad Naqvi}
 E-mail       : asjadnaqvi@gmail.com
-Twitter      : {browse "https://twitter.com/AsjadNaqvi":@AsjadNaqvi}
-
-
-
-{title:Feedback}
-
-{p 4 4 2}
-If you find bugs and/or have feature requests, then please open an {browse "https://github.com/asjadnaqvi/stata-bimap/issues":issue} on GitHub.
-
-
-{title:Citation guidelines}
-
-Suggested citation guidlines for this package:
-
-Naqvi, A. (2024). Stata package "bimap" version 2.1. Release date 18 October 2024. https://github.com/asjadnaqvi/stata-bimap.
-
-@software{bimap,
-   author = {Naqvi, Asjad},
-   title = {Stata package ``bimap''},
-   url = {https://github.com/asjadnaqvi/stata-bimap},
-   version = {2.1},
-   date = {2024-10-18}
-}
+Twitter/X    : {browse "https://twitter.com/AsjadNaqvi":@AsjadNaqvi}
+BlueSky      : {browse "https://bsky.app/profile/asjadnaqvi.bsky.social":@asjadnaqvi.bsky.social}
 
 {title:References}
 
@@ -264,11 +256,10 @@ Naqvi, A. (2024). Stata package "bimap" version 2.1. Release date 18 October 202
 
 
 {title:Other visualization packages}
-
 {psee}
-    {helpb arcplot}, {helpb alluvial}, {helpb bimap}, {helpb bumparea}, {helpb bumpline}, {helpb circlebar}, {helpb circlepack}, {helpb clipgeo}, {helpb delaunay}, {helpb joyplot}, 
-	{helpb marimekko}, {helpb polarspike}, {helpb sankey}, {helpb schemepack}, {helpb spider}, {helpb splinefit}, {helpb streamplot}, {helpb sunburst}, {helpb treecluster}, {helpb treemap}, {helpb waffle}
-	
-or visit {browse "https://github.com/asjadnaqvi":GitHub} for detailed documentation and examples.	
+    {helpb arcplot}, {helpb alluvial}, {helpb bimap}, {helpb bumparea}, {helpb bumpline}, {helpb circlebar}, {helpb circlepack}, {helpb clipgeo}, {helpb delaunay}, {helpb graphfunctions}, {helpb geoboundary}, {helpb geoflow}, {helpb joyplot}, 
+	{helpb marimekko}, {helpb polarspike}, {helpb sankey}, {helpb schemepack}, {helpb spider}, {helpb splinefit}, {helpb streamplot}, {helpb sunburst}, {helpb ternary}, {helpb tidytueday}, {helpb treecluster}, {helpb treemap}, {helpb trimap}, {helpb waffle}
+
+Visit {browse "https://github.com/asjadnaqvi":GitHub} for further information.
 
 

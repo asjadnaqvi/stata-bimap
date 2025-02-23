@@ -1,6 +1,9 @@
-*! bimap v2.1 (18 Oct 2024)
+*! bimap v2.2 (23 Feb 2025)
 *! Asjad Naqvi (asjadnaqvi@gmail.com)
 
+* v2.2	(23 Feb 2025): legend labels are now default. Some passthru fixes. Added geopre() to preadd layers before the bimap layer. 
+*                       Fixed fxsize, fysize. Added scale() to scale text in the legend
+*					    values (now default) changed to novalues. osize() -> lwwidth(), ocolor() -> lcolor()
 * v2.1	(18 Oct 2024): Better label wrapping
 * v2.0	(22 Aug 2024): Port to geoplot for newer stata versions. frame() geo() geopost() added for geoplot. /using swapped with shp() for spmap.
 * v1.9  (19 Jun 2024): Fixed some minor bugs. Nolegend option added. wrap() added for label wrapping.
@@ -41,9 +44,9 @@ program bimap, sortpreserve
  
 	syntax varlist(min=2 max=2 numeric) [if] [in]    ///
 		[ ,  cut(string) palette(string) ]  ///
-		[ count percent BOXsize(real 8) textx(string) texty(string) formatx(string) formaty(string) xscale(real 35) yscale(real 100) TEXTLABSize(string) TEXTSize(string) values ] ///
+		[ count percent BOXsize(real 8) textx(string) texty(string) formatx(string) formaty(string) fxsize(real 33) fysize(real 33) TEXTLABSize(string) TEXTSize(string)  ] ///
 		[ polygon(passthru) line(passthru) point(passthru) label(passthru) ] ///
-		[ ocolor(string) osize(string) ndocolor(string) ndsize(string) ndfcolor(string) ]   ///
+		[  ndocolor(string) ndsize(string) ndfcolor(string) ]   ///
 		[ cutx(numlist min=1)  cuty(numlist min=1) SHOWLEGend  ] ///  // 1.4 updates
 		[ LEGend(passthru) legenda(passthru) LEGStyle(passthru) LEGJunction(passthru) LEGCount(passthru) LEGOrder(passthru) LEGTitle(passthru)  ] ///  // 1.4 legend controls as passthru
 		[ arrow(passthru) diagram(passthru) scalebar(passthru) ] ///  // 1.5
@@ -51,8 +54,8 @@ program bimap, sortpreserve
 		[ XDISCrete YDISCrete ] ///  // v1.7 options
 		[ labxgap(real 0) labygap(real 0) ] ///  // v1.8 options
 		[ TEXTColor(string) TEXTLABColor(string) VALLABColor(string) NOLEGend wrap(numlist >=0 max=1)  * ]	///		// v1.82, v1.9
-		[ geo(string) geopost(string) frame(string) old shp(string) detail scheme(passthru) ]	// v2.0 -- stata 18+ options for geoplot
-		
+		[ geo(string) geopost(string) frame(string) old shp(string) detail scheme(passthru) ] ///	// v2.0 -- stata 18+ options for geoplot
+		[ geopre(string) NOVALues LColor(string) LWidth(string) scale(real 1) ]
 		
 	local myver = `c(version)'
 	
@@ -484,18 +487,14 @@ quietly {
 		
 		forval i = 1/`binx' {
 			forval j = 1/`biny' {
-				
 				replace `grp_cut' = `z' if `cat_`var1''==`i' & `cat_`var2''==`j'
-				
-				local z = `z' + 1
+				local ++z
 			
 			}
 		}
 		
 		
 		***** store the cut-offs for labels	
-		
-
 		
 		if "`count'" != "" {			
 
@@ -532,15 +531,18 @@ quietly {
 		}
 
 	
-		local lc = cond("`ocolor'" == "", "white", "`ocolor'")
 		
-		local lw = cond("`osize'" == "", "0.02", "`osize'")
+		*local lc = cond("`ocolor'" == "", "white", "`ocolor'")
+		*local lw = cond("`osize'" == "", "0.02", "`osize'")
+		
+		if "`lcolor'" == "" local lcolor white
+		if "`lwidth'" == "" local lwidth 0.02
 	
 		local ndo = cond("`ndocolor'" == "", "gs12", "`ndocolor'")
 		
 		local ndf = cond("`ndfcolor'" == "", "gs8", "`ndfcolor'")
 
-		local nds = cond("`ndsize'" == "", "`lw'", "`ndsize'")		
+		local nds = cond("`ndsize'" == "", "`lwidth'", "`ndsize'")		
 		
 		local leg = cond("`showlegend'"=="", "legend(off)", "")
 		
@@ -580,15 +582,17 @@ quietly {
 			local cutst = 9
 		}
 		
+**# draw map
 		
 		if `myver' >= 17 & "`old'"=="" {
 			
 
 			if "`nolegend'" != "" {
 				geoplot ///
-					(area `frame' `grp_cut', discrete cuts(1(1)`cutst') color("`colors'") lcolor(`lc') lwidth(`lw') missing(color(`ndf') lc(`ndo') lw(`nds')) nolegend )    ///
-						`geo' ///
-						, `leg' tight `geopost' `options' `scheme'
+					`geopre'	///
+					(area `frame' `grp_cut', discrete cuts(1(1)`cutst') color("`colors'") lcolor(`lcolor') lwidth(`lwidth') missing(color(`ndf') lc(`ndo') lw(`nds')) nolegend )    ///
+					`geo' ///
+						, `leg' `geopost' `options' `scheme' 
 						
 				exit		
 							
@@ -596,9 +600,11 @@ quietly {
 			else {
 			
 				geoplot ///
-					(area `frame' `grp_cut', discrete cuts(1(1)`cutst') color("`colors'") lcolor(`lc') lwidth(`lw') missing(color(`ndf') lc(`ndo') lw(`nds')) nolegend )    ///
-						`geo' ///
-						, `leg' tight `geopost' name(_map, replace) nodraw  `scheme'
+					`geopre'	///
+					(area `frame' `grp_cut', discrete cuts(1(1)`cutst') color("`colors'") lcolor(`lcolor') lwidth(`lwidth') missing(color(`ndf') lc(`ndo') lw(`nds')) nolegend )    ///
+					`geo' ///
+						, `leg' `geopost' name(_map, replace) nodraw  `scheme' ///
+						graphregion(margin(zero)) 
 			}
 			
 		}
@@ -607,11 +613,11 @@ quietly {
 			if "`nolegend'" != "" {
 			spmap `grp_cut' using "`shp'", ///
 				id(_ID) clm(custom) clb(0(1)`cutst') fcolor("`colors'") ///
-					ocolor(`lc' ..) osize(`lw' ..) ///	
+					ocolor("`lcolor'" ..) osize("`lwidth'" ..) ///	
 					ndocolor(`ndo' ..) ndsize(`nds' ..) ndfcolor(`ndf' ..)  ///
 					`polygon' `line' `point' `label'  ///
 					`leg' `legstyle' `legenda' `legendstyle' `legjunction' `legcount' `legorder' `legtitle'  ///  // v1.4 legend passthrus
-					`arrow' `diagram' `scalebar' `options'  `scheme'
+					`arrow' `diagram' `scalebar' `options'  `scheme' 
 				
 				exit	
 			}
@@ -619,12 +625,12 @@ quietly {
 
 				spmap `grp_cut' using "`shp'", ///
 				id(_ID) clm(custom) clb(0(1)`cutst') fcolor("`colors'") ///
-					ocolor(`lc' ..) osize(`lw' ..) ///	
+					ocolor("`lcolor'" ..) osize("`lwidth'" ..) ///	
 					ndocolor(`ndo' ..) ndsize(`nds' ..) ndfcolor(`ndf' ..)  ///
 					`polygon' `line' `point' `label'  ///
 					`leg' `legstyle' `legenda' `legendstyle' `legjunction' `legcount' `legorder' `legtitle'  ///  // v1.4 legend passthrus
 					`arrow' `diagram' `scalebar' ///  // v1.5 passthrus
-					name(_map, replace) nodraw  `scheme'
+					name(_map, replace) nodraw  `scheme' graphregion(margin(zero))
 			}
 		}
 	
@@ -918,13 +924,21 @@ quietly {
 			
 		}
 			
-		if "`values'" != "" {	
+		if "`novalues'" == "" {	
 			local xvals (scatter y0 x_mark, mcolor(none) mlabel(x_val) mlabpos(6) mcolor(gs6) msize(0.2) mlabsize(`textlabsize') mlabcolor(`textlabcolor') ) 
 						
 			local yvals (scatter y_mark x0, mcolor(none) mlabel(y_val) mlabpos(9) mcolor(gs6) msize(0.2) mlabsize(`textlabsize') mlabcolor(`textlabcolor') ) 
 		
 		}
 			
+**# draw legend
+			
+			
+		twoway (scatteri 0 0, msymbol(none)), ///
+			xlabel(, nogrid) ylabel(, nogrid) ///
+			yscale(off) xscale(off) ///
+			xsize(1) ysize(1) fysize(33) ///
+			name(_empty0, replace) `scheme' nodraw
 
 		twoway ///
 			`boxes' ///
@@ -938,11 +952,12 @@ quietly {
 			, ///
 				xlabel(-0.2 1, nogrid) ylabel(-0.2 1, nogrid) ///
 				yscale(range(0 1.1) off) xscale(range(0 1.1) off) ///
-				aspectratio(1) ///
-				xsize(1) ysize(1) ///
-				fxsize(`xscale') fysize(`yscale') ///
-				legend(off)		///
-				name(_legend, replace)  nodraw   `scheme'
+				xsize(1) ysize(1) aspect(1) ///  
+				legend(off)	fysize(`fysize') fxsize(`fxsize') scale(`scale')	///
+				name(_legend, replace) nodraw `scheme'
+				
+				
+		*graph combine _empty0 _legend _empty0, nodraw cols(1) imargin(zero) name(_legend2, replace) 
 
 	restore			
 	
@@ -951,7 +966,7 @@ quietly {
 	 ********************
 	 
 	  graph combine _map _legend, ///
-		imargin(zero) `options'
+		imargin(0 0 0) `options'
 	
 */
 
