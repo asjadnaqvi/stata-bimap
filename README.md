@@ -868,7 +868,7 @@ Please open an [issue](https://github.com/asjadnaqvi/stata-bimap/issues) to repo
 ## Change log
 
 **v2.2 (23 February 2025)**
-- Legend labels are now shown be default. Previously, these had to be enabled via the `` option. This has been replace with `no`, which now turns off the labels.
+- Legend labels are now shown be default. Previously, these had to be enabled via the `values` option. This has been replace with `novalue`, which now turns off the labels.
 - `ocolor()` and `osize()` have been changed to `lcolor()` and `lwidth()` to align it with standard Stata use. No data options remain as they are (for now) since these are only used in `spmap` currently. Please note that this change also makes the use of `bimap` with `bimap` a bit convoluted since secondary layers passed on as `polygon()` would still require the default `osize()` and `ocolor()` options. See examples above.
 - `xscale()` and `yscale()` renamed to `fxsize()` and `fysize()` the correct options for Stata. These were also reworked to allow for proper lagend scaling. Defaults also updated.
 - Option `scale()` added to allow easy scaling of legend text. 
