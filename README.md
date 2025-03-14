@@ -860,6 +860,8 @@ bimap share_hisp share_afam, palette(orangeblue)  frame(county)  ///
 		 geo((line state, lc(black) lw(0.2))) statvar(tot_pop)			 
 ```
 
+Where the summ of cells in the second map now equals total population:
+
 <img src="/figures/bimap25_statvar1.png" width="100%">
 
 <img src="/figures/bimap25_statvar2.png" width="100%">
