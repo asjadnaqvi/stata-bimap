@@ -848,7 +848,7 @@ summ tot_pop
 di "`r(sum)'"
 ```
 
-Here is a comparison of with defining the `statvar()` option. If we just specify `count`, we get the sum of population for each category:
+which shows a population of approximately 329 million. Here is a comparison of with defining the `statvar()` option. If we just specify `count`, we get the sum of population for each category:
 
 ```stata
 bimap share_hisp share_afam, palette(orangeblue)  frame(county)  ///
