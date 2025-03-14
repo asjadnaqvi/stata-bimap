@@ -914,7 +914,12 @@ Please open an [issue](https://github.com/asjadnaqvi/stata-bimap/issues) to repo
 
 ## Change log
 
-**v2.2 (23 February 2025)**
+**v2.3 (14 Mar 2025)**
+- New option `statvar()` added that now allows us to summarize each cell by a sum of the underlying variable. E.g. population counts might make more sense than cell counts. Many thanks to Minh Nguyen for the amazing suggestion.
+- Option `formatval()` is now just `format()`. This modifies the format of the cells and now the universal default if `format(%5.1f)`. 
+- Minor code improvements.
+
+**v2.2 (23 Feb 2025)**
 - Legend labels are now shown be default. Previously, these had to be enabled via the `values` option. This has been replace with `novalue`, which now turns off the labels.
 - `ocolor()` and `osize()` have been changed to `lcolor()` and `lwidth()` to align it with standard Stata use. No data options remain as they are (for now) since these are only used in `spmap` currently. Please note that this change also makes the use of `bimap` with `bimap` a bit convoluted since secondary layers passed on as `polygon()` would still require the default `osize()` and `ocolor()` options. See examples above.
 - `xscale()` and `yscale()` renamed to `fxsize()` and `fysize()` the correct options for Stata. These were also reworked to allow for proper lagend scaling. Defaults also updated.
@@ -923,17 +928,17 @@ Please open an [issue](https://github.com/asjadnaqvi/stata-bimap/issues) to repo
 - Option `tight`, a default in the backgroud has been removed. Users now have to specify it additionally as `geopost(tight)`. 
 - Many other bug fixes.
 
-**v2.1 (18 October 2024)**
+**v2.1 (18 Oct 2024)**
 - Supporting for better label wrapping added using `graphfunctions`. The latest version of this package is required.
 - Minor syntax cleanups.
 
-**v2.0 (22 August 2024)**
+**v2.0 (22 Aug 2024)**
 - Major update. Support for `geoplot` for Stata versions 17 or newer. Support for `spmap` for Stata versions 16 or older. Versions are auto detected.
 - Stata 17 or newer users can use the option `old` to call in the `spmap` version. This ensures that the code of seasoned `bimap` users does not break.
 - Minor change in syntax for `spmap` versions from `bimap y x using shapefile` to `bimap y x, shp(shapefile)`. This is to ensure consistency for upcoming releases.
 - Option `detail` added to show which Stata version is detected and which map program is used. This might be useful in case you want to have more information. 
 
-**v1.9 (19 June 2024)**
+**v1.9 (19 Jun 2024)**
 - Fixed and added several options to control legends: `textcolor()`, `textlabcolor()`, `vallabcolor()`. 
 - Better options for `textsize()`, `textlabsize()`, `vallabsize()`.
 - Added `wrap()` to wrap labels in legends.
