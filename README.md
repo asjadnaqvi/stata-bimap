@@ -8,8 +8,8 @@
 
 
 
-# bimap v2.2
-(23 Feb 2025)
+# bimap v2.3
+(14 Mar 2025)
 
 This package provides the ability to draw bi-variate maps in Stata. It is based on the [Bi-variate maps Guide](https://medium.com/the-stata-guide/stata-graphs-bi-variate-maps-b1e96dd4c2be).
 
@@ -27,7 +27,7 @@ The package can be installed from SSC (**v2.1**):
 ssc install bimap, replace
 ```
 
-Or it can be installed from GitHub (**v2.2**):
+Or it can be installed from GitHub (**v2.3**):
 
 ```
 net install bimap, from("https://raw.githubusercontent.com/asjadnaqvi/stata-bimap/main/installation/") replace
@@ -836,6 +836,51 @@ bimap discy discx, shp(county_shp2) old palette(yellowblue) count xdisc ydisc
 
 <img src="/figures/bimap23_3.png" width="100%">
 
+
+### statvar() (v2.3)
+
+We can now summarize a vector level variable, e.g. population in county in our example, rather than count of countries. This might be more meaningful especially if population sizes vary considerably.
+
+```
+replace tot_pop = tot_pop / 1e6
+
+summ tot_pop
+di "`r(sum)'"
+```
+
+Here is a comparison of with defining the `statvar()` option. If we just specify `count`, we get the sum of population for each category:
+
+```stata
+bimap share_hisp share_afam, palette(orangeblue)  frame(county)  ///
+		 ndfcolor(pink) ndocolor(lime) ndsize(0.2)  count  ///
+		 geo((line state, lc(black) lw(0.2))) 	 
+		 
+bimap share_hisp share_afam, palette(orangeblue)  frame(county)  ///
+		 ndfcolor(pink) ndocolor(lime) ndsize(0.2)  count  ///
+		 geo((line state, lc(black) lw(0.2))) statvar(tot_pop)			 
+```
+
+<img src="/figures/bimap25_statvar1.png" width="100%">
+
+<img src="/figures/bimap25_statvar2.png" width="100%">
+
+We can similarly use `percentage` to compare count-weighted cells versus population-weighted cells:
+
+```stata
+bimap share_hisp share_afam, palette(orangeblue) frame(county)  ///
+		 ndfcolor(pink) ndocolor(lime) ndsize(0.2)  percent  ///
+		 geo((line state, lc(black) lw(0.2))) 
+		 
+bimap share_hisp share_afam, palette(orangeblue) frame(county)  ///
+		 ndfcolor(pink) ndocolor(lime) ndsize(0.2)  percent  ///
+		 geo((line state, lc(black) lw(0.2))) statvar(tot_pop)		
+```
+
+And observe that shares change quite a bit:
+
+<img src="/figures/bimap25_statvar3.png" width="100%">
+
+<img src="/figures/bimap25_statvar4.png" width="100%">
 
 ### missing data (v1.81)
 

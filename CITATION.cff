@@ -3,6 +3,6 @@ authors:
 - family-names: "Naqvi"
   given-names: "Asjad"
 title: "Stata package ``bimap''"
-version: 2.2
-date-released: 2025-02-23
+version: 2.3
+date-released: 2025-03-14
 url: "https://github.com/asjadnaqvi/stata-bimap"
