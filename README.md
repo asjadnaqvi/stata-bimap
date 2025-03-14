@@ -915,7 +915,7 @@ Please open an [issue](https://github.com/asjadnaqvi/stata-bimap/issues) to repo
 ## Change log
 
 **v2.3 (14 Mar 2025)**
-- New option `statvar()` added that now allows us to summarize each cell by a sum of the underlying variable. E.g. population counts might make more sense than cell counts. Many thanks to Minh Nguyen for the amazing suggestion.
+- New option `statvar()` added that now allows us to summarize each cell by a sum of the underlying variable. E.g. population counts might make more sense than cell counts. Many thanks to **Minh Nguyen** for the amazing suggestion.
 - Option `formatval()` is now just `format()`. This modifies the format of the cells and now the universal default if `format(%5.1f)`. 
 - Minor code improvements.
 
