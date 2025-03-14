@@ -1,5 +1,5 @@
-v 2.2
-d {bf:BIMAP}: Bi-variate maps
+v 2.3
+d {bf:BIMAP}: A Stata package for bi-variate maps.
 
 d Requires: Stata version 15 or higher.
 d
@@ -7,9 +7,9 @@ d KW: Stata
 d KW: graphs
 d KW: map
 d KW: bivariate map
-d Distribution-Date: 20250223
+d Distribution-Date: 20250314
 d
-d This  version: 23 Feb 2025
+d This  version: 14 Mar 2025
 d First version: 08 Apr 2022
 d License: MIT
 d

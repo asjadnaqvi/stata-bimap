@@ -1,6 +1,7 @@
-*! bimap v2.2 (23 Feb 2025)
+*! bimap v2.3 (14 Mar 2025)
 *! Asjad Naqvi (asjadnaqvi@gmail.com)
 
+* v2.3	(14 Mar 2025): Added a statvar() option to show as percentages in the box (Suggested by Minh Nguyen). formatval is now just format.
 * v2.2	(23 Feb 2025): legend labels are now default. Some passthru fixes. Added geopre() to preadd layers before the bimap layer. 
 *                       Fixed fxsize, fysize. Added scale() to scale text in the legend
 *					    values (now default) changed to novalues. osize() -> lwwidth(), ocolor() -> lcolor()
@@ -40,7 +41,7 @@ cap program drop bimap
 
 program bimap, sortpreserve
 
-*version 15
+*version 15 // do not enable. Version check is done internally.
  
 	syntax varlist(min=2 max=2 numeric) [if] [in]    ///
 		[ ,  cut(string) palette(string) ]  ///
@@ -50,12 +51,12 @@ program bimap, sortpreserve
 		[ cutx(numlist min=1)  cuty(numlist min=1) SHOWLEGend  ] ///  // 1.4 updates
 		[ LEGend(passthru) legenda(passthru) LEGStyle(passthru) LEGJunction(passthru) LEGCount(passthru) LEGOrder(passthru) LEGTitle(passthru)  ] ///  // 1.4 legend controls as passthru
 		[ arrow(passthru) diagram(passthru) scalebar(passthru) ] ///  // 1.5
-		[ bins(numlist min=1 >=2) binx(numlist min=1 >=2) biny(numlist min=1 >=2) reverse clr0(string) clrx(string) clry(string) CLRSATurate(real 6) binsproper FORMATVal(string) VALLABSize(string) ] /// // 1.6
+		[ bins(numlist min=1 >=2) binx(numlist min=1 >=2) biny(numlist min=1 >=2) reverse clr0(string) clrx(string) clry(string) CLRSATurate(real 6) binsproper format(string) VALLABSize(string) ] /// // 1.6
 		[ XDISCrete YDISCrete ] ///  // v1.7 options
 		[ labxgap(real 0) labygap(real 0) ] ///  // v1.8 options
 		[ TEXTColor(string) TEXTLABColor(string) VALLABColor(string) NOLEGend wrap(numlist >=0 max=1)  * ]	///		// v1.82, v1.9
 		[ geo(string) geopost(string) frame(string) old shp(string) detail scheme(passthru) ] ///	// v2.0 -- stata 18+ options for geoplot
-		[ geopre(string) NOVALues LColor(string) LWidth(string) scale(real 1) ]
+		[ geopre(string) NOVALues LColor(string) LWidth(string) scale(real 1) statvar(varlist max=1 numeric)  ]
 		
 	local myver = `c(version)'
 	
@@ -133,8 +134,6 @@ program bimap, sortpreserve
 		
 	}
 		
-		
-	
 		marksample touse, strok novarlist
 		gettoken var2 var1 : varlist   // var1 = x, var2 = y
 	
@@ -158,7 +157,6 @@ program bimap, sortpreserve
 		}			
 		
 		
-	
 		if "`bins'"=="" local bins 3 // default
 	
 		***** Get the cuts
@@ -167,7 +165,8 @@ program bimap, sortpreserve
 quietly {
  	preserve	
 		keep if `touse'
-		keep `varlist' _ID
+		
+		keep `varlist' _ID `statvar'
 		
 		tempvar cat_`var1' cat_`var2'
 		
@@ -184,7 +183,7 @@ quietly {
 		
 		if "`palette'" == "" local palette = "pinkgreen"
 		if "`cut'"     == "" local cut     = "pctile"
-		
+
 		
 		local check = 0
 		if inlist("`palette'", "pinkgreen0", "bluered0", "greenblue0", "purpleyellow0", "yellowblue0", "orangeblue0") 	local check = 1
@@ -500,8 +499,15 @@ quietly {
 
 			forval i = 1/`binx' {
 				forval j = 1/`biny' {
-					count if `cat_`var1''==`i' & `cat_`var2''==`j' 
-					local grsize`i'`j' = `r(N)'					
+					
+					if "`statvar'" != "" {
+						summarize `statvar' if `cat_`var1''==`i' & `cat_`var2''==`j' 
+						local grsize`i'`j' = `r(sum)'		
+					}
+					else {
+						count if `cat_`var1''==`i' & `cat_`var2''==`j' 
+						local grsize`i'`j' = `r(N)'					
+					}
 				}
 			}
 		}
@@ -509,20 +515,31 @@ quietly {
 
 		if "`percent'" != "" {	
 	
-		count if `cat_`var1''!=. & `cat_`var2''!=.
-		local grsum = `r(N)'
+			if "`statvar'" != "" {
+				summ `statvar', meanonly
+				local grsum = `r(sum)'
+			}
+			else {
+				count if `cat_`var1''!=. & `cat_`var2''!=.
+				local grsum = `r(N)'
+			}
 	
 			forval i = 1/`binx' {
 				forval j = 1/`biny' {
-					count if `cat_`var1''==`i' & `cat_`var2''==`j' 
-					local grsize`i'`j' = (`r(N)'	/ `grsum') * 100
-					local grsize`i'`j' : di %3.1f `grsize`i'`j''
+					
+					if "`statvar'" != "" {
+						summarize `statvar' if `cat_`var1''==`i' & `cat_`var2''==`j' 
+						local grsize`i'`j' = (`r(sum)'	/ `grsum') * 100
+					}
+					else {
+						count if `cat_`var1''==`i' & `cat_`var2''==`j' 
+						local grsize`i'`j' = (`r(N)'	/ `grsum') * 100
+					}
 				}
 			}
 		}
 
-		
-		
+
 		if "`polygon'" == "" {
 			local polyadd 
 		}
@@ -641,6 +658,7 @@ quietly {
 		**************************
 
 		
+		
 		keep `var1' `var2'
 		ren `var2' ydot
 		ren `var1' xdot
@@ -752,8 +770,11 @@ quietly {
 		replace x_mid = . if tag!=1
 		replace y_mid = . if tag!=1
 		
+		
+		gen mycount = .
+		
 		if "`count'" != "" | "`percent'" != "" {
-			gen mycount = .
+			
 		
 			local x = 1
 			forval i = 1/`binx' {
@@ -767,13 +788,20 @@ quietly {
 		}
 		
 		
-		if "`formatval'" =="" local formatval "%5.1f"
+		if "`format'"  =="" local format "%5.1f"
+	
 		
 		if "`percent'" != ""  {
-			gen mycount2 = string(mycount, "`formatval'") + "%" if mycount!=.
-			local marksym mycount2	
+			gen mycount2 = string(mycount, "`format'") + "%" if mycount!=.
+			
+		}
+		else {
+			gen mycount2 = string(mycount, "`format'")  if mycount!=.
 		}
 
+		
+		local marksym mycount2	
+		
 				
 		// markers 
 

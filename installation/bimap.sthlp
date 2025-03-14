@@ -1,7 +1,7 @@
 {smcl}
-{* 23Feb2025}{...}
+{* 14Mar2025}{...}
 {hi:help bimap}{...}
-{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v2.2 (GitHub)}}
+{right:{browse "https://github.com/asjadnaqvi/stata-bimap":bimap v2.3 (GitHub)}}
 
 {hline}
 
@@ -32,9 +32,9 @@ using the {cmd:geopost()} options. For {cmd:spmap}, the old syntax just passes o
           {cmd:palette}({it:name}) {cmd:reverse} {cmd:clr0}({it:str}) {cmd:clrx}({it:str}) {cmd:clry}({it:str}) {cmdab:clrsat:urate}({it:num})
           {cmd:cut}({it:pctile}|{it:equal}) {cmd:cutx}({it:numlist}) {cmd:cuty}({it:numlist}) {cmd:binsproper} {cmd:bins}({it:num >=2}) {cmd:binx}({it:num >=2}) {cmd:biny}({it:num >=2}) {cmdab:noval:ues} {cmd:count}
           {cmd:percent} {cmdab:showleg:end} {cmdab:lc:olor}({it:str}) {cmdab:lw:idth}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str}) {cmd:ndfsize}({it:str}) {cmdab:xdisc:rete} {cmdab:ydisc:rete} 
-          {cmd:labxgap}({it:num}) {cmd:labygap}({it:num}) {cmd:textx}({it:str}) {cmd:texty}({it:str}) {cmd:formatx}({it:str}) {cmd:formaty}({it:str}) {cmd:detail} {cmd:wrap}({it:num})
+          {cmd:labxgap}({it:num}) {cmd:labygap}({it:num}) {cmd:textx}({it:str}) {cmd:texty}({it:str}) {cmd:format}({it:fmt}) {cmd:formatx}({it:fmt}) {cmd:formaty}({it:fmt}) {cmd:detail} {cmd:wrap}({it:num})
           {cmdab:texts:ize}({it:str}) {cmdab:textlabs:ize}({it:str}) {cmdab:vallabs:ize}({it:str}) {cmdab:textc:olor}({it:str}) {cmdab:textlabc:olor}({it:str}) {cmdab:vallabc:olor}({it:str}) 
-          {cmd:fxsize}({it:num}) {cmd:fysize}({it:num}) {cmd:scale}({it:num}) * {cmd:]}
+          {cmd:fxsize}({it:num}) {cmd:fysize}({it:num}) {cmd:scale}({it:num}) {cmd:statvar}({it:numvar})  * {cmd:]}
 
 
 {marker syntax}{title:Syntax (version 16 or earlier)}
@@ -45,9 +45,9 @@ using the {cmd:geopost()} options. For {cmd:spmap}, the old syntax just passes o
           {cmd:palette}({it:name}) {cmd:reverse} {cmd:clr0}({it:str}) {cmd:clrx}({it:str}) {cmd:clry}({it:str}) {cmdab:clrsat:urate}({it:num})
           {cmd:cut}({it:pctile}|{it:equal}) {cmd:cutx}({it:numlist}) {cmd:cuty}({it:numlist}) {cmd:binsproper} {cmd:bins}({it:num >=2}) {cmd:binx}({it:num >=2}) {cmd:biny}({it:num >=2}) {cmd:values} {cmd:count} 
           {cmd:percent} {cmdab:showleg:end} {cmdab:lc:olor}({it:str}) {cmdab:lw:idth}({it:str}) {cmd:ndocolor}({it:str}) {cmd:ndfcolor}({it:str})  {cmd:ndfsize}({it:str}) {cmdab:xdisc:rete} {cmdab:ydisc:rete} 
-          {cmd:labxgap}({it:num}) {cmd:labygap}({it:num}) {cmd:textx}({it:str}) {cmd:texty}({it:str}) {cmd:formatx}({it:str}) {cmd:formaty}({it:str}) {cmd:detail} {cmd:wrap}({it:num})
+          {cmd:labxgap}({it:num}) {cmd:labygap}({it:num}) {cmd:textx}({it:str}) {cmd:texty}({it:str}) {cmd:format}({it:fmt}) {cmd:formatx}({it:fmt}) {cmd:formaty}({it:fmt}) {cmd:detail} {cmd:wrap}({it:num})
           {cmdab:texts:ize}({it:str}) {cmdab:textlabs:ize}({it:str}) {cmdab:vallabs:ize}({it:str}) {cmdab:textc:olor}({it:str}) {cmdab:textlabc:olor}({it:str}) {cmdab:vallabc:olor}({it:str}) 
-          {cmd:fxsize}({it:num}) {cmd:fysize}({it:num}) {cmd:scale}({it:num}) * {cmd:]}
+          {cmd:fxsize}({it:num}) {cmd:fysize}({it:num}) {cmd:scale}({it:num}) {cmd:statvar}({it:numvar}) * {cmd:]}
 
 
 
@@ -176,9 +176,9 @@ fairly complex syntaxes for generating legends so please see individual helpfile
 
 {p2coldent : {opt vallabc:olor(str)}}The text color of the box values. The default value is {opt vallabc(black)}.{p_end}
 
-{p2coldent : {opt formatval(fmt)}}Format of the box values. Default format is {opt formatval(%5.1f)}.{p_end}
+{p2coldent : {opt format(fmt)}}Format of the box values. Default format is {opt format(%5.1f)}.{p_end}
 
-{p2coldent : {opt formatx(fmt)}, {opt formaty(fmt)}}Format the values on the legend axes. Default format is {opt formatx(%5.1f)}, {opt formaty(%5.1f)}.{p_end}
+{p2coldent : {opt formatx(fmt)}, {opt formaty(fmt)}}Format the values on the legend axes. Default options are {opt formatx(%5.1f)}, {opt formaty(%5.1f)}.{p_end}
 
 {p2coldent : {opt labxgap(num)}}The gap of the x-axis title from the default position. The default value is {opt labxgap(0)}. Use in very minor increments, e.g. {opt labxgap(0.02)}.{p_end}
 
@@ -230,8 +230,8 @@ Please note that the GitHub version might be newer than the SSC version.
 
 {title:Package details}
 
-Version      : {bf:bimap} v2.2
-This release : 23 Feb 2025
+Version      : {bf:bimap} v2.3
+This release : 14 Mar 2025
 First release: 08 Apr 2022
 Repository   : {browse "https://github.com/asjadnaqvi/stata-bimap":GitHub}
 Keywords     : Stata, map, bimap, bi-variate
@@ -255,11 +255,11 @@ BlueSky      : {browse "https://bsky.app/profile/asjadnaqvi.bsky.social":@asjadn
 {p 4 8 2}Jann, B. (2023). geoplot: Stata module to draw maps. Available from {browse "https://ideas.repec.org/c/boc/bocode/s459211.html"}.
 
 
-{title:Other visualization packages}
 {psee}
-    {helpb arcplot}, {helpb alluvial}, {helpb bimap}, {helpb bumparea}, {helpb bumpline}, {helpb circlebar}, {helpb circlepack}, {helpb clipgeo}, {helpb delaunay}, {helpb graphfunctions}, {helpb geoboundary}, {helpb geoflow}, {helpb joyplot}, 
-	{helpb marimekko}, {helpb polarspike}, {helpb sankey}, {helpb schemepack}, {helpb spider}, {helpb splinefit}, {helpb streamplot}, {helpb sunburst}, {helpb ternary}, {helpb tidytueday}, {helpb treecluster}, {helpb treemap}, {helpb trimap}, {helpb waffle}
+    {helpb alluvial}, {helpb arcplot}, {helpb bimap}, {helpb bumparea}, {helpb bumpline}, {helpb circlebar}, {helpb circlepack}, {helpb clipgeo}, {helpb delaunay}, 
+	{helpb geoboundary}, {helpb geoflow}, {helpb graphfunctions}, {helpb marimekko}, {helpb polarspike}, {helpb ridgeline}, 
+	{helpb sankey}, {helpb schemepack}, {helpb spider}, {helpb splinefit},
+	{helpb streamplot}, {helpb sunburst}, {helpb ternary}, {helpb tidytuesday}, {helpb treecluster}, {helpb treemap}, {helpb trimap}, {helpb waffle}.
 
-Visit {browse "https://github.com/asjadnaqvi":GitHub} for further information.
-
+or visit {browse "https://github.com/asjadnaqvi":GitHub}.
 
